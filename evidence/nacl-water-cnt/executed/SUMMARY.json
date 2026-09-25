@@ -1,0 +1,17 @@
+{
+  "note": "SYNTHETIC demonstration only \u2014 not DFT/MLIP/transport results",
+  "overall_component_rmse": 0.2068349507081727,
+  "weak_channel_visible": {
+    "C": 0.091,
+    "Cl": 0.096,
+    "H": 0.114,
+    "Na": 1.02,
+    "O": 0.238
+  },
+  "interval_status": "OK",
+  "decision_action": "REVIEW_MODEL_SCOPE",
+  "figures": [
+    "/home/claude/work/evidence/demo_out/validation_component_rmse.png",
+    "/home/claude/work/evidence/demo_out/validation_vector_p95.png"
+  ]
+}

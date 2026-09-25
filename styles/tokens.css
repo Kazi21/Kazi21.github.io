@@ -1,0 +1,71 @@
+/* tokens.css — design tokens for kazi-ehsanul-karim.github.io (v0.1)
+   Fonts are vendored (OFL, see vendor/fonts/LICENSE-IBM-Plex-OFL.txt).
+   No external requests are made by this stylesheet. */
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../vendor/fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../vendor/fonts/ibm-plex-sans-latin-500-normal.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../vendor/fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../vendor/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* Palette: deep water, chalk, mist; semantic gate colours */
+  --bg:        #0d1b2a;  /* deep water */
+  --bg-2:      #10233a;  /* slightly lifted background band */
+  --surface:   #142b45;  /* panel surface */
+  --line:      rgba(233, 238, 243, 0.14);
+  --line-soft: rgba(233, 238, 243, 0.08);
+  --text:      #e9eef3;  /* chalk */
+  --muted:     #a7b6c6;  /* mist */
+  --dim:       #7f90a3;
+  --accent:    #62d6c2;  /* interactive: links, primary button */
+  --accent-ink:#0b1a28;
+  --ok:        #62d6c2;  /* admissible / demonstrated */
+  --warn:      #f2b950;  /* insufficient / in development */
+  --stop:      #ff7b66;  /* MD-only regime / invalid */
+  --proposed:  #8fb4ea;  /* proposed programme */
+
+  /* Type */
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Modular scale, ratio ≈ 1.25, fluid between 360 px and 1440 px */
+  --step--1: clamp(0.84rem, 0.80rem + 0.18vw, 0.94rem);
+  --step-0:  clamp(1.00rem, 0.96rem + 0.22vw, 1.13rem);
+  --step-1:  clamp(1.25rem, 1.18rem + 0.35vw, 1.44rem);
+  --step-2:  clamp(1.56rem, 1.42rem + 0.65vw, 1.95rem);
+  --step-3:  clamp(1.95rem, 1.70rem + 1.20vw, 2.60rem);
+  --step-4:  clamp(2.40rem, 1.90rem + 2.40vw, 3.90rem);
+
+  --leading-tight: 1.12;
+  --leading-body: 1.62;
+
+  /* Layout */
+  --container: 72rem;
+  --measure: 66ch;
+  --gutter: clamp(1rem, 2.5vw, 2rem);
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: 6rem;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+}

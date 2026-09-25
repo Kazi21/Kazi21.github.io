@@ -1,0 +1,27 @@
+{
+  "action": "REVIEW_MODEL_SCOPE",
+  "reasons": [
+    "weak channel 'Na' component RMSE 1.050 > 0.5 eV/A",
+    "committee uncertainty blind to it (corr 0.07 < 0.3)",
+    "a targeted direct-label repair already ran without improvement (narrow negative result) \u2014 route this channel out of scope, do not claim a proven root cause"
+  ],
+  "missing_evidence": [],
+  "policy_version": "decision-policy-0.1",
+  "provenance": {
+    "inputs_present": [
+      "_comment",
+      "frame_mapping_ok",
+      "metric_interval_status",
+      "per_species_error",
+      "provenance",
+      "reference_compatible",
+      "requested_deployment",
+      "targeted_repair_done",
+      "targeted_repair_improved",
+      "uncertainty_error_correlation"
+    ],
+    "inputs_absent": [],
+    "source": "synthetic example_evidence.json"
+  },
+  "unresolved": false
+}

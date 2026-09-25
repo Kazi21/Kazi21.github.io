@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods package source — Kazi Ehsanul Karim</title>
+<meta name="description" content="Verbatim source of the mlip_evidence methods package: reference-protocol parser, frame-mapping and leakage checks, per-species force metrics, group-aware bootstrap, rules-based decision prototype, release builder, tests and synthetic fixtures.">
+<meta name="robots" content="index,follow">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#0d1b2a">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="../../index.html#projects">Research Projects</a>
+      <a href="../../index.html#practice">Research in Practice</a>
+      <a href="../../index.html#lab">Simulation Lab</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section" id="top">
+  <div class="container">
+    <p class="project-kicker">Research in Practice · evidence · source</p>
+    <h1 class="evidence-title">Source of the methods package</h1>
+    <p class="section-intro">The package's Python modules, tests and fixtures, shown verbatim for inspection. Tooling is MIT-licensed; Analysis code drafted with AI assistance and checked against raw outputs; scientific decisions and validation design are the author&#x27;s. See NOTICE. <a href="index.html">Back to the evidence overview</a>.</p>
+    <ul class="links"><li><a href="#mlip_evidence-__init__-py">mlip_evidence/__init__.py</a></li><li><a href="#mlip_evidence-constants-py">mlip_evidence/constants.py</a></li><li><a href="#mlip_evidence-reference_protocol-py">mlip_evidence/reference_protocol.py</a></li><li><a href="#mlip_evidence-frame_mapping-py">mlip_evidence/frame_mapping.py</a></li><li><a href="#mlip_evidence-metrics-py">mlip_evidence/metrics.py</a></li><li><a href="#mlip_evidence-uncertainty-py">mlip_evidence/uncertainty.py</a></li><li><a href="#mlip_evidence-decision-py">mlip_evidence/decision.py</a></li><li><a href="#mlip_evidence-figures-py">mlip_evidence/figures.py</a></li><li><a href="#mlip_evidence-release-py">mlip_evidence/release.py</a></li><li><a href="#mlip_evidence-cli-py">mlip_evidence/cli.py</a></li><li><a href="#tests-test_mlip_evidence-py">tests/test_mlip_evidence.py</a></li><li><a href="#examples-synthetic-make_fixture-py">examples/synthetic/make_fixture.py</a></li><li><a href="#examples-synthetic-example_evidence-json">examples/synthetic/example_evidence.json</a></li><li><a href="#website-evidence_cards-json">website/evidence_cards.json</a></li><li><a href="#MANIFEST-json">MANIFEST.json</a></li></ul>
+  </div>
+</section>
+<section class="section section-band">
+  <div class="container">
+    <article class="srcfile" id="mlip_evidence-__init__-py">
+      <h2>mlip_evidence/__init__.py <a class="rawlink" href="package/mlip_evidence/__init__.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+mlip_evidence — reproducible tooling for error-aware MLIP evidence.
+
+Public, self-contained tooling that demonstrates the *methods* used in a
+CNT-confined NaCl-water machine-learned interatomic potential (MLIP) campaign:
+reference-protocol checking, leakage/frame-mapping checks, per-species force
+metrics with honest uncertainty, and a transparent rules-based decision
+prototype.
+
+IMPORTANT SCOPE: this package ships with SYNTHETIC fixtures only. Running it does
+NOT perform DFT, does NOT train or evaluate an MLIP, and produces NO physical
+transport result. It demonstrates the analysis tooling, not scientific findings.
+Real campaign numbers, models, and trajectories are intentionally not included.
+
+Provenance: the analysis logic mirrors functions from the author&#x27;s campaign
+tooling (drafted with AI assistance, checked against raw outputs). This public
+copy is re-implemented for synthetic inputs. See NOTICE.md.
+&quot;&quot;&quot;
+__version__ = &quot;0.1.0&quot;
+
+from .constants import (
+    HARTREE_TO_EV, BOHR_TO_ANGSTROM, HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM,
+)
+from .reference_protocol import summarize_reference_protocol, compare_reference_protocols
+from .frame_mapping import validate_frame_mapping
+from .metrics import force_metrics
+from .uncertainty import estimate_metric_interval
+from .decision import recommend_next_action
+from .figures import write_validation_figures
+from .release import build_public_release
+
+__all__ = [
+    &quot;HARTREE_TO_EV&quot;, &quot;BOHR_TO_ANGSTROM&quot;, &quot;HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM&quot;,
+    &quot;summarize_reference_protocol&quot;, &quot;compare_reference_protocols&quot;,
+    &quot;validate_frame_mapping&quot;, &quot;force_metrics&quot;, &quot;estimate_metric_interval&quot;,
+    &quot;recommend_next_action&quot;, &quot;write_validation_figures&quot;, &quot;build_public_release&quot;,
+]
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-constants-py">
+      <h2>mlip_evidence/constants.py <a class="rawlink" href="package/mlip_evidence/constants.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Physical constants — NIST CODATA 2022 (checked 2026-09-06).
+
+The force-conversion factor is DERIVED from the two primary constants rather than
+hard-coded, so the convention is internally consistent by construction.
+
+  HARTREE_TO_EV                    = 27.211386245981   eV / Hartree
+  BOHR_TO_ANGSTROM                 = 0.529177210544    Angstrom / Bohr
+  HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM = HARTREE_TO_EV / BOHR_TO_ANGSTROM
+                                   = 51.42206751...    (eV/A) / (Ha/Bohr)
+
+Note: a value of 51.42208619 appears in an earlier lab document; it differs from
+the CODATA-2022-derived ratio by ~1.9e-5 absolute (~3.6e-7 relative), i.e.
+numerically immaterial for force comparisons, but this package uses the derived
+CODATA 2022 ratio as the single declared convention.
+&quot;&quot;&quot;
+
+HARTREE_TO_EV = 27.211386245981
+BOHR_TO_ANGSTROM = 0.529177210544
+HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM = HARTREE_TO_EV / BOHR_TO_ANGSTROM
+
+# Value found in an earlier lab readiness document, kept only for the
+# internal-consistency test that flags the (immaterial) discrepancy.
+LEGACY_FORCE_FACTOR = 51.42208619
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-reference_protocol-py">
+      <h2>mlip_evidence/reference_protocol.py <a class="rawlink" href="package/mlip_evidence/reference_protocol.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Reference-protocol summary + comparison for CP2K reference inputs.
+
+summarize_reference_protocol(input_path) parses a CP2K input and extracts the
+parameters that determine reference compatibility for MLIP training/validation:
+run type, functional, dispersion, basis sets, pseudopotentials, density-grid
+cutoffs, SCF threshold/algorithm, smearing, charge, cell, periodicity, and
+whether the stress tensor was requested.
+
+compare_reference_protocols(training, validation) flags any parameter that
+differs between two protocol summaries, so that an unexplained reference
+mismatch is classified BEFORE a model error is interpreted.
+
+The parser is deliberately conservative: it records what it finds and marks
+anything it cannot determine as None, rather than guessing.
+&quot;&quot;&quot;
+import json
+import re
+
+# keyword -&gt; (regex, caster). Values are matched case-insensitively on their line.
+_SCALAR_KEYS = {
+    &quot;run_type&quot;: (r&quot;^\s*RUN_TYPE\s+(\S+)&quot;, str),
+    &quot;cutoff_Ry&quot;: (r&quot;^\s*CUTOFF\s+(\d+\.?\d*)&quot;, float),
+    &quot;rel_cutoff_Ry&quot;: (r&quot;^\s*REL_CUTOFF\s+(\d+\.?\d*)&quot;, float),
+    &quot;ngrids&quot;: (r&quot;^\s*NGRIDS\s+(\d+)&quot;, int),
+    &quot;eps_scf&quot;: (r&quot;^\s*EPS_SCF\s+(\S+)&quot;, float),
+    &quot;max_scf&quot;: (r&quot;^\s*MAX_SCF\s+(\d+)&quot;, int),
+    &quot;charge&quot;: (r&quot;^\s*CHARGE\s+([+-]?\d+)&quot;, int),
+    &quot;added_mos&quot;: (r&quot;^\s*ADDED_MOS\s+(\d+)&quot;, int),
+    &quot;smear_method&quot;: (r&quot;^\s*METHOD\s+(FERMI_DIRAC|GAUSSIAN)&quot;, str),
+    &quot;electronic_temperature_K&quot;: (r&quot;ELECTRONIC_TEMPERATURE\s*(?:\[K\])?\s*(\d+\.?\d*)&quot;, float),
+    &quot;xc_functional&quot;: (r&quot;^\s*&amp;XC_FUNCTIONAL\s+(\S+)&quot;, str),
+    &quot;vdw_type&quot;: (r&quot;^\s*TYPE\s+(DFTD3\(BJ\)|DFTD3|DFTD2)&quot;, str),
+    &quot;mixing_method&quot;: (r&quot;^\s*METHOD\s+(BROYDEN_MIXING|PULAY_MIXING|DIRECT_P_MIXING)&quot;, str),
+}
+_FLAG_SECTIONS = {
+    &quot;stress_tensor&quot;: r&quot;STRESS_TENSOR\s+(ANALYTICAL|NUMERICAL)&quot;,
+    &quot;smearing_on&quot;: r&quot;&amp;SMEAR\s+ON&quot;,
+    &quot;outer_scf_on&quot;: r&quot;&amp;OUTER_SCF\s+ON&quot;,
+    &quot;forces_on&quot;: r&quot;&amp;FORCES\s+ON&quot;,
+}
+
+
+def _read_text(input_path):
+    with open(input_path, &quot;r&quot;) as fh:
+        return fh.read()
+
+
+def summarize_reference_protocol(input_path, output_path=None):
+    &quot;&quot;&quot;Parse a CP2K input file into a protocol summary dict.&quot;&quot;&quot;
+    text = _read_text(input_path)
+    lines = text.splitlines()
+    out = {&quot;source&quot;: str(input_path)}
+
+    for key, (pat, cast) in _SCALAR_KEYS.items():
+        val = None
+        rx = re.compile(pat, re.IGNORECASE)
+        for ln in lines:
+            m = rx.search(ln)
+            if m:
+                try:
+                    val = cast(m.group(1))
+                except (ValueError, IndexError):
+                    val = m.group(1)
+                break
+        out[key] = val
+
+    for key, pat in _FLAG_SECTIONS.items():
+        m = re.search(pat, text, re.IGNORECASE)
+        out[key] = (m.group(1) if (m and m.groups()) else bool(m)) if m else (False if key.endswith(&quot;_on&quot;) else None)
+
+    # per-KIND basis + potential
+    kinds = {}
+    for km in re.finditer(r&quot;&amp;KIND\s+(\S+)(.*?)&amp;END\s+KIND&quot;, text, re.IGNORECASE | re.DOTALL):
+        name = km.group(1).strip()
+        body = km.group(2)
+        b = re.search(r&quot;BASIS_SET\s+(\S+)&quot;, body, re.IGNORECASE)
+        p = re.search(r&quot;POTENTIAL\s+(\S+)&quot;, body, re.IGNORECASE)
+        kinds[name] = {&quot;basis_set&quot;: b.group(1) if b else None,
+                       &quot;potential&quot;: p.group(1) if p else None}
+    out[&quot;kinds&quot;] = kinds
+
+    # cell + periodicity
+    abc = re.search(r&quot;^\s*ABC\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)&quot;, text, re.IGNORECASE | re.MULTILINE)
+    out[&quot;cell_abc_A&quot;] = [float(abc.group(i)) for i in (1, 2, 3)] if abc else None
+    cell_vec = re.search(r&quot;^\s*A\s+[\d.\-]+\s+[\d.\-]+\s+[\d.\-]+&quot;, text, re.IGNORECASE | re.MULTILINE)
+    out[&quot;cell_uses_vectors&quot;] = bool(cell_vec)
+    per = re.search(r&quot;&amp;POISSON.*?PERIODIC\s+(\S+)&quot;, text, re.IGNORECASE | re.DOTALL)
+    out[&quot;poisson_periodic&quot;] = per.group(1) if per else None
+
+    if output_path:
+        with open(output_path, &quot;w&quot;) as fh:
+            json.dump(out, fh, indent=2)
+    return out
+
+
+# parameters whose mismatch between train/validation is scientifically material
+_MATERIAL = [
+    &quot;xc_functional&quot;, &quot;vdw_type&quot;, &quot;cutoff_Ry&quot;, &quot;rel_cutoff_Ry&quot;, &quot;eps_scf&quot;,
+    &quot;charge&quot;, &quot;smear_method&quot;, &quot;electronic_temperature_K&quot;, &quot;poisson_periodic&quot;,
+    &quot;run_type&quot;, &quot;kinds&quot;,
+]
+
+
+def compare_reference_protocols(training, validation):
+    &quot;&quot;&quot;Compare two protocol summaries; return matched/mismatched/only-in-one.
+
+    A mismatch on a MATERIAL parameter is flagged compatible=False, meaning a
+    model error computed against `validation` cannot be cleanly attributed to the
+    model until the reference difference is explained.
+    &quot;&quot;&quot;
+    keys = sorted(set(training) | set(validation))
+    matched, mismatched = {}, {}
+    for k in keys:
+        if k in (&quot;source&quot;,):
+            continue
+        tv, vv = training.get(k, &quot;&lt;absent&gt;&quot;), validation.get(k, &quot;&lt;absent&gt;&quot;)
+        if tv == vv:
+            matched[k] = tv
+        else:
+            mismatched[k] = {&quot;training&quot;: tv, &quot;validation&quot;: vv,
+                             &quot;material&quot;: k in _MATERIAL}
+    compatible = not any(v[&quot;material&quot;] for v in mismatched.values())
+    return {
+        &quot;compatible&quot;: compatible,
+        &quot;n_matched&quot;: len(matched),
+        &quot;n_mismatched&quot;: len(mismatched),
+        &quot;mismatched&quot;: mismatched,
+        &quot;note&quot;: (&quot;references compatible on all material parameters&quot;
+                 if compatible else
+                 &quot;MATERIAL reference mismatch — classify before interpreting model error&quot;),
+    }
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-frame_mapping-py">
+      <h2>mlip_evidence/frame_mapping.py <a class="rawlink" href="package/mlip_evidence/frame_mapping.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Frame / atom-mapping and duplicate (leakage) checks.
+
+validate_frame_mapping(reference, prediction) verifies that a prediction&#x27;s atoms
+correspond to the reference&#x27;s atoms. If atom IDs are present it restores order via
+the unique ID permutation; without IDs it accepts only an already-identical type
+order and REJECTS an ambiguous reorder rather than guessing a permutation.
+
+detect_duplicate_frames(set_a, set_b) flags exact-duplicate geometries between two
+frame sets by rounded-coordinate hashing. A zero-collision result exposes exact
+duplication only; it does NOT establish statistical independence or absence of
+near-duplicates (documented limitation, per the reference guidance).
+
+Inputs are plain dicts of NumPy arrays. Arrays are validated for shape, finite
+values, and consistent atom counts; violations raise ValueError.
+&quot;&quot;&quot;
+import hashlib
+import numpy as np
+
+
+def _as_types(d):
+    t = np.asarray(d[&quot;types&quot;])
+    if t.ndim != 1:
+        raise ValueError(f&quot;types must be 1-D (N,), got shape {t.shape}&quot;)
+    return t
+
+
+def _as_coords(d):
+    c = np.asarray(d[&quot;coords&quot;], dtype=float)
+    if c.ndim == 2:
+        c = c[None, :, :]
+    if c.ndim != 3 or c.shape[-1] != 3:
+        raise ValueError(f&quot;coords must be (N,3) or (F,N,3), got shape {c.shape}&quot;)
+    if not np.all(np.isfinite(c)):
+        raise ValueError(&quot;coords contain non-finite values&quot;)
+    return c
+
+
+def validate_frame_mapping(reference, prediction):
+    &quot;&quot;&quot;Return {&#x27;ok&#x27;, &#x27;restored&#x27;, &#x27;permutation&#x27;, &#x27;reason&#x27;} for atom correspondence.&quot;&quot;&quot;
+    rt, pt = _as_types(reference), _as_types(prediction)
+    if rt.shape[0] != pt.shape[0]:
+        return {&quot;ok&quot;: False, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+                &quot;reason&quot;: f&quot;atom count mismatch: reference {rt.shape[0]} vs prediction {pt.shape[0]}&quot;}
+    if sorted(rt.tolist()) != sorted(pt.tolist()):
+        return {&quot;ok&quot;: False, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+                &quot;reason&quot;: &quot;type multisets differ — not the same system&quot;}
+
+    r_ids = reference.get(&quot;ids&quot;)
+    p_ids = prediction.get(&quot;ids&quot;)
+    if r_ids is not None and p_ids is not None:
+        r_ids = np.asarray(r_ids); p_ids = np.asarray(p_ids)
+        if len(set(r_ids.tolist())) != r_ids.size or len(set(p_ids.tolist())) != p_ids.size:
+            return {&quot;ok&quot;: False, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+                    &quot;reason&quot;: &quot;atom IDs not unique — cannot form an unambiguous permutation&quot;}
+        if set(r_ids.tolist()) != set(p_ids.tolist()):
+            return {&quot;ok&quot;: False, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+                    &quot;reason&quot;: &quot;atom ID sets differ — different atoms&quot;}
+        # permutation that reorders prediction into reference ID order
+        order = {i: k for k, i in enumerate(p_ids.tolist())}
+        perm = np.array([order[i] for i in r_ids.tolist()])
+        restored = not np.array_equal(perm, np.arange(perm.size))
+        if not np.array_equal(pt[perm], rt):
+            return {&quot;ok&quot;: False, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+                    &quot;reason&quot;: &quot;ID permutation does not align atom types — inconsistent metadata&quot;}
+        return {&quot;ok&quot;: True, &quot;restored&quot;: bool(restored), &quot;permutation&quot;: perm.tolist(),
+                &quot;reason&quot;: &quot;restored via unique atom-ID permutation&quot; if restored
+                          else &quot;already aligned&quot;}
+
+    # no IDs: accept only identity
+    if np.array_equal(rt, pt):
+        return {&quot;ok&quot;: True, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+                &quot;reason&quot;: &quot;type order already identical (no IDs needed)&quot;}
+    return {&quot;ok&quot;: False, &quot;restored&quot;: False, &quot;permutation&quot;: None,
+            &quot;reason&quot;: &quot;atoms need reordering but no IDs supplied — refusing to guess a permutation&quot;}
+
+
+def _frame_hash(coords_frame, decimals):
+    q = np.round(np.asarray(coords_frame, dtype=float), decimals)
+    return hashlib.sha256(np.ascontiguousarray(q).tobytes()).hexdigest()
+
+
+def detect_duplicate_frames(set_a, set_b, decimals=4):
+    &quot;&quot;&quot;Flag exact-duplicate geometries between two frame sets (leakage check).
+
+    Returns {&#x27;n_a&#x27;,&#x27;n_b&#x27;,&#x27;n_duplicates&#x27;,&#x27;duplicate_pairs&#x27;,&#x27;note&#x27;}.
+    Zero duplicates != independence (see module docstring).
+    &quot;&quot;&quot;
+    ca, cb = _as_coords(set_a), _as_coords(set_b)
+    if ca.shape[1] != cb.shape[1]:
+        raise ValueError(&quot;frame sets have different atom counts&quot;)
+    ha = {_frame_hash(f, decimals): i for i, f in enumerate(ca)}
+    dup = []
+    for j, f in enumerate(cb):
+        h = _frame_hash(f, decimals)
+        if h in ha:
+            dup.append((ha[h], j))
+    return {
+        &quot;n_a&quot;: int(ca.shape[0]), &quot;n_b&quot;: int(cb.shape[0]),
+        &quot;n_duplicates&quot;: len(dup), &quot;duplicate_pairs&quot;: dup,
+        &quot;note&quot;: (&quot;exact-duplicate hashing only; zero collisions does not prove &quot;
+                 &quot;statistical independence or absence of near-duplicates&quot;),
+    }
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-metrics-py">
+      <h2>mlip_evidence/metrics.py <a class="rawlink" href="package/mlip_evidence/metrics.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Per-species force error metrics with explicit definitions.
+
+Two force-RMSE definitions are reported side by side and never mixed:
+  - component RMSE = sqrt( sum((Fp-Fr)**2) / (3*N) )   over 3N scalar components
+  - vector RMSE    = sqrt( mean( sum((Fp-Fr)**2, axis=-1) ) )  over N vectors
+Also reported per species: component MAE and the vector-error median/p95/max, plus
+per-frame breakdown so a large system or dominant species cannot hide a weak
+channel. A species with zero matched observations is reported as MISSING evidence,
+never as zero error.
+
+Inputs are matched reference/prediction arrays of shape (M,3), with per-row species
+labels and frame ids of length M. Non-finite values, shape mismatches, and empty
+input are rejected.
+&quot;&quot;&quot;
+import numpy as np
+
+
+def _validate(reference, prediction):
+    r = np.asarray(reference, dtype=float)
+    p = np.asarray(prediction, dtype=float)
+    if r.shape != p.shape:
+        raise ValueError(f&quot;reference {r.shape} and prediction {p.shape} must match&quot;)
+    if r.ndim != 2 or r.shape[1] != 3:
+        raise ValueError(f&quot;force arrays must be (M,3), got {r.shape}&quot;)
+    if r.shape[0] == 0:
+        raise ValueError(&quot;no matched force vectors supplied&quot;)
+    if not (np.all(np.isfinite(r)) and np.all(np.isfinite(p))):
+        raise ValueError(&quot;non-finite values in force arrays&quot;)
+    return r, p
+
+
+def _species_block(dr):
+    &quot;&quot;&quot;dr = (n,3) error vectors for one species -&gt; metric dict.&quot;&quot;&quot;
+    n = dr.shape[0]
+    comp = dr.reshape(-1)
+    vec_mag = np.sqrt(np.sum(dr ** 2, axis=1))
+    return {
+        &quot;n_vectors&quot;: int(n),
+        &quot;component_rmse&quot;: float(np.sqrt(np.mean(comp ** 2))),
+        &quot;component_mae&quot;: float(np.mean(np.abs(comp))),
+        &quot;vector_rmse&quot;: float(np.sqrt(np.mean(vec_mag ** 2))),
+        &quot;vector_median&quot;: float(np.median(vec_mag)),
+        &quot;vector_p95&quot;: float(np.percentile(vec_mag, 95)),
+        &quot;vector_max&quot;: float(np.max(vec_mag)),
+    }
+
+
+def force_metrics(reference, prediction, species, frame_ids=None, expected_species=None):
+    &quot;&quot;&quot;Per-species and overall force metrics.
+
+    reference, prediction : (M,3) matched force vectors
+    species               : length-M labels (str/int)
+    frame_ids             : length-M frame ids (optional; enables per-frame table)
+    expected_species      : iterable of species that SHOULD be present; any with
+                            no observations are listed under &#x27;missing_species&#x27;.
+    &quot;&quot;&quot;
+    r, p = _validate(reference, prediction)
+    species = np.asarray(species)
+    if species.shape[0] != r.shape[0]:
+        raise ValueError(&quot;species length must equal number of force vectors&quot;)
+    dr = p - r
+
+    per_species = {}
+    for s in sorted(set(species.tolist()), key=str):
+        per_species[str(s)] = _species_block(dr[species == s])
+
+    result = {
+        &quot;definitions&quot;: {
+            &quot;component_rmse&quot;: &quot;sqrt(sum((Fp-Fr)**2)/(3N))&quot;,
+            &quot;vector_rmse&quot;: &quot;sqrt(mean(sum((Fp-Fr)**2, axis=-1)))&quot;,
+        },
+        &quot;overall&quot;: _species_block(dr),
+        &quot;per_species&quot;: per_species,
+    }
+
+    if expected_species is not None:
+        missing = [str(s) for s in expected_species if str(s) not in per_species]
+        result[&quot;missing_species&quot;] = missing  # missing evidence, NOT zero error
+
+    if frame_ids is not None:
+        frame_ids = np.asarray(frame_ids)
+        if frame_ids.shape[0] != r.shape[0]:
+            raise ValueError(&quot;frame_ids length must equal number of force vectors&quot;)
+        per_frame = {}
+        for f in sorted(set(frame_ids.tolist()), key=str):
+            per_frame[str(f)] = _species_block(dr[frame_ids == f])
+        result[&quot;per_frame&quot;] = per_frame
+
+    return result
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-uncertainty-py">
+      <h2>mlip_evidence/uncertainty.py <a class="rawlink" href="package/mlip_evidence/uncertainty.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Group-aware bootstrap confidence intervals.
+
+The sampling unit is an INDEPENDENT group (e.g. an independent replica) or a
+justified time block — never a force component, atom, adjacent frame, or committee
+member. The estimand is the mean of `metric` over observations; each bootstrap
+draw resamples GROUPS with replacement and pools their observations.
+
+If fewer than `min_groups` independent groups are available (or block metadata is
+missing when a block bootstrap is requested), the function returns status
+&#x27;CI_UNAVAILABLE&#x27; with a reason rather than fabricating an interval.
+
+Defaults are reproducible: confidence 0.95, 2000 draws, seed 20260906. Block
+duration is NOT assigned a universal default; it must come from supplied
+`time_ps` metadata and a caller-chosen `block_ps`.
+&quot;&quot;&quot;
+import numpy as np
+
+
+def _grouped(records, metric, group_key):
+    groups = {}
+    for rec in records:
+        if metric not in rec:
+            raise ValueError(f&quot;record missing metric &#x27;{metric}&#x27;: {rec}&quot;)
+        if group_key not in rec:
+            raise ValueError(f&quot;record missing group_key &#x27;{group_key}&#x27;: {rec}&quot;)
+        v = float(rec[metric])
+        if not np.isfinite(v):
+            raise ValueError(f&quot;non-finite metric value: {rec}&quot;)
+        groups.setdefault(rec[group_key], []).append(v)
+    return {g: np.asarray(vs, dtype=float) for g, vs in groups.items()}
+
+
+def _block_groups(records, metric, block_ps):
+    for rec in records:
+        if &quot;time_ps&quot; not in rec:
+            raise ValueError(&quot;block bootstrap requires &#x27;time_ps&#x27; in every record&quot;)
+    groups = {}
+    for rec in records:
+        b = int(np.floor(float(rec[&quot;time_ps&quot;]) / block_ps))
+        groups.setdefault(b, []).append(float(rec[metric]))
+    return {g: np.asarray(vs, dtype=float) for g, vs in groups.items()}
+
+
+def estimate_metric_interval(records, metric, *, group_key=&quot;group&quot;,
+                             block_ps=None, confidence=0.95,
+                             n_bootstrap=2000, seed=20260906, min_groups=3):
+    &quot;&quot;&quot;Bootstrap CI for the mean of `metric`, resampling independent groups.
+
+    Returns a dict with either the interval or status &#x27;CI_UNAVAILABLE&#x27;.
+    &quot;&quot;&quot;
+    if not records:
+        return {&quot;status&quot;: &quot;CI_UNAVAILABLE&quot;, &quot;reason&quot;: &quot;no records supplied&quot;}
+
+    if block_ps is not None:
+        groups = _block_groups(records, metric, block_ps)
+        unit = f&quot;time block ({block_ps} ps)&quot;
+    else:
+        groups = _grouped(records, metric, group_key)
+        unit = f&quot;group &#x27;{group_key}&#x27;&quot;
+
+    labels = list(groups.keys())
+    n_groups = len(labels)
+    if n_groups &lt; min_groups:
+        return {&quot;status&quot;: &quot;CI_UNAVAILABLE&quot;,
+                &quot;reason&quot;: f&quot;only {n_groups} independent {unit} unit(s); need &gt;= {min_groups}&quot;,
+                &quot;n_groups&quot;: n_groups, &quot;sampling_unit&quot;: unit,
+                &quot;estimand&quot;: f&quot;mean of {metric}&quot;}
+
+    all_vals = np.concatenate([groups[l] for l in labels])
+    point = float(np.mean(all_vals))
+
+    rng = np.random.default_rng(seed)
+    idx = np.arange(n_groups)
+    draws = np.empty(n_bootstrap)
+    for b in range(n_bootstrap):
+        pick = rng.choice(idx, size=n_groups, replace=True)
+        pooled = np.concatenate([groups[labels[i]] for i in pick])
+        draws[b] = np.mean(pooled)
+    alpha = 1.0 - confidence
+    lo = float(np.percentile(draws, 100 * alpha / 2))
+    hi = float(np.percentile(draws, 100 * (1 - alpha / 2)))
+
+    return {
+        &quot;status&quot;: &quot;OK&quot;,
+        &quot;estimand&quot;: f&quot;mean of {metric}&quot;,
+        &quot;sampling_unit&quot;: unit,
+        &quot;point&quot;: point,
+        &quot;ci_low&quot;: lo,
+        &quot;ci_high&quot;: hi,
+        &quot;confidence&quot;: confidence,
+        &quot;n_groups&quot;: n_groups,
+        &quot;n_bootstrap&quot;: n_bootstrap,
+        &quot;seed&quot;: seed,
+        &quot;method&quot;: &quot;group/block nonparametric bootstrap (resample units with replacement)&quot;,
+        &quot;note&quot;: (&quot;interval reflects between-unit variability only; it assumes the &quot;
+                 &quot;supplied units are genuinely independent&quot;),
+    }
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-decision-py">
+      <h2>mlip_evidence/decision.py <a class="rawlink" href="package/mlip_evidence/decision.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Workflow-controller prototype (transparent, rules-based).
+
+recommend_next_action(evidence, policy) maps explicit evidence + declared
+thresholds to ONE next action, with the reasons, the evidence it still needs, the
+policy version, and input provenance. It is a fixed rule dispatcher — NOT a learned
+or autonomous scientist. It launches nothing and claims no cost/time savings.
+
+Actions:
+  REVIEW_REFERENCE         reference protocols incompatible on a material parameter
+  CHECK_LABEL_MAPPING      atom/frame correspondence failed
+  REQUEST_TARGETED_LABELS  a weak channel whose committee uncertainty is blind to it
+  REQUEST_MORE_SAMPLING    a weak channel the uncertainty tracks, or CI not yet resolvable
+  REVIEW_MODEL_SCOPE       requested deployment is outside tested scope, OR a targeted
+                           repair already failed for a weak channel (route out of scope)
+  STOP_WITHIN_TESTED_SCOPE all required checks pass inside the tested scope
+  INSUFFICIENT_EVIDENCE    required evidence missing / problem unclassified
+
+Design rule: no numerical score overrides missing physics evidence. If a required
+input is absent the controller returns INSUFFICIENT_EVIDENCE (unresolved), never a
+green light.
+&quot;&quot;&quot;
+
+DEFAULT_POLICY = {
+    &quot;version&quot;: &quot;decision-policy-0.1&quot;,
+    &quot;component_rmse_weak_eVA&quot;: 0.5,     # channel is &quot;weak&quot; above this component RMSE
+    &quot;uncertainty_blind_corr&quot;: 0.3,      # committee &quot;blind&quot; if corr(spread,error) &lt; this
+    &quot;tested_deployments&quot;: [&quot;equilibrium_md&quot;, &quot;structure&quot;, &quot;wall_friction&quot;],
+    &quot;required_evidence&quot;: [&quot;reference_compatible&quot;, &quot;frame_mapping_ok&quot;],
+}
+
+
+def _provenance(evidence):
+    return {
+        &quot;inputs_present&quot;: sorted(k for k in evidence if evidence[k] is not None),
+        &quot;inputs_absent&quot;: sorted(k for k in evidence if evidence.get(k) is None),
+        &quot;source&quot;: evidence.get(&quot;provenance&quot;, &quot;unspecified&quot;),
+    }
+
+
+def recommend_next_action(evidence, policy=None):
+    &quot;&quot;&quot;Return the single recommended next action with full justification.&quot;&quot;&quot;
+    policy = policy or DEFAULT_POLICY
+    reasons, missing = [], []
+
+    # 1. required evidence must be present (physics gate, not overridable)
+    for key in policy[&quot;required_evidence&quot;]:
+        if evidence.get(key) is None:
+            missing.append(key)
+    if missing:
+        return {
+            &quot;action&quot;: &quot;INSUFFICIENT_EVIDENCE&quot;,
+            &quot;reasons&quot;: [f&quot;required evidence missing: {&#x27;, &#x27;.join(missing)}&quot;],
+            &quot;missing_evidence&quot;: missing,
+            &quot;policy_version&quot;: policy[&quot;version&quot;],
+            &quot;provenance&quot;: _provenance(evidence),
+            &quot;unresolved&quot;: True,
+        }
+
+    # 2. reference compatibility
+    if evidence.get(&quot;reference_compatible&quot;) is False:
+        reasons.append(&quot;training/validation reference protocols differ on a material parameter&quot;)
+        return _emit(&quot;REVIEW_REFERENCE&quot;, reasons, policy, evidence)
+
+    # 3. frame/atom mapping
+    if evidence.get(&quot;frame_mapping_ok&quot;) is False:
+        reasons.append(&quot;atom/frame correspondence check failed&quot;)
+        return _emit(&quot;CHECK_LABEL_MAPPING&quot;, reasons, policy, evidence)
+
+    # 4. requested deployment must be inside tested scope (refuse extrapolation)
+    dep = evidence.get(&quot;requested_deployment&quot;)
+    if dep is not None and dep not in policy[&quot;tested_deployments&quot;]:
+        reasons.append(f&quot;requested deployment &#x27;{dep}&#x27; is outside tested scope &quot;
+                       f&quot;{policy[&#x27;tested_deployments&#x27;]} — refuse without new validation&quot;)
+        return _emit(&quot;REVIEW_MODEL_SCOPE&quot;, reasons, policy, evidence)
+
+    # 5. weak-channel handling
+    per_species = evidence.get(&quot;per_species_error&quot;) or {}
+    weak = {s: e for s, e in per_species.items()
+            if e is not None and e &gt; policy[&quot;component_rmse_weak_eVA&quot;]}
+    if weak:
+        worst = max(weak, key=weak.get)
+        reasons.append(f&quot;weak channel &#x27;{worst}&#x27; component RMSE {weak[worst]:.3f} &quot;
+                       f&quot;&gt; {policy[&#x27;component_rmse_weak_eVA&#x27;]} eV/A&quot;)
+        corr = evidence.get(&quot;uncertainty_error_correlation&quot;)
+        if corr is None:
+            missing.append(&quot;uncertainty_error_correlation&quot;)
+            reasons.append(&quot;cannot tell if acquisition signal sees this channel&quot;)
+            return _emit(&quot;INSUFFICIENT_EVIDENCE&quot;, reasons, policy, evidence,
+                         missing=missing, unresolved=True)
+        if corr &lt; policy[&quot;uncertainty_blind_corr&quot;]:
+            reasons.append(f&quot;committee uncertainty blind to it (corr {corr:.2f} &quot;
+                           f&quot;&lt; {policy[&#x27;uncertainty_blind_corr&#x27;]})&quot;)
+            if evidence.get(&quot;targeted_repair_done&quot;) and evidence.get(&quot;targeted_repair_improved&quot;) is False:
+                reasons.append(&quot;a targeted direct-label repair already ran without improvement &quot;
+                               &quot;(narrow negative result) — route this channel out of scope, &quot;
+                               &quot;do not claim a proven root cause&quot;)
+                return _emit(&quot;REVIEW_MODEL_SCOPE&quot;, reasons, policy, evidence)
+            reasons.append(&quot;acquisition is blind, so add direct targeted labels (not more AL)&quot;)
+            return _emit(&quot;REQUEST_TARGETED_LABELS&quot;, reasons, policy, evidence)
+        reasons.append(f&quot;uncertainty tracks the error (corr {corr:.2f}) — more sampling should surface it&quot;)
+        return _emit(&quot;REQUEST_MORE_SAMPLING&quot;, reasons, policy, evidence)
+
+    # 6. all channels acceptable; check the interval is resolvable
+    if evidence.get(&quot;metric_interval_status&quot;) == &quot;CI_UNAVAILABLE&quot;:
+        reasons.append(&quot;no weak channel, but confidence interval not resolvable &quot;
+                       &quot;(too few independent units) — gather more replicas/blocks&quot;)
+        return _emit(&quot;REQUEST_MORE_SAMPLING&quot;, reasons, policy, evidence)
+
+    reasons.append(&quot;references compatible, mapping ok, deployment in tested scope, &quot;
+                   &quot;no weak channel — proceed within the tested scope only&quot;)
+    return _emit(&quot;STOP_WITHIN_TESTED_SCOPE&quot;, reasons, policy, evidence)
+
+
+def _emit(action, reasons, policy, evidence, missing=None, unresolved=False):
+    return {
+        &quot;action&quot;: action,
+        &quot;reasons&quot;: reasons,
+        &quot;missing_evidence&quot;: missing or [],
+        &quot;policy_version&quot;: policy[&quot;version&quot;],
+        &quot;provenance&quot;: _provenance(evidence),
+        &quot;unresolved&quot;: unresolved,
+    }
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-figures-py">
+      <h2>mlip_evidence/figures.py <a class="rawlink" href="package/mlip_evidence/figures.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Validation figures from a metrics report (synthetic demonstration only).
+
+write_validation_figures(report, output_dir) renders per-species force-error bars
+from a `force_metrics` report and stamps every figure with a synthetic-data
+disclaimer. It never invents a missing value: a species absent from the report is
+drawn as a labelled gap, not as zero.
+
+Matplotlib is used with the non-interactive Agg backend so figures regenerate
+headlessly from included source.
+&quot;&quot;&quot;
+import os
+import matplotlib
+matplotlib.use(&quot;Agg&quot;)
+import matplotlib.pyplot as plt
+
+DISCLAIMER = &quot;Synthetic software demonstration; not a DFT, MLIP-accuracy or transport result&quot;
+
+
+def write_validation_figures(report, output_dir, prefix=&quot;validation&quot;):
+    &quot;&quot;&quot;Write per-species metric figures; return list of file paths.&quot;&quot;&quot;
+    os.makedirs(output_dir, exist_ok=True)
+    per = report.get(&quot;per_species&quot;, {})
+    if not per:
+        raise ValueError(&quot;report has no &#x27;per_species&#x27; block to plot&quot;)
+    species = sorted(per.keys(), key=str)
+    comp = [per[s][&quot;component_rmse&quot;] for s in species]
+    p95 = [per[s][&quot;vector_p95&quot;] for s in species]
+    paths = []
+
+    for name, values, ylab in [
+        (&quot;component_rmse&quot;, comp, &quot;component force RMSE (arb. units)&quot;),
+        (&quot;vector_p95&quot;, p95, &quot;vector force error p95 (arb. units)&quot;),
+    ]:
+        fig, ax = plt.subplots(figsize=(6, 3.6))
+        bars = ax.bar(species, values, color=&quot;#4C72B0&quot;)
+        # highlight the worst channel so a weak minority species is visible
+        worst = max(range(len(values)), key=lambda i: values[i])
+        bars[worst].set_color(&quot;#C44E52&quot;)
+        ax.set_ylabel(ylab)
+        ax.set_xlabel(&quot;species&quot;)
+        ax.set_title(f&quot;Per-species {name.replace(&#x27;_&#x27;, &#x27; &#x27;)} (synthetic)&quot;)
+        for i, v in enumerate(values):
+            ax.text(i, v, f&quot;{v:.2f}&quot;, ha=&quot;center&quot;, va=&quot;bottom&quot;, fontsize=8)
+        ax.annotate(DISCLAIMER, xy=(0.5, -0.32), xycoords=&quot;axes fraction&quot;,
+                    ha=&quot;center&quot;, fontsize=7, color=&quot;#555555&quot;)
+        fig.tight_layout()
+        p = os.path.join(output_dir, f&quot;{prefix}_{name}.png&quot;)
+        fig.savefig(p, dpi=130, bbox_inches=&quot;tight&quot;)
+        plt.close(fig)
+        paths.append(p)
+
+    return paths
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-release-py">
+      <h2>mlip_evidence/release.py <a class="rawlink" href="package/mlip_evidence/release.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Explicit-inclusion public release builder.
+
+build_public_release(manifest_path, public_root, zip_path) packages ONLY the files
+named in the manifest, each of which must resolve to a real regular file inside
+public_root. It rejects:
+  - files not under public_root (path traversal / absolute escape),
+  - symlinks (which could point outside the public tree),
+  - missing or non-regular files,
+  - any manifest entry flagged restricted.
+
+Nothing is added implicitly: there is no directory globbing, so a private file
+cannot be swept in. The resulting ZIP stores relative POSIX paths only.
+&quot;&quot;&quot;
+import hashlib
+import json
+import os
+import zipfile
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, &quot;rb&quot;) as fh:
+        for chunk in iter(lambda: fh.read(65536), b&quot;&quot;):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _safe_member(entry, public_root):
+    &quot;&quot;&quot;Validate one manifest entry; return (abs_path, arcname) or raise ValueError.&quot;&quot;&quot;
+    if entry.get(&quot;restricted&quot;):
+        raise ValueError(f&quot;entry flagged restricted: {entry.get(&#x27;public_path&#x27;)}&quot;)
+    rel = entry.get(&quot;public_path&quot;)
+    if not rel or os.path.isabs(rel) or rel.startswith(&quot;..&quot;):
+        raise ValueError(f&quot;invalid public_path: {rel!r}&quot;)
+    abs_path = os.path.realpath(os.path.join(public_root, rel))
+    root = os.path.realpath(public_root)
+    if os.path.commonpath([abs_path, root]) != root:
+        raise ValueError(f&quot;path escapes public_root: {rel}&quot;)
+    src = os.path.join(public_root, rel)
+    if os.path.islink(src):
+        raise ValueError(f&quot;symlink not allowed in release: {rel}&quot;)
+    if not os.path.isfile(abs_path):
+        raise ValueError(f&quot;not a regular file: {rel}&quot;)
+    return abs_path, rel.replace(os.sep, &quot;/&quot;)
+
+
+def build_public_release(manifest_path, public_root, zip_path):
+    &quot;&quot;&quot;Build a public-only ZIP from an explicit manifest. Returns a summary dict.&quot;&quot;&quot;
+    with open(manifest_path) as fh:
+        manifest = json.load(fh)
+    entries = manifest.get(&quot;files&quot;, manifest if isinstance(manifest, list) else [])
+    if not entries:
+        raise ValueError(&quot;manifest lists no files&quot;)
+
+    members, errors = [], []
+    for entry in entries:
+        try:
+            abs_path, arc = _safe_member(entry, public_root)
+            members.append((abs_path, arc))
+        except ValueError as e:
+            errors.append(str(e))
+    if errors:
+        raise ValueError(&quot;release rejected:\n  - &quot; + &quot;\n  - &quot;.join(errors))
+
+    os.makedirs(os.path.dirname(os.path.abspath(zip_path)), exist_ok=True)
+    written = []
+    with zipfile.ZipFile(zip_path, &quot;w&quot;, compression=zipfile.ZIP_DEFLATED) as zf:
+        for abs_path, arc in members:
+            zf.write(abs_path, arcname=arc)
+            written.append({&quot;arcname&quot;: arc, &quot;sha256&quot;: _sha256(abs_path)})
+
+    return {
+        &quot;zip_path&quot;: os.path.abspath(zip_path),
+        &quot;n_members&quot;: len(written),
+        &quot;members&quot;: written,
+        &quot;zip_sha256&quot;: _sha256(zip_path),
+    }
+</pre>
+    </article>
+    <article class="srcfile" id="mlip_evidence-cli-py">
+      <h2>mlip_evidence/cli.py <a class="rawlink" href="package/mlip_evidence/cli.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Command-line interface for mlip_evidence.
+
+Subcommands (all write to explicit --out paths; none touch campaign artifacts):
+  summarize-protocol  parse a CP2K input -&gt; protocol JSON
+  compare-protocol    compare two protocol JSONs
+  force-metrics       per-species force metrics from a synthetic .npz fixture
+  interval            group-aware bootstrap CI from a synthetic records JSON
+  decide              run the workflow-controller on an evidence JSON
+  figures             render validation figures from a metrics JSON
+  demo                run the full synthetic pipeline end to end
+
+All numeric inputs are synthetic fixtures unless a real, cleared file is supplied.
+&quot;&quot;&quot;
+import argparse
+import json
+import os
+import numpy as np
+
+from . import (summarize_reference_protocol, compare_reference_protocols,
+               force_metrics, estimate_metric_interval, recommend_next_action,
+               write_validation_figures)
+from .decision import DEFAULT_POLICY
+
+
+def _load_npz(path):
+    d = np.load(path, allow_pickle=False)   # never unpickle
+    return {k: d[k] for k in d.files}
+
+
+def _dump(obj, out):
+    if out:
+        os.makedirs(os.path.dirname(os.path.abspath(out)) or &quot;.&quot;, exist_ok=True)
+        with open(out, &quot;w&quot;) as fh:
+            json.dump(obj, fh, indent=2)
+    print(json.dumps(obj, indent=2))
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog=&quot;mlip_evidence&quot;, description=__doc__)
+    sub = ap.add_subparsers(dest=&quot;cmd&quot;, required=True)
+
+    p = sub.add_parser(&quot;summarize-protocol&quot;); p.add_argument(&quot;input&quot;); p.add_argument(&quot;--out&quot;)
+    p = sub.add_parser(&quot;compare-protocol&quot;)
+    p.add_argument(&quot;training&quot;); p.add_argument(&quot;validation&quot;); p.add_argument(&quot;--out&quot;)
+    p = sub.add_parser(&quot;force-metrics&quot;)
+    p.add_argument(&quot;npz&quot;); p.add_argument(&quot;--out&quot;)
+    p = sub.add_parser(&quot;interval&quot;)
+    p.add_argument(&quot;records&quot;); p.add_argument(&quot;--metric&quot;, required=True)
+    p.add_argument(&quot;--group-key&quot;, default=&quot;group&quot;); p.add_argument(&quot;--block-ps&quot;, type=float)
+    p.add_argument(&quot;--confidence&quot;, type=float, default=0.95)
+    p.add_argument(&quot;--n-bootstrap&quot;, type=int, default=2000)
+    p.add_argument(&quot;--seed&quot;, type=int, default=20260906); p.add_argument(&quot;--out&quot;)
+    p = sub.add_parser(&quot;decide&quot;); p.add_argument(&quot;evidence&quot;); p.add_argument(&quot;--out&quot;)
+    p = sub.add_parser(&quot;figures&quot;)
+    p.add_argument(&quot;metrics&quot;); p.add_argument(&quot;--out-dir&quot;, required=True)
+    p = sub.add_parser(&quot;demo&quot;); p.add_argument(&quot;--out-dir&quot;, required=True)
+
+    a = ap.parse_args(argv)
+
+    if a.cmd == &quot;summarize-protocol&quot;:
+        _dump(summarize_reference_protocol(a.input, a.out), None)
+    elif a.cmd == &quot;compare-protocol&quot;:
+        t = json.load(open(a.training)); v = json.load(open(a.validation))
+        _dump(compare_reference_protocols(t, v), a.out)
+    elif a.cmd == &quot;force-metrics&quot;:
+        d = _load_npz(a.npz)
+        rep = force_metrics(d[&quot;reference&quot;], d[&quot;prediction&quot;], d[&quot;species&quot;],
+                            frame_ids=d.get(&quot;frame_ids&quot;),
+                            expected_species=d.get(&quot;expected_species&quot;))
+        _dump(rep, a.out)
+    elif a.cmd == &quot;interval&quot;:
+        records = json.load(open(a.records))
+        _dump(estimate_metric_interval(records, a.metric, group_key=a.group_key,
+                                       block_ps=a.block_ps, confidence=a.confidence,
+                                       n_bootstrap=a.n_bootstrap, seed=a.seed), a.out)
+    elif a.cmd == &quot;decide&quot;:
+        ev = json.load(open(a.evidence))
+        _dump(recommend_next_action(ev, DEFAULT_POLICY), a.out)
+    elif a.cmd == &quot;figures&quot;:
+        rep = json.load(open(a.metrics))
+        paths = write_validation_figures(rep, a.out_dir)
+        _dump({&quot;figures&quot;: paths}, None)
+    elif a.cmd == &quot;demo&quot;:
+        from examples.synthetic.make_fixture import run_demo
+        run_demo(a.out_dir)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</pre>
+    </article>
+    <article class="srcfile" id="tests-test_mlip_evidence-py">
+      <h2>tests/test_mlip_evidence.py <a class="rawlink" href="package/tests/test_mlip_evidence.py">raw</a></h2>
+      <pre class="contract srccode">#!/usr/bin/env python3
+&quot;&quot;&quot;
+Focused tests for mlip_evidence — each targets a concrete risk named in the task.
+Run: python tests/test_mlip_evidence.py   (from the public/ root)
+Also works under pytest.
+&quot;&quot;&quot;
+import os
+import sys
+import numpy as np
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+
+from mlip_evidence.constants import (
+    HARTREE_TO_EV, BOHR_TO_ANGSTROM, HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM, LEGACY_FORCE_FACTOR)
+from mlip_evidence.frame_mapping import validate_frame_mapping, detect_duplicate_frames
+from mlip_evidence.metrics import force_metrics
+from mlip_evidence.uncertainty import estimate_metric_interval
+from mlip_evidence.decision import recommend_next_action, DEFAULT_POLICY
+from mlip_evidence.release import build_public_release
+
+
+def test_units_internally_consistent():
+    assert abs(HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM - HARTREE_TO_EV / BOHR_TO_ANGSTROM) &lt; 1e-12
+    # derived ratio differs from the legacy doc value only immaterially
+    assert abs(HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM - LEGACY_FORCE_FACTOR) &lt; 1e-3
+    assert abs(HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM - LEGACY_FORCE_FACTOR) &gt; 1e-6  # but not identical
+
+
+def test_frame_mapping_restores_with_ids():
+    types = np.array([1, 2, 3, 2])
+    ids = np.array([10, 11, 12, 13])
+    perm = np.array([2, 0, 3, 1])
+    out = validate_frame_mapping(
+        {&quot;types&quot;: types, &quot;ids&quot;: ids},
+        {&quot;types&quot;: types[perm], &quot;ids&quot;: ids[perm]})
+    assert out[&quot;ok&quot;] and out[&quot;restored&quot;], out
+
+
+def test_frame_mapping_rejects_ambiguous_without_ids():
+    out = validate_frame_mapping(
+        {&quot;types&quot;: np.array([1, 2, 3])},
+        {&quot;types&quot;: np.array([2, 1, 3])})   # reordered, no ids
+    assert not out[&quot;ok&quot;] and &quot;refusing&quot; in out[&quot;reason&quot;].lower(), out
+
+
+def test_known_force_offset_metrics():
+    # constant +0.3 on Fx only -&gt; component RMSE = sqrt(0.3^2/3); vector RMSE = 0.3
+    ref = np.zeros((100, 3))
+    pred = ref.copy(); pred[:, 0] = 0.3
+    m = force_metrics(ref, pred, species=[&quot;X&quot;] * 100)
+    assert abs(m[&quot;overall&quot;][&quot;component_rmse&quot;] - np.sqrt(0.3 ** 2 / 3)) &lt; 1e-9, m
+    assert abs(m[&quot;overall&quot;][&quot;vector_rmse&quot;] - 0.3) &lt; 1e-9, m
+
+
+def test_weak_channel_visible_despite_low_aggregate():
+    rng = np.random.default_rng(0)
+    ref = rng.normal(0, 1, (1000, 3)); pred = ref + rng.normal(0, 0.1, (1000, 3))
+    species = np.array([&quot;C&quot;] * 980 + [&quot;Na&quot;] * 20)
+    pred[species == &quot;Na&quot;] += rng.normal(0, 1.0, (20, 3))   # weak minority
+    m = force_metrics(ref, pred, species)
+    assert m[&quot;overall&quot;][&quot;component_rmse&quot;] &lt; 0.3            # aggregate looks fine
+    assert m[&quot;per_species&quot;][&quot;Na&quot;][&quot;component_rmse&quot;] &gt; 0.7  # but Na is exposed
+
+
+def test_missing_species_reported_not_zero():
+    ref = np.zeros((10, 3)); pred = ref.copy()
+    m = force_metrics(ref, pred, [&quot;C&quot;] * 10, expected_species=[&quot;C&quot;, &quot;Na&quot;])
+    assert m[&quot;missing_species&quot;] == [&quot;Na&quot;], m
+    assert &quot;Na&quot; not in m[&quot;per_species&quot;]
+
+
+def test_duplicate_frames_flagged():
+    a = np.random.default_rng(1).normal(0, 1, (5, 8, 3))
+    b = a[[2, 4]].copy()                       # exact duplicates of a
+    out = detect_duplicate_frames({&quot;coords&quot;: a}, {&quot;coords&quot;: b})
+    assert out[&quot;n_duplicates&quot;] == 2, out
+
+
+def test_interval_reproducible_and_unavailable():
+    recs = [{&quot;m&quot;: 0.1 + 0.01 * i, &quot;group&quot;: f&quot;r{i}&quot;} for i in range(5)
+            for _ in range(4)]
+    a = estimate_metric_interval(recs, &quot;m&quot;, group_key=&quot;group&quot;)
+    b = estimate_metric_interval(recs, &quot;m&quot;, group_key=&quot;group&quot;)
+    assert a[&quot;status&quot;] == &quot;OK&quot; and a[&quot;ci_low&quot;] == b[&quot;ci_low&quot;] == b[&quot;ci_low&quot;]
+    # too few groups -&gt; unavailable, not fabricated
+    few = [{&quot;m&quot;: 0.1, &quot;group&quot;: &quot;r0&quot;}, {&quot;m&quot;: 0.2, &quot;group&quot;: &quot;r1&quot;}]
+    u = estimate_metric_interval(few, &quot;m&quot;, group_key=&quot;group&quot;)
+    assert u[&quot;status&quot;] == &quot;CI_UNAVAILABLE&quot;, u
+
+
+def test_controller_missing_evidence():
+    ev = {&quot;reference_compatible&quot;: None, &quot;frame_mapping_ok&quot;: True}
+    out = recommend_next_action(ev, DEFAULT_POLICY)
+    assert out[&quot;action&quot;] == &quot;INSUFFICIENT_EVIDENCE&quot; and out[&quot;unresolved&quot;], out
+
+
+def test_controller_refuses_efield():
+    ev = {&quot;reference_compatible&quot;: True, &quot;frame_mapping_ok&quot;: True,
+          &quot;requested_deployment&quot;: &quot;efield&quot;, &quot;per_species_error&quot;: {}}
+    out = recommend_next_action(ev, DEFAULT_POLICY)
+    assert out[&quot;action&quot;] == &quot;REVIEW_MODEL_SCOPE&quot;, out
+
+
+def test_controller_blind_weak_channel_after_repair():
+    ev = {&quot;reference_compatible&quot;: True, &quot;frame_mapping_ok&quot;: True,
+          &quot;requested_deployment&quot;: &quot;wall_friction&quot;,
+          &quot;per_species_error&quot;: {&quot;C&quot;: 0.09, &quot;Na&quot;: 1.1},
+          &quot;uncertainty_error_correlation&quot;: 0.07,
+          &quot;targeted_repair_done&quot;: True, &quot;targeted_repair_improved&quot;: False}
+    out = recommend_next_action(ev, DEFAULT_POLICY)
+    assert out[&quot;action&quot;] == &quot;REVIEW_MODEL_SCOPE&quot;, out
+
+
+def test_controller_stop_within_scope():
+    ev = {&quot;reference_compatible&quot;: True, &quot;frame_mapping_ok&quot;: True,
+          &quot;requested_deployment&quot;: &quot;wall_friction&quot;,
+          &quot;per_species_error&quot;: {&quot;C&quot;: 0.09, &quot;O&quot;: 0.25, &quot;Cl&quot;: 0.11},
+          &quot;uncertainty_error_correlation&quot;: 0.8,
+          &quot;metric_interval_status&quot;: &quot;OK&quot;}
+    out = recommend_next_action(ev, DEFAULT_POLICY)
+    assert out[&quot;action&quot;] == &quot;STOP_WITHIN_TESTED_SCOPE&quot;, out
+
+
+def test_release_rejects_restricted_and_escape(tmp_path=None):
+    import tempfile, json
+    d = tempfile.mkdtemp()
+    pub = os.path.join(d, &quot;public&quot;); os.makedirs(pub)
+    with open(os.path.join(pub, &quot;ok.txt&quot;), &quot;w&quot;) as fh:
+        fh.write(&quot;public&quot;)
+    # restricted entry must be rejected
+    man = os.path.join(d, &quot;man.json&quot;)
+    json.dump({&quot;files&quot;: [{&quot;public_path&quot;: &quot;ok.txt&quot;},
+                         {&quot;public_path&quot;: &quot;secret.txt&quot;, &quot;restricted&quot;: True}]},
+              open(man, &quot;w&quot;))
+    try:
+        build_public_release(man, pub, os.path.join(d, &quot;out.zip&quot;))
+        raise AssertionError(&quot;should have rejected restricted entry&quot;)
+    except ValueError as e:
+        assert &quot;restricted&quot; in str(e)
+    # traversal must be rejected
+    json.dump({&quot;files&quot;: [{&quot;public_path&quot;: &quot;../escape.txt&quot;}]}, open(man, &quot;w&quot;))
+    try:
+        build_public_release(man, pub, os.path.join(d, &quot;out.zip&quot;))
+        raise AssertionError(&quot;should have rejected traversal&quot;)
+    except ValueError as e:
+        assert &quot;invalid public_path&quot; in str(e) or &quot;escape&quot; in str(e)
+
+
+if __name__ == &quot;__main__&quot;:
+    fns = [v for k, v in sorted(globals().items()) if k.startswith(&quot;test_&quot;)]
+    p = f = 0
+    for fn in fns:
+        try:
+            fn(); print(f&quot;PASS {fn.__name__}&quot;); p += 1
+        except Exception as e:
+            print(f&quot;FAIL {fn.__name__}: {e}&quot;); f += 1
+    print(f&quot;\n{p} passed, {f} failed&quot;)
+    sys.exit(1 if f else 0)
+</pre>
+    </article>
+    <article class="srcfile" id="examples-synthetic-make_fixture-py">
+      <h2>examples/synthetic/make_fixture.py <a class="rawlink" href="package/examples/synthetic/make_fixture.py">raw</a></h2>
+      <pre class="contract srccode">&quot;&quot;&quot;
+Deterministic SYNTHETIC fixtures for mlip_evidence.
+
+Builds a multi-species matched force set (reference + prediction) in which one
+minority channel (&quot;Na&quot;) is deliberately weak, so the tooling can demonstrate that
+a poor minority species stays visible despite a low aggregate metric. Also builds
+group-structured records for the bootstrap and an evidence dict for the decision
+controller.
+
+NOTHING here is a physical result. Forces are drawn from Gaussians; &quot;Na&quot; error is
+inflated by construction. Do not interpret any number as DFT/MLIP accuracy.
+&quot;&quot;&quot;
+import json
+import os
+import numpy as np
+
+SEED = 20260906
+# species: (n_atoms_per_frame, reference sigma, prediction-error sigma)
+SPEC = {
+    &quot;C&quot;:  (40, 1.5, 0.09),
+    &quot;O&quot;:  (12, 1.5, 0.25),
+    &quot;H&quot;:  (24, 1.2, 0.11),
+    &quot;Cl&quot;: (2,  1.0, 0.11),
+    &quot;Na&quot;: (2,  1.2, 1.05),   # &lt;-- intentionally WEAK minority channel
+}
+N_FRAMES = 20
+EXPECTED_SPECIES = [&quot;C&quot;, &quot;O&quot;, &quot;H&quot;, &quot;Na&quot;, &quot;Cl&quot;]
+
+
+def build_force_fixture(seed=SEED):
+    rng = np.random.default_rng(seed)
+    ref, pred, species, frames = [], [], [], []
+    for f in range(N_FRAMES):
+        for s, (n, sig_ref, sig_err) in SPEC.items():
+            r = rng.normal(0.0, sig_ref, size=(n, 3))
+            p = r + rng.normal(0.0, sig_err, size=(n, 3))
+            ref.append(r); pred.append(p)
+            species.extend([s] * n); frames.extend([f] * n)
+    return {
+        &quot;reference&quot;: np.vstack(ref),
+        &quot;prediction&quot;: np.vstack(pred),
+        &quot;species&quot;: np.array(species),
+        &quot;frame_ids&quot;: np.array(frames),
+        &quot;expected_species&quot;: np.array(EXPECTED_SPECIES),
+    }
+
+
+def build_interval_records(seed=SEED, n_replicas=5):
+    &quot;&quot;&quot;Per-replica scalar records for the group bootstrap (synthetic).&quot;&quot;&quot;
+    rng = np.random.default_rng(seed + 1)
+    recs = []
+    for rep in range(n_replicas):
+        base = rng.normal(0.13, 0.01)          # synthetic per-replica O-channel RMSE
+        for _ in range(6):
+            recs.append({&quot;o_component_rmse&quot;: float(abs(base + rng.normal(0, 0.005))),
+                         &quot;group&quot;: f&quot;replica_{rep}&quot;})
+    return recs
+
+
+def save_fixture(out_dir, seed=SEED):
+    os.makedirs(out_dir, exist_ok=True)
+    fx = build_force_fixture(seed)
+    npz = os.path.join(out_dir, &quot;synthetic_forces.npz&quot;)
+    np.savez(npz, **fx)
+    recs = build_interval_records(seed)
+    with open(os.path.join(out_dir, &quot;synthetic_interval_records.json&quot;), &quot;w&quot;) as fh:
+        json.dump(recs, fh, indent=2)
+    return npz
+
+
+def run_demo(out_dir):
+    &quot;&quot;&quot;Full synthetic pipeline: metrics -&gt; figures -&gt; interval -&gt; decision.&quot;&quot;&quot;
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    from mlip_evidence import (force_metrics, estimate_metric_interval,
+                               recommend_next_action, write_validation_figures)
+    from mlip_evidence.decision import DEFAULT_POLICY
+
+    os.makedirs(out_dir, exist_ok=True)
+    fx = build_force_fixture()
+
+    metrics = force_metrics(fx[&quot;reference&quot;], fx[&quot;prediction&quot;], fx[&quot;species&quot;],
+                            frame_ids=fx[&quot;frame_ids&quot;],
+                            expected_species=fx[&quot;expected_species&quot;].tolist())
+    with open(os.path.join(out_dir, &quot;metrics.json&quot;), &quot;w&quot;) as fh:
+        json.dump(metrics, fh, indent=2)
+
+    figs = write_validation_figures(metrics, out_dir)
+
+    recs = build_interval_records()
+    interval = estimate_metric_interval(recs, &quot;o_component_rmse&quot;, group_key=&quot;group&quot;)
+    with open(os.path.join(out_dir, &quot;interval.json&quot;), &quot;w&quot;) as fh:
+        json.dump(interval, fh, indent=2)
+
+    # evidence assembled from the synthetic metrics; committee corr set low for &quot;Na&quot;
+    per_species_err = {s: metrics[&quot;per_species&quot;][s][&quot;component_rmse&quot;]
+                       for s in metrics[&quot;per_species&quot;]}
+    evidence = {
+        &quot;reference_compatible&quot;: True,
+        &quot;frame_mapping_ok&quot;: True,
+        &quot;requested_deployment&quot;: &quot;wall_friction&quot;,
+        &quot;per_species_error&quot;: per_species_err,
+        &quot;uncertainty_error_correlation&quot;: 0.07,   # synthetic: committee blind to weak channel
+        &quot;targeted_repair_done&quot;: True,
+        &quot;targeted_repair_improved&quot;: False,
+        &quot;metric_interval_status&quot;: interval[&quot;status&quot;],
+        &quot;provenance&quot;: &quot;synthetic demo fixture&quot;,
+    }
+    decision = recommend_next_action(evidence, DEFAULT_POLICY)
+    with open(os.path.join(out_dir, &quot;decision.json&quot;), &quot;w&quot;) as fh:
+        json.dump(decision, fh, indent=2)
+
+    summary = {
+        &quot;note&quot;: &quot;SYNTHETIC demonstration only — not DFT/MLIP/transport results&quot;,
+        &quot;overall_component_rmse&quot;: metrics[&quot;overall&quot;][&quot;component_rmse&quot;],
+        &quot;weak_channel_visible&quot;: {
+            s: round(metrics[&quot;per_species&quot;][s][&quot;component_rmse&quot;], 3)
+            for s in metrics[&quot;per_species&quot;]},
+        &quot;interval_status&quot;: interval[&quot;status&quot;],
+        &quot;decision_action&quot;: decision[&quot;action&quot;],
+        &quot;figures&quot;: figs,
+    }
+    with open(os.path.join(out_dir, &quot;SUMMARY.json&quot;), &quot;w&quot;) as fh:
+        json.dump(summary, fh, indent=2)
+    print(json.dumps(summary, indent=2))
+    return summary
+
+
+if __name__ == &quot;__main__&quot;:
+    import sys
+    run_demo(sys.argv[1] if len(sys.argv) &gt; 1 else &quot;demo_out&quot;)
+</pre>
+    </article>
+    <article class="srcfile" id="examples-synthetic-example_evidence-json">
+      <h2>examples/synthetic/example_evidence.json <a class="rawlink" href="package/examples/synthetic/example_evidence.json">raw</a></h2>
+      <pre class="contract srccode">{
+  &quot;_comment&quot;: &quot;Synthetic evidence record for the decision-controller demo. No real campaign numbers; error values are illustrative.&quot;,
+  &quot;reference_compatible&quot;: true,
+  &quot;frame_mapping_ok&quot;: true,
+  &quot;requested_deployment&quot;: &quot;wall_friction&quot;,
+  &quot;per_species_error&quot;: {&quot;C&quot;: 0.09, &quot;O&quot;: 0.25, &quot;H&quot;: 0.11, &quot;Cl&quot;: 0.11, &quot;Na&quot;: 1.05},
+  &quot;uncertainty_error_correlation&quot;: 0.07,
+  &quot;targeted_repair_done&quot;: true,
+  &quot;targeted_repair_improved&quot;: false,
+  &quot;metric_interval_status&quot;: &quot;OK&quot;,
+  &quot;provenance&quot;: &quot;synthetic example_evidence.json&quot;
+}
+</pre>
+    </article>
+    <article class="srcfile" id="website-evidence_cards-json">
+      <h2>website/evidence_cards.json <a class="rawlink" href="package/website/evidence_cards.json">raw</a></h2>
+      <pre class="contract srccode">{
+  &quot;schema&quot;: &quot;mlip_evidence.cards/0.1&quot;,
+  &quot;disclaimer&quot;: &quot;Method and tooling evidence. Synthetic fixtures demonstrate the tooling, not DFT/MLIP accuracy or physical transport. No restricted campaign numbers are shown.&quot;,
+  &quot;cards&quot;: [
+    {
+      &quot;id&quot;: &quot;reference-checking&quot;,
+      &quot;title&quot;: &quot;Reference-protocol checking&quot;,
+      &quot;question&quot;: &quot;Are the DFT references for training and validation actually compatible?&quot;,
+      &quot;contribution&quot;: &quot;Extracts CP2K protocol parameters (functional, dispersion, basis/pseudos, density-grid cutoffs, metallic-SCF smearing, charge, periodicity, stress request) and flags any material training-vs-validation mismatch before a model error is interpreted.&quot;,
+      &quot;status&quot;: &quot;EXECUTED_EXAMPLE&quot;,
+      &quot;data_origin&quot;: &quot;Real CP2K input template (protocol parameters only) + synthetic comparison fixture&quot;,
+      &quot;what_was_executed&quot;: &quot;summarize_reference_protocol + compare_reference_protocols; parsed a real CP2K template; unit tests pass&quot;,
+      &quot;evidence_links&quot;: [&quot;../METHODS.md#1-reference-protocol-compatibility-cp2k&quot;, &quot;../mlip_evidence/reference_protocol.py&quot;, &quot;../examples/synthetic/example_cp2k.inp&quot;],
+      &quot;limitation&quot;: &quot;A two-cutoff check does not establish convergence of every property; basis/grid/SCF convergence are distinct.&quot;,
+      &quot;next_step&quot;: &quot;Attach a force-convergence-ladder summary on matched geometries.&quot;,
+      &quot;verified_date&quot;: &quot;2026-09-07&quot;
+    },
+    {
+      &quot;id&quot;: &quot;error-diagnosis&quot;,
+      &quot;title&quot;: &quot;Error-aware, per-species validation&quot;,
+      &quot;question&quot;: &quot;Does the model hide a weak channel behind a good average?&quot;,
+      &quot;contribution&quot;: &quot;Per-species force metrics with two explicit RMSE definitions, vector p95/max, per-frame breakdown, missing-species-as-missing-evidence, plus group-aware bootstrap CIs and a leakage/duplicate check. Demonstrates that a weak minority channel stays visible despite a low aggregate metric.&quot;,
+      &quot;status&quot;: &quot;EXECUTED_EXAMPLE&quot;,
+      &quot;data_origin&quot;: &quot;Synthetic multi-species fixture with an intentionally weak channel&quot;,
+      &quot;what_was_executed&quot;: &quot;force_metrics + estimate_metric_interval + detect_duplicate_frames on synthetic data; figures rendered with synthetic disclaimer; unit tests pass&quot;,
+      &quot;evidence_links&quot;: [&quot;../METHODS.md#3-per-species-force-metrics-explicit-definitions&quot;, &quot;../mlip_evidence/metrics.py&quot;, &quot;../mlip_evidence/uncertainty.py&quot;],
+      &quot;limitation&quot;: &quot;Synthetic demonstration; real per-element results are private. A single uncertainty-error correlation is not full calibration.&quot;,
+      &quot;next_step&quot;: &quot;Apply to a cleared, larger holdout with independent replicas for real CIs.&quot;,
+      &quot;verified_date&quot;: &quot;2026-09-07&quot;
+    },
+    {
+      &quot;id&quot;: &quot;computational-decisions&quot;,
+      &quot;title&quot;: &quot;Computational decision prototype&quot;,
+      &quot;question&quot;: &quot;Given the evidence, what is the right next computational action?&quot;,
+      &quot;contribution&quot;: &quot;A transparent, rules-based workflow-controller that maps explicit evidence + declared thresholds to one action (review reference, check mapping, request targeted labels, request more sampling, review scope, stop-in-scope, or insufficient evidence), with reasons, missing evidence, policy version, and provenance. Refuses out-of-scope deployments; never lets a score override missing physics.&quot;,
+      &quot;status&quot;: &quot;PROTOTYPE&quot;,
+      &quot;data_origin&quot;: &quot;Synthetic evidence records&quot;,
+      &quot;what_was_executed&quot;: &quot;recommend_next_action over synthetic evidence; unit tests cover missing-evidence, E-field refusal, scoped-repair, and stop-in-scope paths&quot;,
+      &quot;evidence_links&quot;: [&quot;../METHODS.md#6-decision-logic-workflow-controller-prototype&quot;, &quot;../mlip_evidence/decision.py&quot;, &quot;../examples/synthetic/example_evidence.json&quot;],
+      &quot;limitation&quot;: &quot;Fixed rule dispatcher, not a learned or autonomous scientist; launches nothing; no cost/time-savings claim.&quot;,
+      &quot;next_step&quot;: &quot;Benchmark a learned action selector against this baseline before any autonomy claim.&quot;,
+      &quot;verified_date&quot;: &quot;2026-09-07&quot;
+    }
+  ]
+}
+</pre>
+    </article>
+    <article class="srcfile" id="MANIFEST-json">
+      <h2>MANIFEST.json <a class="rawlink" href="package/MANIFEST.json">raw</a></h2>
+      <pre class="contract srccode">{
+  &quot;package&quot;: &quot;NaCl_Water_CNT_Website_Evidence&quot;,
+  &quot;version&quot;: &quot;0.1&quot;,
+  &quot;note&quot;: &quot;Public methods+tooling package. Synthetic fixtures only; no DFT/MLIP/transport results.&quot;,
+  &quot;files&quot;: [
+    {
+      &quot;public_path&quot;: &quot;README.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;METHODS.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;MODEL_SCOPE.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;LICENSE&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;NOTICE.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;PI_WALKTHROUGH.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/__init__.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/constants.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/reference_protocol.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/frame_mapping.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/metrics.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/uncertainty.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/decision.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/figures.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/release.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;mlip_evidence/cli.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;tests/test_mlip_evidence.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;examples/__init__.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;examples/synthetic/__init__.py&quot;,
+      &quot;data_origin&quot;: &quot;new tooling authored for this package (MIT)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;examples/synthetic/make_fixture.py&quot;,
+      &quot;data_origin&quot;: &quot;synthetic fixture generated for this package&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;examples/synthetic/example_cp2k.inp&quot;,
+      &quot;data_origin&quot;: &quot;representative sample input (methods parameters only; not a campaign data file)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;examples/synthetic/example_evidence.json&quot;,
+      &quot;data_origin&quot;: &quot;synthetic fixture generated for this package&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;website/MLIP_PROJECT.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;website/evidence_cards.json&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;website/workflow.svg&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;website/workflow_alt.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;website/SIMULATION_LAB_HANDOFF.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    },
+    {
+      &quot;public_path&quot;: &quot;website/WEBSITE_INTEGRATION.md&quot;,
+      &quot;data_origin&quot;: &quot;documentation authored for this package (methods/scope; no restricted numbers)&quot;
+    }
+  ]
+}
+</pre>
+    </article>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1 (web build). Website version 0.1.4.</p></div>
+    <div><p>Tooling in the package: MIT. Package documentation and this page: © Kazi Ehsanul Karim; see the package NOTICE.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
+  </div>
+</footer>
+</body>
+</html>

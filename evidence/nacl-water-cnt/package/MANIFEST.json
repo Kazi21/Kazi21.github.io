@@ -1,0 +1,119 @@
+{
+  "package": "NaCl_Water_CNT_Website_Evidence",
+  "version": "0.1",
+  "note": "Public methods+tooling package. Synthetic fixtures only; no DFT/MLIP/transport results.",
+  "files": [
+    {
+      "public_path": "README.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "METHODS.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "MODEL_SCOPE.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "LICENSE",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "NOTICE.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "PI_WALKTHROUGH.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "mlip_evidence/__init__.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/constants.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/reference_protocol.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/frame_mapping.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/metrics.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/uncertainty.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/decision.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/figures.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/release.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "mlip_evidence/cli.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "tests/test_mlip_evidence.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "examples/__init__.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "examples/synthetic/__init__.py",
+      "data_origin": "new tooling authored for this package (MIT)"
+    },
+    {
+      "public_path": "examples/synthetic/make_fixture.py",
+      "data_origin": "synthetic fixture generated for this package"
+    },
+    {
+      "public_path": "examples/synthetic/example_cp2k.inp",
+      "data_origin": "representative sample input (methods parameters only; not a campaign data file)"
+    },
+    {
+      "public_path": "examples/synthetic/example_evidence.json",
+      "data_origin": "synthetic fixture generated for this package"
+    },
+    {
+      "public_path": "website/MLIP_PROJECT.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "website/evidence_cards.json",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "website/workflow.svg",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "website/workflow_alt.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "website/SIMULATION_LAB_HANDOFF.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    },
+    {
+      "public_path": "website/WEBSITE_INTEGRATION.md",
+      "data_origin": "documentation authored for this package (methods/scope; no restricted numbers)"
+    }
+  ]
+}

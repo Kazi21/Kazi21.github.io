@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kazi Ehsanul Karim — From molecular dynamics to physics-informed models of nanoscale transport</title>
+<meta name="description" content="Kazi Ehsanul Karim, Ph.D. candidate in Mechanical Engineering at the University of Ulsan. Molecular dynamics, statistical mechanics and continuum modelling of nanoscale transport; published work on nanoscale boundary conditions and CNT water transport; current development of physics-informed transport closures and error-aware interatomic potentials for confined electrolytes. Open to postdoctoral and research-fellow opportunities from early 2027.">
+<meta name="author" content="Kazi Ehsanul Karim">
+<link rel="canonical" href="https://kazi21.github.io/">
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<meta name="theme-color" content="#0d1b2a">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kazi Ehsanul Karim — From molecular dynamics to physics-informed models of nanoscale transport">
+<meta property="og:description" content="Molecular dynamics, statistical mechanics and continuum modelling of nanoscale transport. First-author research in Physical Review E and Physical Chemistry Chemical Physics; developing physics-informed transport closures and error-aware interatomic potentials for confined electrolytes.">
+<meta property="og:url" content="https://kazi21.github.io/">
+<meta property="og:image" content="https://kazi21.github.io/assets/icons/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Kazi Ehsanul Karim",
+  "jobTitle": "Ph.D. candidate, Mechanical Engineering",
+  "affiliation": { "@type": "Organization", "name": "University of Ulsan" },
+  "email": "mailto:kaziehsanul45@gmail.com",
+  "url": "https://kazi21.github.io/",
+  "sameAs": [
+    "https://scholar.google.com/citations?user=jRhIY3UAAAAJ",
+    "https://orcid.org/0000-0003-0627-3002",
+    "https://www.linkedin.com/in/kazi-ehsanul-karim-75413989",
+    "https://github.com/Kazi21"
+  ],
+  "knowsAbout": ["molecular dynamics", "statistical mechanics", "nanofluidics", "carbon nanotubes", "machine-learned interatomic potentials", "physics-informed neural networks", "multiscale modelling"]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="#top">Kazi Ehsanul Karim</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#projects">Research Projects</a>
+      <a href="#practice">Research in Practice</a>
+      <a href="#lab">Simulation Lab</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- 1. Hero: the researcher first ------------------------------------------------- -->
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="hero-name"><strong>Kazi Ehsanul Karim</strong><br>Ph.D. candidate, Mechanical Engineering, University of Ulsan<br><span class="hero-fields">Molecular Simulation | Statistical Mechanics | Multiscale Fluid Mechanics</span></p>
+      <h1>From molecular dynamics to physics-informed models of nanoscale transport</h1>
+      <p class="lede">I combine molecular dynamics, statistical mechanics and continuum modelling to understand how confinement and interfaces govern transport. Building on first-author publications in Physical Review E and Physical Chemistry Chemical Physics, I am developing physics-informed transport closures and error-aware interatomic potentials for confined electrolytes.</p>
+      <p class="hero-evidence"><strong>First-author publications:</strong> <a href="https://doi.org/10.1103/PhysRevE.103.053115">Physical Review E, 2021</a> · <a href="https://doi.org/10.1039/D4CP01068J">Physical Chemistry Chemical Physics, 2024</a></p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#projects">Explore research</a>
+        <a class="btn" href="#contact">Contact me</a>
+        <a class="btn-link" href="#publications">Publications</a>
+        <a class="btn-link" href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>Public CV (PDF)</a>
+      </div>
+      <p class="hero-status">Open to postdoctoral and research-fellow opportunities. Target start: early 2027. Defense planned for November 2026; formal degree conferral expected in February 2027.</p>
+    </div>
+
+    <aside class="facts" aria-label="At a glance">
+      <h2 class="facts-title">At a glance</h2>
+      <dl>
+        <dt>Position</dt><dd>Ph.D. candidate, Integrated M.S.–Ph.D. Program in Mechanical Engineering, University of Ulsan, Republic of Korea (March 2019 to present)</dd>
+        <dt>Laboratory</dt><dd>Micro/Nano-scale Thermo-Fluids Engineering Laboratory (MNTF), supervisor Prof. BoHung Kim</dd>
+        <dt>Degree timeline</dt><dd>Defense planned November 2026; formal degree conferral expected February 2027</dd>
+        <dt>Methods</dt><dd>LAMMPS EMD/NEMD, CP2K, DP-GEN and DeePMD-kit, Green–Kubo transport, continuum boundary conditions, Python on Linux/HPC</dd>
+        <dt>Record</dt><dd>Two first-author journal articles (2021, 2024); <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV (PDF)</a></dd>
+      </dl>
+    </aside>
+  </div>
+</section>
+
+<!-- 2. Research Projects ---------------------------------------------------------------- -->
+<section class="section section-band" id="projects">
+  <div class="container">
+    <h2>Research Projects</h2>
+    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and the physics-informed closure that links molecular structure to flow. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
+
+    <div class="projects">
+      <article class="project project-major">
+        <p class="project-kicker">Project 1</p>
+        <h3>Molecular structure, boundary conditions and nanoscale transport</h3>
+        <p class="project-status"><span class="status status-live">Published research</span></p>
+        <dl class="project-dl">
+          <dt>Scientific question</dt>
+          <dd>Where does a confined fluid actually end at a nanoscale wall, and which continuum quantities, boundary conditions and transport laws still describe what the molecules do there?</dd>
+          <dt>My contribution</dt>
+          <dd>A first-law energy-balance definition of the flow boundary inside a carbon nanotube, tested against Hagen–Poiseuille limits (<em>Phys. Rev. E</em> 2021), and a critical review with scale-effects analysis of water-transport estimates in nanotubes (<em>Phys. Chem. Chem. Phys.</em> 2024).</dd>
+          <dt>Available evidence</dt>
+          <dd><a href="https://doi.org/10.1103/PhysRevE.103.053115">Phys. Rev. E 103, 053115 (2021)</a> · <a href="https://doi.org/10.1039/D4CP01068J">Phys. Chem. Chem. Phys. 26, 19069 (2024)</a></dd>
+        </dl>
+        <details class="disclosure">
+          <summary>Methods and next development</summary>
+          <div class="disclosure-body">
+            <p>In <em>Physical Review E</em> (2021) I developed a first-law energy-balance analysis that locates the flow boundary for a simple liquid inside a single-walled carbon nanotube from non-equilibrium and equilibrium molecular dynamics, and tested the resulting boundary against Hagen–Poiseuille limits under controlled wall–fluid interaction. In <em>Physical Chemistry Chemical Physics</em> (2024) I led a critical review of experimental and simulation estimates of water transport in carbon nanotubes and a scale-effects analysis of how boundary definitions enter Hagen–Poiseuille-type estimates.</p>
+            <p><strong>Next development.</strong> Ongoing work on interfacial friction and slip, molecular accessibility, finite-time diffusivity and hydraulic resistance in nanotubes and graphene nanoslits, described here as current interests; pending results are not published on this site.</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="project project-major">
+        <p class="project-kicker">Project 2</p>
+        <h3>Error-aware MLIPs for CNT-confined NaCl–water</h3>
+        <p class="project-status"><span class="status">Current research</span></p>
+        <dl class="project-dl">
+          <dt>Scientific question</dt>
+          <dd>Which model errors matter for the intended transport prediction, and what should be calculated next?</dd>
+          <dt>My contribution</dt>
+          <dd>An active CP2K–DP-GEN–DeePMD–LAMMPS workflow whose emphasis is error-aware validation: reference-protocol checks, per-species force errors, committee uncertainty checked against true error, and a rules-based decision on the next calculation.</dd>
+          <dt>Available evidence</dt>
+          <dd><a href="evidence/nacl-water-cnt/index.html">Methods and software demonstration</a> with synthetic example data: three inspectable entry points, tests executed, source and download. No campaign numbers, models or trajectories are published.</dd>
+        </dl>
+        <details class="disclosure">
+          <summary>Methods and next development</summary>
+          <div class="disclosure-body">
+            <p>Periodic Gaussian-and-plane-wave reference calculations in CP2K (PBE-D3(BJ), GTH pseudopotentials, DZVP-MOLOPT basis sets, with the Fermi-smearing SCF strategy that metallic armchair tubes require); selection of reference configurations by DP-GEN active learning with a DeePMD-kit committee; consistency checks on the reference data; element-resolved force errors (Na⁺, Cl⁻, O, H) with committee disagreement; structural diagnostics, stability testing and LAMMPS deployment within a declared scope. The model is energy-and-force only and local; its validity envelope is stated in the package's model-scope note.</p>
+            <p><strong>Next development.</strong> A reproducible reference example with a real CP2K input, then a controlled test of whether targeted reference calculations improve performance on independent evaluation cases; the package's scoped next experiment is stress labels with a virial loss term behind a composition-disjoint validation set.</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="project project-major">
+        <p class="project-kicker">Project 3</p>
+        <h3>Physics-informed structure–friction–flow closure</h3>
+        <p class="project-status"><span class="status">Current research</span></p>
+        <dl class="project-dl">
+          <dt>Scientific question</dt>
+          <dd>Can a physically constrained model connect molecular structure, interfacial friction and flow into a transport closure that is useful, and inspectable, within a clearly defined physical regime?</dd>
+          <dt>My contribution</dt>
+          <dd>Physics-informed neural-network models in which physical constraints, not only data, shape the mapping from confined molecular structure to friction and flow; the current implementation is in development and no benchmark result is published.</dd>
+          <dt>Available evidence</dt>
+          <dd>Project scope in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>; the molecular data come from the transport work of Project 1. A public script or benchmark will be linked only once it exists and has been inspected.</dd>
+        </dl>
+        <details class="disclosure">
+          <summary>Methods and next development</summary>
+          <div class="disclosure-body">
+            <p>The aim is a closure whose useful range and failure modes can be examined, rather than a fit that reproduces simulation data. Physics enters through the constraints imposed on the model, and the evaluation design separates training, validation and untouched evaluation conditions so that reported performance is not selected on the data that reports it.</p>
+            <p><strong>Next development.</strong> A benchmark comparing a conventional closure, a data-driven baseline and the physics-informed model on held-out simulation conditions, with explicit checks on physical consistency and predictive uncertainty.</p>
+          </div>
+        </details>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Future vision ----------------------------------------------------------------------- -->
+<section class="section" id="vision">
+  <div class="container">
+    <div class="vision-grid">
+      <div>
+        <h2>Can a simulation identify what to compute next?</h2>
+        <p class="statement">My longer-term goal is adaptive simulation that uses physical diagnostics, model errors and uncertainty to guide where computational effort is most useful.</p>
+        <p><span class="status status-proposed">Research direction</span></p>
+        <p>The proposed cycle is deliberately plain: examine an error in the current prediction; investigate its source, whether reference data, the interaction model, sampling or the continuum description; select the one calculation most likely to resolve it; update the model; and evaluate the outcome on cases that were not used to make the decision. The first milestone is one bounded, human-reviewed decision cycle with its inputs, rationale, cost and outcome recorded. This is a research direction; no adaptive system is claimed to exist.</p>
+        <ol class="agent-loop vision-loop">
+          <li>Examine an error</li><li>Investigate its source</li><li>Select a useful calculation</li><li>Update the model</li><li>Evaluate the outcome</li>
+        </ol>
+        <details class="disclosure">
+          <summary>The selection rule, for readers who want the equations</summary>
+          <div class="disclosure-body">
+            <p>Given a target quantity <em>J</em> and the evidence gathered so far, the next action is the one that removes the most uncertainty about <em>J</em> per unit of cost, with time, energy and money normalised into declared budget units before they are combined:</p>
+            <div class="eq"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>a</mi><mo lspace="0em" rspace="0em">∗</mo></msup><mo>=</mo><mi>arg</mi><mo>⁡</mo><munder><mrow><mi>max</mi><mo>⁡</mo></mrow><mi>a</mi></munder><mtext>  </mtext><mfrac><mrow><mi mathvariant="normal">Var</mi><mo>⁡</mo><mtext> ⁣</mtext><mrow><mo fence="true">(</mo><mi>J</mi><mo>∣</mo><mi mathvariant="script">D</mi><mo fence="true">)</mo></mrow><mo>−</mo><mi mathvariant="double-struck">E</mi><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi mathvariant="normal">Var</mi><mo>⁡</mo><mtext> ⁣</mtext><mrow><mo fence="true">(</mo><mi>J</mi><mo>∣</mo><mi mathvariant="script">D</mi><mo>∪</mo><msub><mi mathvariant="script">D</mi><mi>a</mi></msub><mo fence="true">)</mo></mrow><mo fence="true">]</mo></mrow></mrow><msub><mi>C</mi><mi>a</mi></msub></mfrac></mrow><annotation encoding="application/x-tex">a^{*}=\arg\max_{a}\;\frac{\operatorname{Var}\!\left(J\mid\mathcal D\right)-\mathbb E\!\left[\operatorname{Var}\!\left(J\mid\mathcal D\cup\mathcal D_{a}\right)\right]}{C_{a}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7387em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7387em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∗</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.263em;vertical-align:-0.836em;"></span><span class="mop">ar<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.4306em;"><span style="top:-2.4em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop">max</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">Var</span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathcal" style="margin-right:0.02778em;">D</span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathbb">E</span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">[</span><span class="mop"><span class="mord mathrm">Var</span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathcal" style="margin-right:0.02778em;">D</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∪</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mclose delimcenter" style="top:0em;">]</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+            <div class="eq"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>C</mi><mi>a</mi></msub><mo>=</mo><msub><mi>w</mi><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">P</mi><mi mathvariant="normal">U</mi></mrow></msub><mtext> </mtext><msub><mi>C</mi><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">P</mi><mi mathvariant="normal">U</mi></mrow></msub><mo>+</mo><msub><mi>w</mi><mrow><mi mathvariant="normal">G</mi><mi mathvariant="normal">P</mi><mi mathvariant="normal">U</mi></mrow></msub><mtext> </mtext><msub><mi>C</mi><mrow><mi mathvariant="normal">G</mi><mi mathvariant="normal">P</mi><mi mathvariant="normal">U</mi></mrow></msub><mo>+</mo><msub><mi>w</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">T</mi></mrow></msub><mtext> </mtext><msub><mi>C</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">T</mi></mrow></msub><mo>+</mo><msub><mi>w</mi><mrow><mi mathvariant="normal">h</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi></mrow></msub><mtext> </mtext><msub><mi>C</mi><mrow><mi mathvariant="normal">h</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{a}=w_{\mathrm{CPU}}\,C_{\mathrm{CPU}}+w_{\mathrm{GPU}}\,C_{\mathrm{GPU}}+w_{\mathrm{DFT}}\,C_{\mathrm{DFT}}+w_{\mathrm{human}}\,C_{\mathrm{human}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">CPU</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">CPU</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">GPU</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">GPU</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">DFT</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">DFT</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">human</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">human</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></div>
+            <p>Where a learned model is used, it corrects a known baseline rather than replacing it, and forces are taken from the energy so that they stay conservative:</p>
+            <div class="eq"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>E</mi><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></msub><mo>=</mo><msub><mi>E</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi></mrow></msub><mo>+</mo><mi mathvariant="normal">Δ</mi><msub><mi>E</mi><mi>θ</mi></msub><mo separator="true">,</mo><mspace width="2em"/><mi mathvariant="bold">F</mi><mo>=</mo><mo>−</mo><mi mathvariant="normal">∇</mi><msub><mi>E</mi><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></msub></mrow><annotation encoding="application/x-tex">E_{\mathrm{model}}=E_{\mathrm{baseline}}+\Delta E_{\theta},\qquad \mathbf F=-\nabla E_{\mathrm{model}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">model</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">baseline</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8805em;vertical-align:-0.1944em;"></span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord">−</span><span class="mord">∇</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">model</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></div>
+            <p>Candidate actions: an analytical estimate; classical molecular dynamics; one more independent replica; a CP2K reference calculation; targeted relabelling or retraining of the potential; production dynamics with the learned potential; testing or refining one continuum closure; stopping because the requirement is met; refusing scale transfer because the system remains non-continuum. The decision layer allocates the physics; it does not replace it.</p>
+          </div>
+        </details>
+      </div>
+      <figure class="engine-figure">
+          <svg class="loop-diagram" viewBox="0 0 520 400" role="img" aria-labelledby="loop-title loop-desc">
+            <title id="loop-title">Proposed decision loop</title>
+            <desc id="loop-desc">Quantum reference labels feed a residual machine-learned potential, which feeds molecular dynamics. A gate decides whether a continuum closure is admissible; if not, the result is returned as an MD-only regime. The sensitivity of the target quantity is passed backward to decide which calculation to run next.</desc>
+            <defs>
+              <marker id="m-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a7b6c6"/></marker>
+              <marker id="m-back" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8fb4ea"/></marker>
+              <marker id="m-stop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ff7b66"/></marker>
+            </defs>
+            <path class="flow flow-animated" d="M190,50 H330" marker-end="url(#m-muted)"/>
+            <path class="flow flow-animated" d="M410,70 V130" marker-end="url(#m-muted)"/>
+            <path class="flow flow-animated" d="M410,170 V207" marker-end="url(#m-muted)"/>
+            <path class="flow flow-animated" d="M410,283 V330" marker-end="url(#m-muted)"/>
+            <path class="flow flow-animated" d="M330,350 H190" marker-end="url(#m-muted)"/>
+            <path class="flow flow-back" d="M110,330 V70" marker-end="url(#m-back)"/>
+            <path class="flow flow-refuse" d="M372,245 H320" marker-end="url(#m-stop)"/>
+            <rect class="node" x="30" y="30" width="160" height="40" rx="4"/>
+            <text x="110" y="49" text-anchor="middle">Reference labels</text>
+            <text class="lbl" x="110" y="63" text-anchor="middle">CP2K, selected frames only</text>
+            <rect class="node" x="330" y="30" width="160" height="40" rx="4"/>
+            <text x="410" y="49" text-anchor="middle">Residual MLIP</text>
+            <text class="lbl" x="410" y="63" text-anchor="middle">known physics + learned correction</text>
+            <rect class="node" x="330" y="130" width="160" height="40" rx="4"/>
+            <text x="410" y="149" text-anchor="middle">Molecular dynamics</text>
+            <text class="lbl" x="410" y="163" text-anchor="middle">replicas, stopped at target CI</text>
+            <polygon class="gate" points="410,207 448,245 410,283 372,245"/>
+            <circle class="gate-light" cx="410" cy="245" r="5"/>
+            <text class="lbl" x="458" y="249" text-anchor="start">gate</text>
+            <rect class="node" x="200" y="225" width="120" height="40" rx="4"/>
+            <text x="260" y="244" text-anchor="middle">MD-only regime</text>
+            <text class="lbl" x="260" y="258" text-anchor="middle">transfer refused</text>
+            <rect class="node" x="330" y="330" width="160" height="40" rx="4"/>
+            <text x="410" y="349" text-anchor="middle">Continuum closure</text>
+            <text class="lbl" x="410" y="363" text-anchor="middle">only if admissible</text>
+            <rect class="node node-target" x="30" y="330" width="160" height="40" rx="4"/>
+            <text x="110" y="349" text-anchor="middle">Target quantity</text>
+            <text class="lbl" x="110" y="363" text-anchor="middle">flux, selectivity, friction, heat flux</text>
+            <text class="lbl" x="122" y="200" text-anchor="start">sensitivity of the target</text>
+            <text class="lbl" x="122" y="214" text-anchor="start">decides the next calculation</text>
+          </svg>
+        <figcaption>The proposed loop. Solid arrows carry information forward; the dashed arrow carries the target's sensitivity backward; the gate may refuse the continuum step. A design, not a running system.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Research in Practice ---------------------------------------------------------------- -->
+<section class="section section-band" id="practice">
+  <div class="container">
+    <h2>Research in Practice</h2>
+    <p class="section-intro">Explore the proposed workflow. This walkthrough explains the method behind Project 2; it does not report executed training or scientific outcomes. Select a step to read its purpose. Steps 2–4 link to the <a href="evidence/nacl-water-cnt/index.html">methods and software demonstration</a> (synthetic example data).</p>
+
+    <div class="practice">
+      <fieldset class="steps">
+        <legend class="visually-hidden">Workflow steps</legend>
+        <input type="radio" name="step" id="step-1" checked><label for="step-1"><span class="n">1</span>Define the target</label>
+        <input type="radio" name="step" id="step-2"><label for="step-2"><span class="n">2</span>Check the reference</label>
+        <input type="radio" name="step" id="step-3"><label for="step-3"><span class="n">3</span>Expose model errors</label>
+        <input type="radio" name="step" id="step-4"><label for="step-4"><span class="n">4</span>Choose the next calculation</label>
+      </fieldset>
+
+      <div class="practice-grid">
+        <figure class="practice-figure">
+          <svg viewBox="0 0 600 220" role="img" aria-labelledby="wf-title wf-desc">
+            <title id="wf-title">Proposed workflow</title>
+            <desc id="wf-desc">Four steps in a loop: define the target, check the reference, inspect model errors, choose the next calculation, then return to checking the reference.</desc>
+            <defs>
+              <marker id="wf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a7b6c6"/></marker>
+              <marker id="wf-back" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8fb4ea"/></marker>
+            </defs>
+            <path class="wf-flow" d="M140,80 H165" marker-end="url(#wf-arrow)"/>
+            <path class="wf-flow" d="M290,80 H315" marker-end="url(#wf-arrow)"/>
+            <path class="wf-flow" d="M440,80 H465" marker-end="url(#wf-arrow)"/>
+            <path class="wf-flow wf-loop" d="M520,110 V170 H230 V112" marker-end="url(#wf-back)"/>
+            <rect class="wf-node p-node-1" x="20" y="50" width="120" height="60" rx="6"/>
+            <text x="80" y="76" text-anchor="middle">Define</text><text x="80" y="94" text-anchor="middle">the target</text>
+            <rect class="wf-node p-node-2" x="170" y="50" width="120" height="60" rx="6"/>
+            <text x="230" y="76" text-anchor="middle">Check</text><text x="230" y="94" text-anchor="middle">the reference</text>
+            <rect class="wf-node p-node-3" x="320" y="50" width="120" height="60" rx="6"/>
+            <text x="380" y="76" text-anchor="middle">Inspect</text><text x="380" y="94" text-anchor="middle">model errors</text>
+            <rect class="wf-node p-node-4" x="470" y="50" width="110" height="60" rx="6"/>
+            <text x="525" y="76" text-anchor="middle">Choose next</text><text x="525" y="94" text-anchor="middle">calculation</text>
+            <text class="lbl" x="375" y="190" text-anchor="middle">record the reason, run it, return to the reference</text>
+          </svg>
+        </figure>
+
+        <div class="step-panels">
+          <div class="step-panel step-panel-1">
+            <h3>Define the target</h3>
+            <p>Name the transport quantity the prediction is for (flux, selectivity, friction, diffusivity), the uncertainty it must reach and the computational budget. Everything downstream is judged against this target, not against generic accuracy.</p>
+          </div>
+          <div class="step-panel step-panel-2">
+            <h3>Check the reference</h3>
+            <p>Verify that the CP2K reference data are internally consistent: functional and basis settings, energy, force and virial conventions, cell and cutoff choices, and whether independent evaluation configurations exist. A model trained on inconsistent references inherits the inconsistency. Entry point: <a href="evidence/nacl-water-cnt/index.html#reference-checking">CP2K protocol parsing and compatibility checking</a> (<a href="evidence/nacl-water-cnt/source.html#mlip_evidence-reference_protocol-py">source</a>).</p>
+          </div>
+          <div class="step-panel step-panel-3">
+            <h3>Expose model errors</h3>
+            <p>Resolve the potential's errors by species and environment (Na⁺, Cl⁻, O, H; bulk-like against wall-adjacent water), compare committee members, and test structural diagnostics and MD stability. Ask which of these errors can change the target quantity. Entry point: <a href="evidence/nacl-water-cnt/index.html#error-diagnosis">per-species force diagnostics and uncertainty tooling</a> (<a href="evidence/nacl-water-cnt/source.html#mlip_evidence-metrics-py">source</a>).</p>
+          </div>
+          <div class="step-panel step-panel-4">
+            <h3>Choose the next calculation</h3>
+            <p>Decide between adding reference calculations where the important errors live, extending sampling where statistics limit the target, or testing the transport closure. Record the reason, run it, and return to the reference check. Entry point: <a href="evidence/nacl-water-cnt/index.html#computational-decisions">the transparent decision prototype</a> (<a href="evidence/nacl-water-cnt/source.html#mlip_evidence-decision-py">source</a>).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="evidence-strip">
+      <p class="evidence-label"><span class="badge badge-label">Methods and software demonstration · synthetic example data</span></p>
+      <p class="section-intro">Runnable tooling with synthetic fixtures for the three steps above. It demonstrates the software, not DFT accuracy, MLIP accuracy or physical transport; no campaign numbers, models or trajectories are published. Its documented tests were executed for this site (13 passed, 0 failed) and the outputs are shown on the evidence page.</p>
+      <div class="projects">
+        <article class="ecard" id="ep-reference">
+          <p class="project-kicker">Check the reference</p>
+          <h3>Are the DFT references for training and validation actually compatible?</h3>
+          <p><span class="badge badge-exec">EXECUTED_EXAMPLE</span></p>
+          <p>Extracts CP2K protocol parameters (functional, dispersion, basis and pseudopotentials, density-grid cutoffs, metallic-SCF smearing, charge, periodicity, stress request) and flags any material training-versus-validation mismatch before a model error is interpreted.</p>
+          <p class="limitation">Limitation: a two-cutoff check does not establish convergence of every property; basis, grid and SCF convergence are distinct.</p>
+          <p><a href="evidence/nacl-water-cnt/index.html#reference-checking">Evidence card</a> · <a href="evidence/nacl-water-cnt/source.html#mlip_evidence-reference_protocol-py">reference_protocol.py</a></p>
+        </article>
+        <article class="ecard" id="ep-errors">
+          <p class="project-kicker">Expose model errors</p>
+          <h3>Does the model hide a weak channel behind a good average?</h3>
+          <p><span class="badge badge-exec">EXECUTED_EXAMPLE</span></p>
+          <p>Per-species force metrics with two explicit RMSE definitions, vector p95 and maximum, per-frame breakdown, missing species reported as missing evidence, group-aware bootstrap intervals that return "unavailable" rather than an invented interval, and a leakage check.</p>
+          <p class="limitation">Limitation: synthetic demonstration; real per-element results are private. A single uncertainty–error correlation is not full calibration.</p>
+          <p><a href="evidence/nacl-water-cnt/index.html#error-diagnosis">Evidence card</a> · <a href="evidence/nacl-water-cnt/source.html#mlip_evidence-metrics-py">metrics.py</a> · <a href="evidence/nacl-water-cnt/source.html#mlip_evidence-uncertainty-py">uncertainty.py</a></p>
+        </article>
+        <article class="ecard" id="ep-decide">
+          <p class="project-kicker">Choose the next calculation</p>
+          <h3>Given the evidence, what is the right next computational action?</h3>
+          <p><span class="badge badge-proto">PROTOTYPE</span></p>
+          <p>A transparent, rules-based controller that maps stated evidence and declared thresholds to one action (review reference, check mapping, request targeted labels, request more sampling, review scope, stop within tested scope, or insufficient evidence), with reasons, missing evidence, policy version and provenance.</p>
+          <p class="limitation">Limitation: a fixed rule dispatcher, not a learned or autonomous scientist; it launches nothing and claims no cost or time saving.</p>
+          <p><a href="evidence/nacl-water-cnt/index.html#computational-decisions">Evidence card</a> · <a href="evidence/nacl-water-cnt/source.html#mlip_evidence-decision-py">decision.py</a></p>
+        </article>
+      </div>
+      <p class="agent-note">Analysis code drafted with AI assistance and checked against raw outputs; scientific decisions and validation design are the author's. See the package <a href="evidence/nacl-water-cnt/package/NOTICE.md">NOTICE</a>. <a href="assets/downloads/NaCl_Water_CNT_Website_Evidence_v0.1-web.zip" download>Download the package</a> (zip; web build with 25 of 28 files, the remaining three to follow) or <a href="evidence/nacl-water-cnt/source.html">browse the source</a>. The two published papers and the public CV remain the inspectable scientific record; this package documents methods.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Simulation Lab -------------------------------------------------------------------------- -->
+<section class="section" id="lab">
+  <div class="container">
+    <h2>Simulation Lab</h2>
+    <div class="lab-grid">
+      <div class="lab-copy">
+        <h3 class="lab-title">Watch a molecular model learn.</h3>
+        <p>I am developing a browser experiment that connects water dynamics, force-prediction errors and targeted learning updates. The planned interface will let visitors explore molecular motion and inspect why the next calculation is chosen.</p>
+        <p><span class="status">Interactive experiment in development</span></p>
+        <ol class="lab-steps">
+          <li><b>Reference water</b> a rigid SPC/E water box provides the trajectory and the truth for comparison.</li>
+          <li><b>Learner</b> a compact energy-based model is evaluated on configurations the reference produced, while the reference continues undisturbed.</li>
+          <li><b>Error check</b> force errors are resolved by atom and environment against physical sanity checks.</li>
+          <li><b>Decision</b> the panel shows why the next update or the next sample was chosen, or why it stopped.</li>
+        </ol>
+        <details class="disclosure">
+          <summary>How the planned experiment works</summary>
+          <div class="disclosure-body">
+            <p>Reference model: rigid SPC/E water (O–H 0.1000 nm, H–O–H 109.47°), 216 molecules, damped shifted-force electrostatics with a 0.90 nm cutoff (labelled SPC/E–DSF), RATTLE constraints, velocity Verlet, periodic box of 1.862 nm; eight independently equilibrated starting states. Reported quantity, oxygen sites only, at a registered lag τ:</p>
+            <div class="eq"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>D</mi><mi mathvariant="normal">O</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">T</mi></mrow></msubsup><mo stretchy="false">(</mo><mi>N</mi><mo separator="true">,</mo><mi>τ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mo fence="true">⟨</mo><msup><mrow><mo fence="true">∣</mo><msub><mover accent="true"><mi mathvariant="bold">r</mi><mo>~</mo></mover><mi mathvariant="normal">O</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo>+</mo><mi>τ</mi><mo stretchy="false">)</mo><mo>−</mo><msub><mover accent="true"><mi mathvariant="bold">r</mi><mo>~</mo></mover><mi mathvariant="normal">O</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo fence="true">∣</mo></mrow><mn>2</mn></msup><mo fence="true">⟩</mo></mrow><mrow><mn>6</mn><mtext> </mtext><mi>τ</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">D_{\mathrm{O}}^{\mathrm{FT}}(N,\tau)=\frac{\left\langle\left|\tilde{\mathbf r}_{\mathrm{O}}(t+\tau)-\tilde{\mathbf r}_{\mathrm{O}}(t)\right|^{2}\right\rangle}{6\,\tau}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-2.453em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathrm mtight">O</span></span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">FT</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.876em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.19em;"><span style="top:-2.464em;"><span class="pstrut" style="height:3.15em;"></span><span class="mord"><span class="mord">6</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span><span style="top:-3.38em;"><span class="pstrut" style="height:3.15em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-4.19em;"><span class="pstrut" style="height:3.15em;"></span><span class="mord"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size2">⟨</span></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">∣</span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6813em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">r</span></span><span style="top:-3.3634em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathrm mtight">O</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6813em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">r</span></span><span style="top:-3.3634em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathrm mtight">O</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">∣</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.954em;"><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size2">⟩</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+            <p>Sampling precision is judged by a replica-level interval evaluated at preregistered checkpoints and corrected for the number of looks:</p>
+            <div class="eq"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mover accent="true"><mi>D</mi><mo>ˉ</mo></mover><mtext>  </mtext><mo>±</mo><mtext>  </mtext><msub><mi>t</mi><mrow><mi>R</mi><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mn>1</mn><mo>−</mo><mi>α</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mn>2</mn><mi>K</mi><mo stretchy="false">)</mo></mrow></msub><mtext>  </mtext><mfrac><msub><mi>s</mi><mi>D</mi></msub><msqrt><mi>R</mi></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\bar D\;\pm\;t_{R-1,\,1-\alpha/(2K)}\;\frac{s_{D}}{\sqrt{R}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9034em;vertical-align:-0.0833em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">±</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.0376em;vertical-align:-0.93em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mbin mtight">−</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mspace mtight" style="margin-right:0.1952em;"></span><span class="mord mtight">1</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.0037em;">α</span><span class="mord mtight">/</span><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.1833em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9267em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span><span style="top:-2.8867em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1133em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+            <p>A run ends in one of four states: precision reached, budget exhausted, invalid physics, or execution failure, and every run produces a cost-and-evidence certificate. Reaching the sampling-precision target says nothing about the learner; the learner is accepted only on its own error and physics checks against configurations it never trained on. The exercise demonstrates learning against this reference model, not quantum accuracy or a measured speed-up. Playback speed will be a display setting, separate from the integration timestep; temperature or molecule-count controls will appear only when they change the running experiment. Nothing on this page runs a simulation yet.</p>
+          </div>
+        </details>
+      </div>
+
+      <figure class="lab-figure">
+        <svg class="water-illustration" viewBox="0 0 420 340" role="img" aria-labelledby="w-title w-desc">
+          <title id="w-title">Water molecules and hydrogen bonds</title>
+          <desc id="w-desc">A static illustration of five SPC/E water molecules (O–H 0.1000 nm, H–O–H 109.47°) drawn to a consistent scale, connected by dashed hydrogen bonds, with a scale bar of 0.1 nanometre.</desc>
+          <defs>
+            <radialGradient id="gO" cx="35%" cy="35%" r="70%"><stop offset="0" stop-color="#ffb3a6"/><stop offset="1" stop-color="#d9553f"/></radialGradient>
+            <radialGradient id="gH" cx="35%" cy="35%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9c6d3"/></radialGradient>
+          </defs>
+          <g class="hbonds">
+            <path d="M141.4,106.2 L182.3,132.0"/>
+            <path d="M249.6,108.5 L208.0,132.5"/>
+            <path d="M210.5,186.5 L225.3,230.8"/>
+            <path d="M329.2,115.8 L365.7,147.0"/>
+          </g>
+          <!-- molecules: SPC/E O–H 0.1000 nm, H–O–H 109.47°, scale 40 px per 0.1 nm; each donor H points at its acceptor O -->
+          <g class="mol" transform="translate(100.0,80.0) rotate(-3.0)">
+            <line class="bond" x1="0" y1="0" x2="32.7" y2="23.1"/><line class="bond" x1="0" y1="0" x2="-32.7" y2="23.1"/>
+            <circle class="H" cx="32.7" cy="23.1" r="8"/><circle class="H" cx="-32.7" cy="23.1" r="8"/><circle class="O" cx="0" cy="0" r="14"/>
+          </g>
+          <g class="mol" transform="translate(195.0,140.0) rotate(36.3)">
+            <line class="bond" x1="0" y1="0" x2="32.7" y2="23.1"/><line class="bond" x1="0" y1="0" x2="-32.7" y2="23.1"/>
+            <circle class="H" cx="32.7" cy="23.1" r="8"/><circle class="H" cx="-32.7" cy="23.1" r="8"/><circle class="O" cx="0" cy="0" r="14"/>
+          </g>
+          <g class="mol" transform="translate(292.0,84.0) rotate(5.3)">
+            <line class="bond" x1="0" y1="0" x2="32.7" y2="23.1"/><line class="bond" x1="0" y1="0" x2="-32.7" y2="23.1"/>
+            <circle class="H" cx="32.7" cy="23.1" r="8"/><circle class="H" cx="-32.7" cy="23.1" r="8"/><circle class="O" cx="0" cy="0" r="14"/>
+          </g>
+          <g class="mol" transform="translate(230.0,245.0) rotate(35.0)">
+            <line class="bond" x1="0" y1="0" x2="32.7" y2="23.1"/><line class="bond" x1="0" y1="0" x2="-32.7" y2="23.1"/>
+            <circle class="H" cx="32.7" cy="23.1" r="8"/><circle class="H" cx="-32.7" cy="23.1" r="8"/><circle class="O" cx="0" cy="0" r="14"/>
+          </g>
+          <g class="mol" transform="translate(377.1,156.8) rotate(115.0)">
+            <line class="bond" x1="0" y1="0" x2="32.7" y2="23.1"/><line class="bond" x1="0" y1="0" x2="-32.7" y2="23.1"/>
+            <circle class="H" cx="32.7" cy="23.1" r="8"/><circle class="H" cx="-32.7" cy="23.1" r="8"/><circle class="O" cx="0" cy="0" r="14"/>
+          </g>
+          <text class="wl" x="70" y="62">O</text>
+          <text class="wl" x="47" y="110">H</text>
+          <text class="wl wl-hb" x="60" y="150">hydrogen bond</text>
+          <text class="wl wl-hb" x="60" y="164">O···O ≈ 0.28 nm</text>
+          <line class="scale" x1="40" y1="310" x2="80" y2="310"/><line class="scale" x1="40" y1="305" x2="40" y2="315"/><line class="scale" x1="80" y1="305" x2="80" y2="315"/>
+          <text class="wl" x="88" y="314">0.1 nm</text>
+          <text class="wl wl-note" x="410" y="326" text-anchor="end">illustration, not a trajectory</text>
+        </svg>
+        <figcaption>SPC/E geometry: O–H 0.1000 nm, H–O–H 109.47°, drawn to the scale bar; dashed lines mark hydrogen bonds with donor H pointing at the acceptor O. A static illustration; the interactive classical water box (SPC/E) is scheduled for a later release as an intuition demo of molecular dynamics. Not a quantum calculation, not an MLIP, not a transport result, and not connected to the CNT MLIP work of Project 2.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Contribution, current work, additional direction ------------------------------------------ -->
+<section class="section section-band" id="contribution">
+  <div class="container">
+    <h2>What I can contribute to your group</h2>
+    <ul class="deliverables">
+      <li><h3>Molecular simulation and transport analysis with LAMMPS EMD/NEMD</h3><p>Equilibrium and non-equilibrium studies of confined transport and interfacial friction, with replica-based uncertainty, convergence diagnostics and explicit stopping criteria from the first campaign.</p></li>
+      <li><h3>Connecting molecular mechanisms to boundary conditions and reduced transport descriptions</h3><p>Define the boundary, the accessible region and the quantity a transport model actually needs; test whether a continuum description remains valid before it is used.</p></li>
+      <li><h3>Reproducible, physics-informed learning and reference-data workflows</h3><p>Reference calculations, learned potentials and physics-informed closures with species- and environment-resolved error checks, versioned inputs and a traceable route from reference data to prediction.</p></li>
+    </ul>
+    <p class="section-intro" style="margin-top: var(--space-3)">An initial collaboration would agree on one system and one observable, reproduce a baseline, and select a targeted next test. I do not promise a paper, a fixed saving or complete model transferability within a set period.</p>
+
+    <h2 style="margin-top: var(--space-5)">Current work and next outputs</h2>
+    <details class="disclosure">
+      <summary>Eight items with explicit status</summary>
+      <div class="disclosure-body">
+    <ul class="worklist">
+      <li><span class="status">In progress</span><span>CP2K reference calculations and the DP-GEN/DeePMD workflow for CNT-confined NaCl–water, with consistency checks and species-resolved error analysis (Project 2); methods tooling published as a software demonstration.</span></li>
+      <li><span class="status">In progress</span><span>Physics-informed structure–friction–flow closure: model formulation and benchmark design (Project 3).</span></li>
+      <li><span class="status status-proposed">Planned</span><span>Reproducible reference example: inputs, settings and consistency checks that another group can rerun.</span></li>
+      <li><span class="status status-proposed">Planned</span><span>Held-out model evaluation with species- and environment-resolved errors.</span></li>
+      <li><span class="status status-proposed">Planned</span><span>Closure benchmark: conventional closure, data-driven baseline and physics-informed model on held-out conditions.</span></li>
+      <li><span class="status status-proposed">Planned</span><span>Scoped transport analysis of one confined system with uncertainty and a stated continuum-validity decision.</span></li>
+      <li><span class="status">In development</span><span>Simulation Lab: the live water-and-learning experiment described above.</span></li>
+      <li><span class="status status-proposed">Planned</span><span>Ph.D. defense, November 2026; formal degree conferral expected February 2027.</span></li>
+    </ul>
+    <p class="agent-note">Dates are targets; an item becomes evidence only when its artefact is public.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" style="margin-top: var(--space-4)">
+      <summary>Additional research direction: nature-inspired transport strategies (proposed)</summary>
+      <div class="disclosure-body">
+        <p>Can transport strategies evolved by living systems become testable physical design rules for nanoscale devices? Each cue below is mapped natural mechanism → design variable → simulation experiment → engineering objective. Proposed programme: none of these is a validated device prediction. Hover or focus a cue to see which capability it targets; open it for the mapping.</p>
+<div class="mechmap" id="nature-map">
+      <div class="mechmap-col">
+        <h4>Nature's transport strategies</h4>
+        <details class="cue" data-target="selectivity">
+          <summary>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4v10M16 14c-5 0-8 4-9 12M16 14c5 0 8 4 9 12M16 14c-2 0-3 5-3 12M16 14c2 0 3 5 3 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 27h24" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2"/></svg>
+            <span class="cue-name">Mangrove roots</span><span class="cue-hint">salt exclusion under suction</span>
+          </summary>
+          <dl class="cue-dl">
+            <dt>Natural mechanism</dt><dd>Root membranes pass water and exclude most ions while transpiration pulls the flow.</dd>
+            <dt>Design variable</dt><dd>Pore radius relative to hydrated-ion radius; dehydration free-energy barrier; surface charge and Debye-length ratio.</dd>
+            <dt>Simulation experiment</dt><dd>NEMD of NaCl solutions through sub-nanometre nanotubes and slits; ion-entry potentials of mean force; water flux against rejection.</dd>
+            <dt>Engineering objective</dt><dd>Ionic selectivity at a stated water permeability: the selectivity–permeability trade-off.</dd>
+          </dl>
+        </details>
+        <details class="cue" data-target="passive">
+          <summary>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26C6 14 14 6 26 6c0 12-8 20-20 20z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 24L22 10" stroke="currentColor" stroke-width="1.2"/><path d="M13 5v-3M16 6V2M19 5v-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <span class="cue-name">Plant transpiration</span><span class="cue-hint">evaporation-driven passive flow</span>
+          </summary>
+          <dl class="cue-dl">
+            <dt>Natural mechanism</dt><dd>Evaporation at nanoscale menisci creates capillary suction that drives flow without a pump and carries latent heat away.</dd>
+            <dt>Design variable</dt><dd>Meniscus curvature and pore radius (capillary pressure); evaporative flux against the hydraulic resistance of the network; contact angle.</dd>
+            <dt>Simulation experiment</dt><dd>NEMD of evaporation-driven flow in nanochannels with liquid–vapour interfaces; interfacial heat flux.</dd>
+            <dt>Engineering objective</dt><dd>Passive pumping flux and evaporative heat removal per unit area at zero applied pressure.</dd>
+          </dl>
+        </details>
+        <details class="cue" data-target="voltage">
+          <summary>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16c4-8 8-8 12 0s8 8 12 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 7v4M6 9h4M22 22h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M14 24l-2 5h5l-2 5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span class="cue-name">Electric eel</span><span class="cue-hint">stacked ion-selective cells</span>
+          </summary>
+          <dl class="cue-dl">
+            <dt>Natural mechanism</dt><dd>Thousands of series-stacked electrocytes convert ionic concentration gradients through selective channels into a large voltage.</dd>
+            <dt>Design variable</dt><dd>Membrane cation/anion selectivity (transference number), stack count, gradient magnitude, ionic conductance.</dd>
+            <dt>Simulation experiment</dt><dd>Ionic currents and selectivity in charged nanopores under concentration and potential gradients; molecular closures feeding a Nernst–Planck stack model.</dd>
+            <dt>Engineering objective</dt><dd>Open-circuit voltage and power density from salinity gradients; voltage-controlled transport.</dd>
+          </dl>
+        </details>
+        <details class="cue" data-target="interface">
+          <summary>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 26c3 0 3-3 6-3s3 3 6 3 3-6 6-6 3 6 6 6 3-9 6-9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 8l4 2-4 2M14 6l4 2-4 2M24 4l4 2-4 2" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            <span class="cue-name">Moth eye</span><span class="cue-hint">graded interfaces, no abrupt mismatch</span>
+          </summary>
+          <dl class="cue-dl">
+            <dt>Natural mechanism</dt><dd>A sub-wavelength graded surface removes the abrupt impedance change that causes reflection. The transport analogue is the entrance and exit resistance of an abrupt channel mouth.</dd>
+            <dt>Design variable</dt><dd>Gradient length of wall–fluid interaction or wettability at the entrance relative to channel radius; entrance-resistance coefficient.</dd>
+            <dt>Simulation experiment</dt><dd>NEMD flow through pores with graded entrance interactions; entrance and exit hydraulic resistance against gradient length.</dd>
+            <dt>Engineering objective</dt><dd>Reduced interfacial resistance through graded interfaces. The optical origin is the analogy only; no photonic simulation is claimed.</dd>
+          </dl>
+        </details>
+      </div>
+
+      <div class="mechmap-col mechmap-agent">
+        <h4>Physics-gated learning agent</h4>
+        <ol class="agent-loop">
+          <li>Observe</li><li>Extract mechanism</li><li>Propose design</li><li>Select fidelity</li><li>Simulate</li><li>Validate</li><li>Stop or revise</li>
+        </ol>
+        <p class="agent-note">The agent proposes and allocates; the physics gate decides what counts as evidence.</p>
+      </div>
+
+      <div class="mechmap-col">
+        <h4>Target capabilities in confined nanosystems</h4>
+        <ul class="targets">
+          <li data-target="selectivity">Ionic selectivity</li>
+          <li data-target="passive">Passive mass transport and heat removal</li>
+          <li data-target="voltage">Voltage-driven transport and energy conversion</li>
+          <li data-target="interface">Interface and entrance management</li>
+        </ul>
+        <p class="agent-note">Capabilities to be pursued, each with a declared uncertainty target and an admissibility decision. No outcome is claimed.</p>
+      </div>
+    </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- 7. Publications and profile ------------------------------------------------------------------ -->
+<section class="section" id="publications">
+  <div class="container">
+    <h2>Publications and profile</h2>
+    <div class="grid-2">
+      <div>
+        <ul class="pubs">
+          <li><span class="title">First law of thermodynamics on the boundary for flow through a carbon nanotube</span><span class="meta">K. E. Karim and B. Kim, <em>Physical Review E</em> 103, 053115 (2021). <a href="https://doi.org/10.1103/PhysRevE.103.053115">doi:10.1103/PhysRevE.103.053115</a></span></li>
+          <li><span class="title">Estimating water transport in carbon nanotubes: a critical review and inclusion of scale effects</span><span class="meta">K. E. Karim, M. Barisik, C. Bakli and B. Kim, <em>Physical Chemistry Chemical Physics</em> 26, 19069–19082 (2024). <a href="https://doi.org/10.1039/D4CP01068J">doi:10.1039/D4CP01068J</a></span></li>
+        </ul>
+        <p style="margin-top: var(--space-2)">Earlier peer-reviewed work in materials and mechanical engineering, and pending first-author manuscripts, are listed by title in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV (PDF)</a>. Full record on <a href="https://scholar.google.com/citations?user=jRhIY3UAAAAJ">Google Scholar</a> and <a href="https://orcid.org/0000-0003-0627-3002">ORCID</a>.</p>
+      </div>
+      <div>
+        <h3>Education</h3>
+        <ul>
+          <li>Ph.D. candidate, Integrated M.S.–Ph.D. Program in Mechanical Engineering, University of Ulsan, Republic of Korea, March 2019 to present. Dissertation: <em>What survives sub-nm confinement? The meaning of slip length under molecular accessibility, ergodicity and structure–transport decoupling.</em></li>
+          <li>B.Sc., Mechanical Engineering, Khulna University of Engineering &amp; Technology, Bangladesh, 2015.</li>
+        </ul>
+        <h3>Toolchain</h3>
+        <p>LAMMPS, CP2K, DP-GEN and DeePMD-kit; Python with NumPy, SciPy, pandas, Matplotlib, scikit-learn and MDAnalysis; Bash, Linux/HPC and MPI workflows; OVITO and VMD; ANSYS for continuum flow and thermal analysis.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Contact -------------------------------------------------------------------------------------- -->
+<section class="section section-band" id="contact">
+  <div class="container">
+    <h2>Discuss a postdoctoral or research-fellow opportunity</h2>
+    <p>I am open to positions where molecular simulation, learned potentials and transport questions meet. Target start: early 2027. Defense planned for November 2026; formal degree conferral expected in February 2027. Email is the quickest route; I reply from the address below.</p>
+    <div class="contact-row">
+      <a class="contact-email" id="email-link" href="mailto:kaziehsanul45@gmail.com" data-email="kaziehsanul45@gmail.com">kaziehsanul45@gmail.com</a>
+      <button class="btn btn-small" type="button" id="copy-email" data-email="kaziehsanul45@gmail.com">Copy email</button>
+      <span class="copy-state" id="copy-state" aria-live="polite"></span>
+    </div>
+    <ul class="links">
+      <li><a href="https://scholar.google.com/citations?user=jRhIY3UAAAAJ">Google Scholar</a></li>
+      <li><a href="https://orcid.org/0000-0003-0627-3002">ORCID</a></li>
+      <li><a href="https://www.linkedin.com/in/kazi-ehsanul-karim-75413989">LinkedIn</a></li>
+      <li><a href="https://github.com/Kazi21">GitHub</a></li>
+      <li><a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>Public CV (PDF)</a></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <p class="version">Version 0.1.4. Research website with a methods-and-software demonstration for Project 2 and an explanatory Simulation Lab preview; the live experiment is scheduled for a later release.</p>
+    </div>
+    <div>
+      <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>
+    </div>
+    <div>
+      <p>This page makes no third-party requests, sets no cookies and runs no analytics. Fonts and mathematics are served from this site.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js" defer></script>
+</body>
+</html>

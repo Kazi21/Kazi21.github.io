@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Error-aware MLIPs: methods and software demonstration — Kazi Ehsanul Karim</title>
+<meta name="description" content="Runnable methods tooling with synthetic fixtures for the CNT-confined NaCl–water MLIP work of Kazi Ehsanul Karim: reference-protocol checking, per-species force diagnostics, group-aware uncertainty and a rules-based decision prototype. Synthetic example data; no campaign results.">
+<meta name="robots" content="index,follow">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#0d1b2a">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="../../index.html#projects">Research Projects</a>
+      <a href="../../index.html#practice">Research in Practice</a>
+      <a href="../../index.html#lab">Simulation Lab</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section" id="top">
+  <div class="container">
+    <p class="project-kicker">Research in Practice · evidence</p>
+    <h1 class="evidence-title">Error-aware MLIPs for confined electrolytes: methods and software demonstration</h1>
+    <p class="statement">Runnable tooling and synthetic fixtures that show how the CNT-confined NaCl–water MLIP work checks its references, exposes per-species errors and chooses the next calculation.</p>
+    <p><span class="badge badge-label">Methods and software demonstration · synthetic example data</span></p>
+    <p class="section-intro">Method and tooling evidence. Synthetic fixtures demonstrate the tooling, not DFT/MLIP accuracy or physical transport. No restricted campaign numbers are shown.</p>
+    <p class="section-intro">Analysis code drafted with AI assistance and checked against raw outputs; scientific decisions and validation design are the author&#x27;s. See NOTICE.</p>
+    <ul class="links">
+      <li><a href="../../assets/downloads/NaCl_Water_CNT_Website_Evidence_v0.1-web.zip" download>Download the package (zip, web build)</a></li>
+      <li><a href="source.html">Browse the source</a></li>
+      <li><a href="package/README.md">README</a></li>
+      <li><a href="package/NOTICE.md">NOTICE</a></li>
+      <li><a href="package/MANIFEST.json">MANIFEST</a></li>
+    </ul>
+    <p class="agent-note">Web build: 25 of the package's 28 files plus MANIFEST.json and a web-build manifest. Pending until supplied: <code>LICENSE</code>, <code>examples/synthetic/example_cp2k.inp</code>, <code>website/workflow.svg</code>. The three commands that need none of them ran as documented (below); the CP2K parse example will be shown once <code>example_cp2k.inp</code> is added.</p>
+  </div>
+</section>
+
+<section class="section section-band" id="executed">
+  <div class="container">
+    <h2>What was executed for this page</h2>
+    <p class="section-intro">The package's documented commands were run on 23 September 2026 in a clean environment (Python 3.11.15, NumPy 2.4.4, Matplotlib 3.10.9 (Linux)). Every number below comes from the package's synthetic fixtures. Synthetic software demonstration; not a DFT, MLIP-accuracy or transport result.</p>
+    <table class="runtable">
+      <thead><tr><th>Command (from the package README)</th><th>Outcome</th></tr></thead>
+      <tbody>
+        <tr><td><code>python tests/test_mlip_evidence.py</code></td><td><span class="badge badge-exec">13 passed, 0 failed</span> (the count the README specifies)</td></tr>
+        <tr><td><code>python -m examples.synthetic.make_fixture demo_out</code></td><td>Wrote metrics.json, interval.json, decision.json, SUMMARY.json and two figures. Aggregate component RMSE 0.207 (arbitrary synthetic units) while the deliberately weak <code>Na</code> channel shows 1.02; bootstrap interval status <code>OK</code> over 5 synthetic replicas; decision <code>REVIEW_MODEL_SCOPE</code>.</td></tr>
+        <tr><td><code>python -m mlip_evidence.cli decide examples/synthetic/example_evidence.json</code></td><td>Action <code>REVIEW_MODEL_SCOPE</code>, policy <code>decision-policy-0.1</code>; reasons listed below.</td></tr>
+        <tr><td><code>python -m mlip_evidence.cli summarize-protocol examples/synthetic/example_cp2k.inp</code></td><td><span class="badge badge-pending">not run</span> the sample input is not yet in the web build.</td></tr>
+      </tbody>
+    </table>
+    <div class="grid-2" style="margin-top: var(--space-4)">
+      <div>
+        <h3>Per-species component RMSE, synthetic fixture</h3>
+        <table class="runtable"><thead><tr><th>Species</th><th>component RMSE (arb.)</th></tr></thead><tbody><tr><td>C</td><td>0.091</td></tr><tr><td>Cl</td><td>0.096</td></tr><tr><td>H</td><td>0.114</td></tr><tr><td>Na</td><td>1.020</td></tr><tr><td>O</td><td>0.238</td></tr></tbody></table>
+        <p class="agent-note">The aggregate looks acceptable; the per-species table exposes the weak minority channel. Raw outputs of the demo: <a href="executed/SUMMARY.json">SUMMARY.json</a> · <a href="executed/metrics.json">metrics.json</a> · <a href="executed/interval.json">interval.json</a> · <a href="executed/decision.json">decision.json</a>; of the <code>decide</code> command: <a href="executed/decide_example_evidence.json">decide_example_evidence.json</a>.</p>
+      </div>
+      <div>
+        <h3>Decision returned for the example evidence</h3>
+        <p><code>REVIEW_MODEL_SCOPE</code></p>
+        <ul><li>weak channel &#x27;Na&#x27; component RMSE 1.050 &gt; 0.5 eV/A</li><li>committee uncertainty blind to it (corr 0.07 &lt; 0.3)</li><li>a targeted direct-label repair already ran without improvement (narrow negative result) — route this channel out of scope, do not claim a proven root cause</li></ul>
+        <p class="agent-note">A rules-based prototype: it maps stated evidence and declared thresholds to one action and its reasons. It launches nothing and makes no cost or time-savings claim.</p>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top: var(--space-4)">
+      <figure class="evfig"><img src="executed/validation_component_rmse.png" alt="Bar chart of per-species component force RMSE from the synthetic fixture; the Na bar is highlighted as the weak channel." loading="lazy"><figcaption>Synthetic software demonstration; not a DFT, MLIP-accuracy or transport result.</figcaption></figure>
+      <figure class="evfig"><img src="executed/validation_vector_p95.png" alt="Bar chart of per-species 95th-percentile vector force error from the synthetic fixture; the Na bar is highlighted." loading="lazy"><figcaption>Synthetic software demonstration; not a DFT, MLIP-accuracy or transport result.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="cards">
+  <div class="container">
+    <h2>Three entry points</h2>
+    <p class="section-intro">The same three steps that the Research in Practice walkthrough describes, each with its status, its limitation and the code to inspect.</p>
+    <div class="projects">
+      <article class="ecard" id="reference-checking">
+        <p class="project-kicker">Reference-protocol checking</p>
+        <h3>Are the DFT references for training and validation actually compatible?</h3>
+        <p><span class="badge badge-exec">EXECUTED_EXAMPLE</span></p>
+        <dl class="project-dl">
+          <dt>What the tooling does</dt><dd>Extracts CP2K protocol parameters (functional, dispersion, basis/pseudos, density-grid cutoffs, metallic-SCF smearing, charge, periodicity, stress request) and flags any material training-vs-validation mismatch before a model error is interpreted.</dd>
+          <dt>Data origin</dt><dd>Real CP2K input template (protocol parameters only) + synthetic comparison fixture</dd>
+          <dt>What was executed</dt><dd>summarize_reference_protocol + compare_reference_protocols; parsed a real CP2K template; unit tests pass</dd>
+          <dt>Limitation</dt><dd class="limitation">A two-cutoff check does not establish convergence of every property; basis/grid/SCF convergence are distinct.</dd>
+          <dt>Next step</dt><dd>Attach a force-convergence-ladder summary on matched geometries.</dd>
+          <dt>Inspect</dt><dd><a href="#s1-reference-protocol-compatibility-cp2k">Methods §1</a> · <a href="source.html#mlip_evidence-reference_protocol-py">reference_protocol.py</a> · <span class="pending">example_cp2k.inp (sample input pending)</span></dd>
+        </dl>
+      </article>
+      <article class="ecard" id="error-diagnosis">
+        <p class="project-kicker">Error-aware, per-species validation</p>
+        <h3>Does the model hide a weak channel behind a good average?</h3>
+        <p><span class="badge badge-exec">EXECUTED_EXAMPLE</span></p>
+        <dl class="project-dl">
+          <dt>What the tooling does</dt><dd>Per-species force metrics with two explicit RMSE definitions, vector p95/max, per-frame breakdown, missing-species-as-missing-evidence, plus group-aware bootstrap CIs and a leakage/duplicate check. Demonstrates that a weak minority channel stays visible despite a low aggregate metric.</dd>
+          <dt>Data origin</dt><dd>Synthetic multi-species fixture with an intentionally weak channel</dd>
+          <dt>What was executed</dt><dd>force_metrics + estimate_metric_interval + detect_duplicate_frames on synthetic data; figures rendered with synthetic disclaimer; unit tests pass</dd>
+          <dt>Limitation</dt><dd class="limitation">Synthetic demonstration; real per-element results are private. A single uncertainty-error correlation is not full calibration.</dd>
+          <dt>Next step</dt><dd>Apply to a cleared, larger holdout with independent replicas for real CIs.</dd>
+          <dt>Inspect</dt><dd><a href="#s3-per-species-force-metrics-explicit-definitions">Methods §3</a> · <a href="source.html#mlip_evidence-metrics-py">metrics.py</a> · <a href="source.html#mlip_evidence-uncertainty-py">uncertainty.py</a></dd>
+        </dl>
+      </article>
+      <article class="ecard" id="computational-decisions">
+        <p class="project-kicker">Computational decision prototype</p>
+        <h3>Given the evidence, what is the right next computational action?</h3>
+        <p><span class="badge badge-proto">PROTOTYPE</span></p>
+        <dl class="project-dl">
+          <dt>What the tooling does</dt><dd>A transparent, rules-based workflow-controller that maps explicit evidence + declared thresholds to one action (review reference, check mapping, request targeted labels, request more sampling, review scope, stop-in-scope, or insufficient evidence), with reasons, missing evidence, policy version, and provenance. Refuses out-of-scope deployments; never lets a score override missing physics.</dd>
+          <dt>Data origin</dt><dd>Synthetic evidence records</dd>
+          <dt>What was executed</dt><dd>recommend_next_action over synthetic evidence; unit tests cover missing-evidence, E-field refusal, scoped-repair, and stop-in-scope paths</dd>
+          <dt>Limitation</dt><dd class="limitation">Fixed rule dispatcher, not a learned or autonomous scientist; launches nothing; no cost/time-savings claim.</dd>
+          <dt>Next step</dt><dd>Benchmark a learned action selector against this baseline before any autonomy claim.</dd>
+          <dt>Inspect</dt><dd><a href="#s6-decision-logic-workflow-controller-prototype">Methods §6</a> · <a href="source.html#mlip_evidence-decision-py">decision.py</a> · <a href="source.html#examples-synthetic-example_evidence-json">example_evidence.json</a></dd>
+        </dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-band" id="workflow">
+  <div class="container">
+    <h2>Workflow and status</h2>
+    <p class="section-intro">Text description of the package's workflow schematic (the SVG itself will be added when supplied). Schematic of methods and status; solid = implemented, dashed = proposed. Not a data figure.</p>
+    <div class="doc"><h1 id="workflowsvg--text-equivalent-accessibility">workflow.svg — text
+equivalent (accessibility)</h1>
+<p>A left-to-right pipeline with a feedback loop. Solid boxes are
+implemented; dashed boxes are proposed (not yet done); the red box is
+out of MLIP scope.</p>
+<p><strong>Implemented pipeline (top row):</strong></p>
+<ol type="1">
+<li><strong>CP2K reference</strong> — PBE-D3(BJ) reference calculations;
+reference-protocol check. →</li>
+<li><strong>Data mapping</strong> — id-sorting and leakage/duplicate
+check. →</li>
+<li><strong>DP-GEN + DeePMD</strong> — committee training via active
+learning. →</li>
+<li><strong>Per-species validation</strong> — error-aware validation on
+a leak-free fresh-DFT holdout. →</li>
+<li><strong>Uncertainty</strong> — group-aware bootstrap confidence
+intervals (or "unavailable").</li>
+</ol>
+<p><strong>Decision + deployment (second row):</strong> 6. Uncertainty
+feeds a <strong>rules-based decision controller (prototype)</strong>,
+which either emits <strong>LAMMPS deployment</strong> (stability-gated,
+tested scope only) or routes back to the 7. <strong>Acquisition
+loop</strong> (request targeted labels / more sampling) → re-label /
+retrain at the CP2K and training stages.</p>
+<p><strong>Out of MLIP scope:</strong> one <strong>weak ion
+channel</strong> is routed to <strong>direct DFT / classical
+methods</strong> rather than trusted from the potential.</p>
+<p><strong>Proposed extensions (dashed, not yet done):</strong></p>
+<ul>
+<li><strong>Stress/virial labels + a virial loss term</strong> → enables
+variable-cell deployment.</li>
+<li><strong>A learned action selector</strong> → would replace the
+rules-based controller (requires separate benchmarking before any
+autonomy claim).</li>
+</ul>
+<p>The diagram shows methods and their status; it contains no data
+values and is not a scientific-result figure.</p>
+</div>
+  </div>
+</section>
+
+<section class="section" id="project">
+  <div class="container">
+    <h2>Project write-up</h2>
+    <p class="section-intro">The package's own project description. Statements about the private campaign are the author's account; no campaign numbers, models or trajectories are published.</p>
+    <div class="doc"><h1 id="error-aware-mlips-for-confined-electrolytes">Error-Aware MLIPs
+for Confined Electrolytes</h1>
+<p><strong>The problem.</strong> Ions and water inside carbon nanotubes
+behave nothing like bulk solution — hydration shells are stripped, and
+wall friction sets the ultimate limit on transport. Ab-initio molecular
+dynamics is accurate enough to capture this but far too expensive for
+the timescales transport needs. Machine-learned interatomic potentials
+(MLIPs) can bridge that gap, but only if their errors are understood
+channel by channel rather than hidden behind a single average.</p>
+<p><strong>What I built.</strong> An end-to-end, energy-and-force MLIP
+workflow for NaCl–water in CNTs: CP2K reference calculations
+(PBE-D3(BJ), MOLOPT/GTH, with the Fermi-smearing SCF strategy that
+metallic armchair tubes require), DP-GEN active learning with a model
+committee, DeePMD training, and stability-gated LAMMPS deployment. The
+emphasis is not "it trained" but <strong>error-aware
+validation</strong>: a leak-free, freshly-labelled holdout scored per
+element, so the framework, water, and chloride channels are certified
+separately from a weaker sodium channel — and the model's committee
+uncertainty is checked against true error instead of being trusted
+blindly.</p>
+<p><strong>The honest result.</strong> When one ionic channel proved
+weak, I ran a single targeted repair, saw no improvement on the
+untouched holdout, and <strong>scoped that channel out</strong> —
+routing those quantities to direct DFT and classical methods — rather
+than averaging the problem away. Documenting where a model <em>should
+not</em> be used is part of the contribution.</p>
+<p><strong>Inspectable evidence.</strong> This site ships runnable
+tooling (with synthetic fixtures) for reference-protocol checking,
+per-species force metrics with explicit definitions, group-aware
+bootstrap uncertainty that returns "unavailable" when the data can't
+support a confidence interval, and a transparent rules-based decision
+prototype that recommends the next computational action from stated
+evidence. Everything is unit-tested; the figures are labelled synthetic;
+no restricted results are exposed.</p>
+<p><strong>Next experiment (scoped).</strong> Extend the reference
+protocol to stress labels and add a virial term to the loss, gated
+behind a composition-disjoint validation set — the concrete step toward
+variable-cell deployment the current energy-and-force model does not
+support.</p>
+<p><em>Status: methods and tooling — EXECUTED_EXAMPLE / PROTOTYPE. Ph.D.
+completion ~February 2027. See MODEL_SCOPE.md for the validity
+envelope.</em></p>
+</div>
+  </div>
+</section>
+
+<section class="section section-band" id="docs">
+  <div class="container">
+    <h2>Methods, scope, walkthrough and provenance</h2>
+    <details class="disclosure" open><summary>Methods (METHODS.md)</summary><div class="disclosure-body doc"><h1 id="methods">METHODS</h1>
+<p>Method-level description of the workflow the tooling supports. No
+restricted campaign numbers appear here; all illustrative figures are
+synthetic.</p>
+<h2 id="s1-reference-protocol-compatibility-cp2k">1. Reference-protocol
+compatibility (CP2K)</h2>
+<p>MLIP accuracy is only meaningful against a fixed DFT reference.
+<code>summarize_reference_protocol</code> extracts the parameters that
+determine compatibility from a CP2K input: run type, functional and
+dispersion, basis sets and pseudopotentials, density-grid cutoffs
+(<code>CUTOFF</code>/<code>REL_CUTOFF</code>), SCF threshold/algorithm,
+smearing and added MOs (needed for metallic armchair CNTs), total
+charge, cell, and Poisson periodicity — and whether the stress tensor
+was requested. <code>compare_reference_protocols</code> flags any
+<strong>material</strong> mismatch between the training and validation
+references, so a difference is classified <em>before</em> a model error
+is attributed to the model.</p>
+<p>Caveat: a two-cutoff comparison demonstrates a convergence check; it
+does not establish convergence of every property. Basis, density-grid,
+and SCF convergence are distinct.</p>
+<h2 id="s2-data-mapping-and-leakage">2. Data mapping and leakage</h2>
+<p><code>validate_frame_mapping</code> verifies atom/frame
+correspondence between reference and prediction. With atom IDs it
+restores order via the unique permutation; without IDs it accepts only
+an already-identical order and <strong>refuses to guess</strong> an
+ambiguous reorder. <code>detect_duplicate_frames</code> flags
+exact-duplicate geometries between two sets. Zero exact collisions
+establishes only the absence of exact duplicates — not statistical
+independence or the absence of near-duplicates. Held-out data should be
+separated by trajectory/generation, and a holdout that informed repair
+or model selection is development validation, not untouched final
+testing.</p>
+<h2 id="s3-per-species-force-metrics-explicit-definitions">3. Per-species
+force metrics (explicit definitions)</h2>
+<p>Two force-RMSE definitions are reported side by side and never
+mixed:</p>
+<ul>
+<li>component RMSE = <code>sqrt( sum((Fp−Fr)**2) / (3N) )</code></li>
+<li>vector RMSE =
+<code>sqrt( mean( sum((Fp−Fr)**2, axis=−1) ) )</code></li>
+</ul>
+<p><code>force_metrics</code> also reports component MAE and
+vector-error median/p95/max <strong>per species</strong>, with per-frame
+breakdowns, so a dominant species or large system cannot conceal a weak
+minority channel. A species with no matched observations is reported as
+<strong>missing evidence</strong>, never as zero error.</p>
+<h2 id="s4-uncertainty-group-aware-bootstrap">4. Uncertainty (group-aware
+bootstrap)</h2>
+<p><code>estimate_metric_interval</code> resamples <strong>independent
+units</strong> — independent replicas, or justified time blocks — with
+replacement (defaults: 95%, 2000 draws, seed 20260906). Force
+components, atoms, adjacent frames, and committee members are
+<strong>not</strong> treated as independent replicates. If too few
+independent units exist, or block metadata is missing, it returns
+<code>CI_UNAVAILABLE</code> with a reason rather than fabricating an
+interval. Committee spread is an acquisition signal; comparing it to
+reference error on matched observations is a diagnostic, and a single
+correlation is not full calibration.</p>
+<h2 id="s5-dynamics-gates">5. Dynamics gates</h2>
+<p>Short stable NVT trajectories and low NVE energy drift are
+<strong>limited numerical checks</strong> of a deployment. They do not
+certify force accuracy, correct chemistry, or converged transport. A
+transport coefficient (e.g. a Green–Kubo friction) is only quoted when
+its correlation-integral plateau is resolved and cross-checked;
+otherwise no value is reported.</p>
+<h2 id="s6-decision-logic-workflow-controller-prototype">6. Decision
+logic (workflow-controller prototype)</h2>
+<p><code>recommend_next_action</code> maps explicit evidence + declared
+thresholds to one next action (<code>REVIEW_REFERENCE</code>,
+<code>CHECK_LABEL_MAPPING</code>, <code>REQUEST_TARGETED_LABELS</code>,
+<code>REQUEST_MORE_SAMPLING</code>, <code>REVIEW_MODEL_SCOPE</code>,
+<code>STOP_WITHIN_TESTED_SCOPE</code>,
+<code>INSUFFICIENT_EVIDENCE</code>). It is a transparent rule
+dispatcher: it emits the action, the reasons, the missing evidence, the
+policy version, and input provenance. No numerical score overrides
+missing physics evidence; an unsupported deployment (e.g. an external
+electric field) is refused by the scope policy. It is
+<strong>not</strong> a learned or autonomous system and launches
+nothing.</p>
+<h2 id="units">Units</h2>
+<p>Force conversion is derived from NIST CODATA 2022 constants
+(<code>HARTREE_TO_EV / BOHR_TO_ANGSTROM = 51.42206751 (eV/Å)/(Ha/Bohr)</code>),
+used as the single declared convention throughout the tooling.</p>
+</div></details>
+    <details class="disclosure"><summary>Model scope (MODEL_SCOPE.md)</summary><div class="disclosure-body doc"><h1 id="model-scope-public">MODEL SCOPE (public)</h1>
+<p>Validity envelope of the confined-electrolyte MLIP, at the level of
+<em>what it is for</em> and <em>what it must not be used for</em>. This
+is a scope statement, not a results sheet — no restricted campaign
+numbers appear here.</p>
+<h2 id="what-the-model-is">What the model is</h2>
+<ul>
+<li><strong>Architecture:</strong> standard <strong>local</strong>
+DeePMD potential (<code>se_e2_a</code> descriptor). Coulomb interactions
+are represented only implicitly, within the descriptor cutoff. It is
+<strong>not</strong> a long-range / charge-aware model (not DPLR), and
+it is <strong>not</strong> an equivariant model (not MACE/NequIP).</li>
+<li><strong>Training labels:</strong> <strong>energy and force
+only.</strong> Stress/virial is <strong>not</strong> in the training
+objective, so variable-cell/NPT behaviour is untrained.</li>
+<li><strong>Committee:</strong> a small multi-model committee (shared
+warm-start lineage) used for an active-learning acquisition signal;
+committee spread is not a calibrated error on its own.</li>
+</ul>
+<h2 id="tested--supported-use-executed_example">Tested / supported use
+(EXECUTED_EXAMPLE)</h2>
+<ul>
+<li>Equilibrium molecular dynamics of the <strong>same periodic CNT +
+water + dilute-NaCl cells</strong> it was trained on, at temperatures
+inside the trained range (~300–350 K), for: confined-water structure,
+ion hydration/coordination of the well-represented channels, and
+wall-friction analysis.</li>
+<li>Deployment uses a <strong>rigid-wall</strong> convention and passes
+short-timescale stability gates; one narrow chirality is metastable with
+flexible walls and is run rigid.</li>
+</ul>
+<h2 id="known-weakness-carried-into-every-claim">Known weakness (carried
+into every claim)</h2>
+<ul>
+<li>One ionic channel is <strong>not accurately represented</strong> by
+this local model and its quantities are taken from <strong>direct
+DFT/AIMD</strong> (and its transport from classical methods), never from
+the MLIP. This is stated wherever those quantities appear.</li>
+</ul>
+<h2
+id="prohibited-without-new-validation-proposed-extensions-only">PROHIBITED
+without new validation (PROPOSED extensions only)</h2>
+<ul>
+<li>External <strong>electric fields</strong> or thermal gradients (no
+field response in an energy/force PES).</li>
+<li><strong>Open-reservoir / membrane / CNT-mouth</strong> geometries
+(only periodic tube cells are tested).</li>
+<li><strong>Concentrations or tube lengths</strong> materially outside
+the trained cells (no universal transferability claim).</li>
+<li><strong>Stress / NPT / variable-cell</strong> simulation (virial
+untrained).</li>
+<li>Any reliance on <strong>explicit long-range electrostatics</strong>
+(the model has none).</li>
+</ul>
+<p>The <code>mlip_evidence</code> decision policy encodes this envelope:
+a request outside the tested deployment set returns
+<code>REVIEW_MODEL_SCOPE</code> (refused) rather than a green light.</p>
+</div></details>
+    <details class="disclosure"><summary>Two-minute reviewer walkthrough (PI_WALKTHROUGH.md)</summary><div class="disclosure-body doc"><h1 id="two-minute-pi-walkthrough">Two-minute PI walkthrough</h1>
+<p>A reviewer-facing script showing one shareable input, a raw
+output/fixture, regenerated analysis, a personal decision, a limitation,
+and the next check. Everything shown is either a methods artifact or a
+labelled synthetic fixture — no restricted results.</p>
+<h2 id="s000--framing-15-s">0:00 — Framing (15 s)</h2>
+<p>"I build energy-and-force MLIPs for ions and water confined in carbon
+nanotubes. What I want to show isn't that a model trained — it's how I
+make its errors <em>legible</em> and let that drive the next
+computational action."</p>
+<h2 id="s015--one-shareable-input-20-s">0:15 — One shareable input (20
+s)</h2>
+<p>Open <code>examples/synthetic/example_cp2k.inp</code> and run:</p>
+<pre class="bash"><code>python -m mlip_evidence.cli summarize-protocol examples/synthetic/example_cp2k.inp</code></pre>
+<p>"This parses a CP2K reference input into a protocol summary —
+functional, dispersion, grid cutoffs, the Fermi-smearing SCF strategy
+metallic armchair tubes need, periodicity, and whether stress was even
+requested. I compare training vs validation protocols so a reference
+mismatch is caught <em>before</em> I blame the model."</p>
+<h2 id="s035--raw-fixture--regenerated-analysis-35-s">0:35 — Raw fixture
+→ regenerated analysis (35 s)</h2>
+<pre class="bash"><code>python -m examples.synthetic.make_fixture demo_out</code></pre>
+<p>"On a synthetic multi-species set with one deliberately weak channel,
+the aggregate force RMSE looks fine — but the per-species table and
+figure expose the weak channel anyway. A species with no data is
+reported as <em>missing</em>, not zero. Uncertainty uses a group-aware
+bootstrap over independent replicas and returns 'unavailable' when the
+data can't support a confidence interval, instead of inventing one."</p>
+<h2 id="s110--a-personal-decision-30-s">1:10 — A personal decision (30
+s)</h2>
+<pre class="bash"><code>python -m mlip_evidence.cli decide examples/synthetic/example_evidence.json</code></pre>
+<p>"The controller reads the evidence and recommends the next action.
+Here it returns <code>REVIEW_MODEL_SCOPE</code>: the weak channel's
+committee uncertainty was blind to it, and a targeted repair had already
+failed — so the honest move is to scope that channel out and route it to
+direct DFT, not to keep grinding. In the real campaign that is exactly
+the decision I made."</p>
+<h2 id="s140--limitation--next-check-20-s">1:40 — Limitation + next check
+(20 s)</h2>
+<p>"Limitations I state up front: this potential is local — no explicit
+long-range electrostatics — and it's energy-and-force only, so no stress
+or variable-cell. The next concrete step is stress labels plus a virial
+loss term, gated behind a composition-disjoint validation set. That's
+the smallest experiment that would extend the validated scope."</p>
+<p><em>Note: this walkthrough is the public artifact. The private
+readiness plan is not shown to reviewers and is not part of this
+package.</em></p>
+</div></details>
+    <details class="disclosure"><summary>Package README</summary><div class="disclosure-body doc"><h1
+id="error-aware-mlips-for-confined-electrolytes--evidence-tooling">Error-Aware
+MLIPs for Confined Electrolytes — evidence tooling</h1>
+<p>Reproducible, self-contained tooling that demonstrates the
+<strong>methods</strong> behind a machine-learned interatomic potential
+(MLIP) campaign for NaCl–water inside carbon nanotubes: CP2K
+reference-protocol checking → error-aware per-species validation →
+group-aware uncertainty → a transparent decision prototype → LAMMPS
+deployment scope.</p>
+<p><strong>Author role.</strong> Kazi Ehsanul Karim designed the
+reference protocol, the validation and holdout strategy, the
+active-learning and stability gates, and every scientific go/no-go
+decision, and executed the calculations on his workstation. Analysis
+code was drafted with AI assistance and checked against raw outputs. See
+<code>NOTICE.md</code>.</p>
+<h2 id="what-this-package-is--and-is-not">What this package is — and is
+not</h2>
+<ul>
+<li><strong>Is:</strong> runnable tooling + <strong>synthetic</strong>
+fixtures that exercise the analysis and decision logic, plus
+methods/scope documentation.</li>
+<li><strong>Is not:</strong> it runs <strong>no DFT</strong>,
+trains/evaluates <strong>no MLIP</strong>, and produces <strong>no
+physical result</strong>. Every number it prints comes from
+clearly-labelled synthetic fixtures. Real campaign results, models, and
+trajectories are intentionally excluded.</li>
+</ul>
+<h2 id="status-labels-used-throughout">Status labels used
+throughout</h2>
+<p><code>PUBLISHED</code> · <code>EXECUTED_EXAMPLE</code> ·
+<code>PROTOTYPE</code> · <code>IN_DEVELOPMENT</code> ·
+<code>PROPOSED</code>. Synthetic figures are stamped <em>"Synthetic
+software demonstration; not a DFT, MLIP-accuracy or transport
+result."</em></p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Python ≥ 3.10, NumPy, Matplotlib (report/figure regeneration).</li>
+<li>No DFT/MLIP engine is required to run anything here.</li>
+<li>Tested with: python 3.12, numpy 2.3, matplotlib 3.10.</li>
+</ul>
+<h2 id="runnable-examples-from-this-public-directory">Runnable examples
+(from this <code>public/</code> directory)</h2>
+<pre class="bash"><code># 1. focused tests (should print &quot;13 passed, 0 failed&quot;)
+python tests/test_mlip_evidence.py
+
+# 2. full synthetic pipeline: metrics -&gt; figures -&gt; bootstrap CI -&gt; decision
+python -m examples.synthetic.make_fixture demo_out
+#   writes demo_out/{metrics.json, interval.json, decision.json, SUMMARY.json,
+#   validation_component_rmse.png, validation_vector_p95.png}
+
+# 3. parse a CP2K input into a protocol summary (works on any CP2K .inp)
+python -m mlip_evidence.cli summarize-protocol examples/synthetic/example_cp2k.inp
+
+# 4. run the decision controller on an evidence file
+python -m mlip_evidence.cli decide examples/synthetic/example_evidence.json</code></pre>
+<h2 id="package-layout">Package layout</h2>
+<pre><code>mlip_evidence/        reference_protocol, frame_mapping, metrics, uncertainty,
+                      decision (workflow-controller), figures, release, cli, constants
+tests/                focused tests (one per named risk)
+examples/synthetic/   deterministic fixtures + end-to-end demo (SYNTHETIC ONLY)
+README.md METHODS.md MODEL_SCOPE.md    docs
+website/              site copy, evidence cards, workflow.svg, integration notes
+PI_WALKTHROUGH.md     two-minute reviewer script
+LICENSE NOTICE.md     licensing + attribution</code></pre>
+<h2 id="limits-read-before-citing">Limits (read before citing)</h2>
+<ul>
+<li>Synthetic fixtures demonstrate tooling, not accuracy or
+transport.</li>
+<li>The MLIP is <strong>energy-and-force</strong> only; stress/virial
+and variable-cell are not trained.</li>
+<li>The model is <strong>local</strong> (no explicit long-range
+electrostatics); prohibited deployments are listed in
+<code>MODEL_SCOPE.md</code>.</li>
+<li>The decision component is a <strong>rules-based prototype</strong>,
+not an autonomous agent.</li>
+<li>See <code>METHODS.md</code> for definitions and
+<code>MODEL_SCOPE.md</code> for the validity envelope.</li>
+</ul>
+</div></details>
+    <details class="disclosure"><summary>Attribution and provenance (NOTICE.md)</summary><div class="disclosure-body doc"><h1 id="notice--attribution-and-provenance">NOTICE — attribution and
+provenance</h1>
+<h2 id="ownership-of-this-package">Ownership of this package</h2>
+<p>The <code>mlip_evidence</code> tooling, its tests, the synthetic
+examples, and the documentation in this package were authored for Kazi
+Ehsanul Karim's research website. The <strong>scientific decisions,
+validation design, reference protocol, and scope judgments are the
+author's</strong>. The analysis code was <strong>drafted with AI
+assistance</strong> and checked against raw outputs; a passing test
+count demonstrates software behaviour, not scientific validity or
+physical accuracy.</p>
+<h2 id="what-is-included-vs-referenced">What is included vs.
+referenced</h2>
+<ul>
+<li><strong>Included:</strong> new, self-contained tooling +
+<strong>synthetic</strong> fixtures + methods/scope docs.</li>
+<li><strong>Referenced only (NOT included):</strong> the DFT/MLIP
+campaign's inputs, models, trajectories, logs, and numerical results;
+these are private research artifacts.</li>
+</ul>
+<h2
+id="upstream-software-used-in-the-underlying-research-not-distributed-here">Upstream
+software (used in the underlying research; not distributed here)</h2>
+<p>These tools were used to produce the campaign that this package
+<em>describes</em>; each is the property of its authors under its own
+license, and none is redistributed in this package:</p>
+<ul>
+<li><strong>CP2K</strong> — Quickstep DFT (GPL). <a
+href="https://www.cp2k.org">https://www.cp2k.org</a></li>
+<li><strong>DeePMD-kit</strong> — MLIP training/inference (LGPL-3.0). <a
+href="https://github.com/deepmodeling/deepmd-kit">https://github.com/deepmodeling/deepmd-kit</a></li>
+<li><strong>DP-GEN</strong> — concurrent-learning workflow (LGPL-3.0).
+<a
+href="https://github.com/deepmodeling/dpgen">https://github.com/deepmodeling/dpgen</a></li>
+<li><strong>LAMMPS</strong> — molecular dynamics (GPL-2.0). <a
+href="https://www.lammps.org">https://www.lammps.org</a></li>
+<li><strong>NumPy</strong>, <strong>Matplotlib</strong>,
+<strong>SciPy</strong> — scientific Python (BSD/PSF-style
+licenses).</li>
+</ul>
+<h2 id="constants">Constants</h2>
+<p>Physical constants are NIST CODATA 2022 (checked 2026-09-06). The
+force-conversion factor is derived from the two primary constants rather
+than hard-coded.</p>
+<h2 id="data-statement">Data statement</h2>
+<p>No experimental or third-party dataset is redistributed. All numeric
+fixtures are synthetic and generated by
+<code>examples/synthetic/make_fixture.py</code>. Published prior work by
+the author (e.g. PRE 2021, PCCP 2024) belongs to the respective journals
+and is cited, not included.</p>
+<h2 id="excluded-by-policy">Excluded by policy</h2>
+<p>Private research results, model checkpoints, raw trajectories/logs,
+the readiness plan, and any PINN code/results are intentionally excluded
+from this package.</p>
+</div></details>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1 (web build). Website version 0.1.4.</p></div>
+    <div><p>Tooling in the package: MIT. Package documentation and this page: © Kazi Ehsanul Karim; see the package NOTICE.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
+  </div>
+</footer>
+</body>
+</html>
