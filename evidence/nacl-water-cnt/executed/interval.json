@@ -1,0 +1,14 @@
+{
+  "status": "OK",
+  "estimand": "mean of a_component_rmse",
+  "sampling_unit": "group 'group'",
+  "point": 0.16187077796807908,
+  "ci_low": 0.15987371007824594,
+  "ci_high": 0.16349761457482156,
+  "confidence": 0.95,
+  "n_groups": 5,
+  "n_bootstrap": 2000,
+  "seed": 20260906,
+  "method": "group/block nonparametric bootstrap (resample units with replacement)",
+  "note": "interval reflects between-unit variability only; it assumes the supplied units are genuinely independent"
+}

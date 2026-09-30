@@ -1,0 +1,15 @@
+{
+  "note": "SYNTHETIC demonstration only \u2014 not DFT/MLIP/transport results",
+  "overall_component_rmse": 0.31255922687622123,
+  "weak_channel_visible": {
+    "A": 0.16,
+    "B": 0.058,
+    "X": 1.451
+  },
+  "interval_status": "OK",
+  "decision_action": "REVIEW_MODEL_SCOPE",
+  "figures": [
+    "demo_out/validation_component_rmse.png",
+    "demo_out/validation_vector_p95.png"
+  ]
+}

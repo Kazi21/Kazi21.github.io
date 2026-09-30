@@ -1,0 +1,12 @@
+{
+  "_comment": "Synthetic evidence record for the decision-controller demo. Generic channel labels (not chemical elements) and arbitrary error values; no relation to any real result.",
+  "reference_compatible": true,
+  "frame_mapping_ok": true,
+  "requested_deployment": "wall_friction",
+  "per_species_error": {"A": 0.16, "B": 0.06, "X": 1.30},
+  "uncertainty_error_correlation": 0.20,
+  "targeted_repair_done": true,
+  "targeted_repair_improved": false,
+  "metric_interval_status": "OK",
+  "provenance": "synthetic example_evidence.json"
+}

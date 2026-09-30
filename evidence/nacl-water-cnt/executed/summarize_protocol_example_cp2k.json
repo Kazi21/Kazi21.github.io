@@ -1,0 +1,37 @@
+{
+  "source": "examples/synthetic/example_cp2k.inp",
+  "run_type": "ENERGY_FORCE",
+  "cutoff_Ry": 400.0,
+  "rel_cutoff_Ry": 60.0,
+  "ngrids": 4,
+  "eps_scf": 1e-06,
+  "max_scf": 400,
+  "charge": 0,
+  "added_mos": 120,
+  "smear_method": "FERMI_DIRAC",
+  "electronic_temperature_K": 300.0,
+  "xc_functional": "PBE",
+  "vdw_type": "DFTD3(BJ)",
+  "mixing_method": "BROYDEN_MIXING",
+  "stress_tensor": "ANALYTICAL",
+  "smearing_on": true,
+  "outer_scf_on": false,
+  "forces_on": false,
+  "kinds": {
+    "C": {
+      "basis_set": "DZVP-MOLOPT-GTH",
+      "potential": "GTH-PBE-q4"
+    },
+    "O": {
+      "basis_set": "DZVP-MOLOPT-GTH",
+      "potential": "GTH-PBE-q6"
+    }
+  },
+  "cell_abc_A": [
+    20.0,
+    20.0,
+    20.0
+  ],
+  "cell_uses_vectors": false,
+  "poisson_periodic": "XYZ"
+}

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" role="img"
+     aria-labelledby="wf-title wf-desc" font-family="Segoe UI, Arial, sans-serif">
+  <title id="wf-title">Error-aware MLIP workflow for confined electrolytes</title>
+  <desc id="wf-desc">A left-to-right pipeline. Implemented stages (solid boxes): CP2K
+    reference calculation and protocol check; data mapping and leakage check; DeePMD
+    committee training via DP-GEN active learning; per-species error-aware validation on a
+    fresh-DFT holdout; group-aware uncertainty; a rules-based decision controller; and
+    stability-gated LAMMPS deployment within the tested scope. The decision controller feeds
+    a loop back to acquisition (request targeted labels or more sampling). Proposed, not-yet-done
+    stages (dashed boxes): stress and virial labels with a virial loss term for variable-cell
+    deployment, and a learned action selector to replace the rules-based controller. Quantities
+    for a species outside the potential's validated scope are not taken from the potential.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 z" fill="#555"/>
+    </marker>
+    <style>
+      .box{fill:#EEF3FB;stroke:#3A5D9C;stroke-width:2;rx:8;}
+      .prop{fill:#FBF3E7;stroke:#B07A2A;stroke-width:2;stroke-dasharray:7 5;}
+      .oos{fill:#F7E9EC;stroke:#B0453A;stroke-width:2;}
+      .lbl{font-size:12.5px;fill:#1b2a44;}
+      .lblp{font-size:12.5px;fill:#5a3d12;}
+      .flow{stroke:#555;stroke-width:2;fill:none;marker-end:url(#arrow);}
+      .flowd{stroke:#B07A2A;stroke-width:2;fill:none;stroke-dasharray:7 5;marker-end:url(#arrow);}
+      .cap{font-size:11px;fill:#555;}
+      .hd{font-size:15px;font-weight:bold;fill:#1b2a44;}
+    </style>
+  </defs>
+
+  <text x="20" y="26" class="hd">Error-aware MLIP workflow — confined NaCl–water in CNTs</text>
+
+  <!-- row 1: implemented pipeline -->
+  <g>
+    <rect class="box" x="20"  y="50" width="152" height="58" rx="8"/>
+    <text class="lbl" x="30" y="74">CP2K reference</text>
+    <text class="cap" x="30" y="92">PBE-D3(BJ), protocol check</text>
+
+    <rect class="box" x="185" y="50" width="140" height="58" rx="8"/>
+    <text class="lbl" x="195" y="74">Data mapping</text>
+    <text class="cap" x="195" y="92">id-sort, leakage check</text>
+
+    <rect class="box" x="350" y="50" width="150" height="58" rx="8"/>
+    <text class="lbl" x="360" y="74">DP-GEN + DeePMD</text>
+    <text class="cap" x="360" y="92">committee, active learning</text>
+
+    <rect class="box" x="525" y="50" width="150" height="58" rx="8"/>
+    <text class="lbl" x="535" y="74">Per-species validation</text>
+    <text class="cap" x="535" y="92">fresh-DFT holdout</text>
+
+    <rect class="box" x="700" y="50" width="140" height="58" rx="8"/>
+    <text class="lbl" x="710" y="74">Uncertainty</text>
+    <text class="cap" x="710" y="92">group bootstrap / CI</text>
+
+    <path class="flow" d="M172,79 L183,79"/>
+    <path class="flow" d="M325,79 L348,79"/>
+    <path class="flow" d="M500,79 L523,79"/>
+    <path class="flow" d="M675,79 L698,79"/>
+  </g>
+
+  <!-- row 2: decision + deployment -->
+  <g>
+    <rect class="box" x="525" y="170" width="150" height="64" rx="8"/>
+    <text class="lbl" x="535" y="196">Decision controller</text>
+    <text class="cap" x="535" y="214">rules-based (prototype)</text>
+
+    <rect class="box" x="700" y="170" width="200" height="64" rx="8"/>
+    <text class="lbl" x="710" y="196">LAMMPS deployment</text>
+    <text class="cap" x="710" y="214">stability-gated, in scope only</text>
+
+    <rect class="box" x="185" y="170" width="270" height="64" rx="8"/>
+    <text class="lbl" x="195" y="196">Acquisition loop</text>
+    <text class="cap" x="195" y="214">targeted labels / more sampling</text>
+
+    <!-- uncertainty -> decision -->
+    <path class="flow" d="M770,108 L600,168"/>
+    <!-- decision -> deployment (stop in scope) -->
+    <path class="flow" d="M675,202 L698,202"/>
+    <!-- decision -> acquisition loop (request labels/sampling) -->
+    <path class="flow" d="M525,210 L457,204"/>
+    <!-- acquisition loop back up to CP2K/training -->
+    <path class="flow" d="M250,170 L250,110"/>
+    <text class="cap" x="255" y="150">re-label / retrain</text>
+  </g>
+
+  <!-- out-of-scope channel -->
+  <rect class="oos" x="20" y="170" width="140" height="64" rx="8"/>
+  <text class="lbl" x="30" y="196" fill="#7a2a24">Out-of-scope species</text>
+  <text class="cap" x="30" y="214">not taken from the MLIP</text>
+  <path class="flow" d="M595,168 C520,150 250,150 120,168" />
+
+  <!-- proposed extensions -->
+  <g>
+    <rect class="prop" x="350" y="300" width="220" height="60" rx="8"/>
+    <text class="lblp" x="360" y="324">Stress/virial labels + loss</text>
+    <text class="cap" x="360" y="342">variable-cell (PROPOSED)</text>
+
+    <rect class="prop" x="600" y="300" width="230" height="60" rx="8"/>
+    <text class="lblp" x="610" y="324">Learned action selector</text>
+    <text class="cap" x="610" y="342">replaces rules (PROPOSED)</text>
+
+    <path class="flowd" d="M460,300 L440,238"/>
+    <path class="flowd" d="M690,300 L640,238"/>
+  </g>
+
+  <!-- legend -->
+  <g transform="translate(20,395)">
+    <rect class="box" x="0" y="0" width="26" height="16" rx="4"/>
+    <text class="cap" x="32" y="13">Implemented (EXECUTED_EXAMPLE / PROTOTYPE)</text>
+    <rect class="prop" x="330" y="0" width="26" height="16" rx="4"/>
+    <text class="cap" x="362" y="13">Proposed (not yet done)</text>
+    <rect class="oos" x="560" y="0" width="26" height="16" rx="4"/>
+    <text class="cap" x="592" y="13">Out of MLIP scope</text>
+  </g>
+  <text class="cap" x="20" y="440">Schematic of methods and status. Not a scientific result figure; no data values shown.</text>
+</svg>

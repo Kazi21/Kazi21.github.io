@@ -1,0 +1,115 @@
+/* layout.css — page structure. Specificity is kept flat (single classes). */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: var(--leading-body);
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { max-width: 100%; height: auto; }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: var(--leading-tight); letter-spacing: -0.012em; }
+h1 { font-size: var(--step-4); letter-spacing: -0.025em; text-wrap: balance; }
+h2 { font-size: var(--step-3); margin-bottom: var(--space-3); text-wrap: balance; }
+h3 { font-size: var(--step-1); margin-bottom: var(--space-1); }
+h4 { font-size: var(--step-0); margin-bottom: var(--space-1); }
+
+p { margin: 0 0 var(--space-2); max-width: var(--measure); }
+p:last-child { margin-bottom: 0; }
+ul, ol { margin: 0 0 var(--space-2); padding-left: 1.25rem; max-width: var(--measure); }
+li { margin-bottom: 0.35rem; }
+li::marker { color: var(--dim); }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+.skip-link {
+  position: absolute; left: 1rem; top: -4rem;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 0.5rem 0.9rem; border-radius: var(--radius-s); font-weight: 600; z-index: 100;
+}
+.skip-link:focus { top: 1rem; }
+
+/* Header ------------------------------------------------------------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(13, 27, 42, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.site-header .container {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+  min-height: 3.5rem;
+}
+.brand { font-weight: 600; text-decoration: none; color: var(--text); white-space: nowrap; }
+.site-nav { display: flex; gap: clamp(0.6rem, 1.4vw, 1.4rem); flex-wrap: wrap; justify-content: flex-end; }
+.site-nav a { color: var(--muted); text-decoration: none; font-size: var(--step--1); padding: 0.25rem 0; border-bottom: 1px solid transparent; }
+.site-nav a:hover, .site-nav a[aria-current="true"] { color: var(--text); border-bottom-color: var(--accent); }
+
+/* Containers and sections -------------------------------------------- */
+.container { width: min(100% - 2 * var(--gutter), var(--container)); margin-inline: auto; }
+
+.section { padding-block: var(--space-6); border-top: 1px solid var(--line-soft); }
+.section-band { background: var(--bg-2); }
+.section-intro { max-width: var(--measure); margin-bottom: var(--space-4); color: var(--muted); }
+
+/* Hero ---------------------------------------------------------------- */
+.hero { padding-block: var(--space-5) var(--space-6); border-top: 0; }
+.hero-grid {
+  display: grid; gap: var(--space-4);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+}
+.hero-copy .lede { font-size: var(--step-1); color: var(--muted); line-height: 1.5; margin-top: var(--space-3); max-width: 34ch; }
+.hero-name { color: var(--muted); font-size: var(--step--1); margin-bottom: var(--space-3); }
+.hero-name strong { color: var(--text); font-weight: 500; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.hero-status { margin-top: var(--space-3); font-size: var(--step--1); color: var(--dim); max-width: 48ch; }
+.hero-figure { margin: 0; }
+.hero-figure figcaption { font-size: var(--step--1); color: var(--dim); margin-top: var(--space-2); max-width: 48ch; }
+
+/* Generic two- and three-column grids -------------------------------- */
+.grid-2 { display: grid; gap: var(--space-4); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { display: grid; gap: var(--space-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Footer -------------------------------------------------------------- */
+.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--line-soft); color: var(--muted); font-size: var(--step--1); }
+.site-footer p { max-width: none; }
+.footer-grid { display: grid; gap: var(--space-3); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Responsive ---------------------------------------------------------- */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .section { padding-block: var(--space-5); }
+}
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  /* On phones the header is not sticky, so its height costs nothing while reading;
+     the section links stay available as one horizontally scrollable row. */
+  .site-header { position: static; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .site-header .container { flex-direction: column; align-items: stretch; gap: 0.3rem; padding-block: 0.6rem; }
+  .site-nav { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 1rem; padding-bottom: 0.15rem; scrollbar-width: none; }
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a { white-space: nowrap; }
+  .hero-copy .lede { max-width: none; }
+}
+
+@media print {
+  .site-header, .skip-link { display: none; }
+  body { background: #fff; color: #000; }
+  a { color: #000; }
+}

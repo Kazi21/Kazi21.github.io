@@ -1,0 +1,45 @@
+{
+  "schema": "mlip_evidence.cards/0.1",
+  "disclaimer": "Method and tooling evidence. Synthetic fixtures demonstrate the tooling, not DFT/MLIP accuracy or physical transport. No restricted campaign numbers are shown.",
+  "cards": [
+    {
+      "id": "reference-checking",
+      "title": "Reference-protocol checking",
+      "question": "Are the DFT references for training and validation actually compatible?",
+      "contribution": "Extracts CP2K protocol parameters (functional, dispersion, basis/pseudos, density-grid cutoffs, metallic-SCF smearing, charge, periodicity, stress request) and flags any material training-vs-validation mismatch before a model error is interpreted.",
+      "status": "EXECUTED_EXAMPLE",
+      "data_origin": "Real CP2K input template (protocol parameters only) + synthetic comparison fixture",
+      "what_was_executed": "summarize_reference_protocol + compare_reference_protocols; parsed a real CP2K template; unit tests pass",
+      "evidence_links": ["../METHODS.md#1-reference-protocol-compatibility-cp2k", "../mlip_evidence/reference_protocol.py", "../examples/synthetic/example_cp2k.inp"],
+      "limitation": "A two-cutoff check does not establish convergence of every property; basis/grid/SCF convergence are distinct.",
+      "next_step": "Attach a force-convergence-ladder summary on matched geometries.",
+      "verified_date": "2026-09-07"
+    },
+    {
+      "id": "error-diagnosis",
+      "title": "Error-aware, per-species validation",
+      "question": "Does the model hide a weak channel behind a good average?",
+      "contribution": "Per-species force metrics with two explicit RMSE definitions, vector p95/max, per-frame breakdown, missing-species-as-missing-evidence, plus group-aware bootstrap CIs and a leakage/duplicate check. Demonstrates that a weak minority channel stays visible despite a low aggregate metric.",
+      "status": "EXECUTED_EXAMPLE",
+      "data_origin": "Synthetic multi-species fixture with an intentionally weak channel",
+      "what_was_executed": "force_metrics + estimate_metric_interval + detect_duplicate_frames on synthetic data; figures rendered with synthetic disclaimer; unit tests pass",
+      "evidence_links": ["../METHODS.md#3-per-species-force-metrics-explicit-definitions", "../mlip_evidence/metrics.py", "../mlip_evidence/uncertainty.py"],
+      "limitation": "Synthetic demonstration; real per-element results are private. A single uncertainty-error correlation is not full calibration.",
+      "next_step": "Apply to a cleared, larger holdout with independent replicas for real CIs.",
+      "verified_date": "2026-09-07"
+    },
+    {
+      "id": "computational-decisions",
+      "title": "Computational decision prototype",
+      "question": "Given the evidence, what is the right next computational action?",
+      "contribution": "A transparent, rules-based workflow-controller that maps explicit evidence + declared thresholds to one action (review reference, check mapping, request targeted labels, request more sampling, review scope, stop-in-scope, or insufficient evidence), with reasons, missing evidence, policy version, and provenance. Refuses out-of-scope deployments; never lets a score override missing physics.",
+      "status": "PROTOTYPE",
+      "data_origin": "Synthetic evidence records",
+      "what_was_executed": "recommend_next_action over synthetic evidence; unit tests cover missing-evidence, E-field refusal, scoped-repair, and stop-in-scope paths",
+      "evidence_links": ["../METHODS.md#6-decision-logic-workflow-controller-prototype", "../mlip_evidence/decision.py", "../examples/synthetic/example_evidence.json"],
+      "limitation": "Fixed rule dispatcher, not a learned or autonomous scientist; launches nothing; no cost/time-savings claim.",
+      "next_step": "Benchmark a learned action selector against this baseline before any autonomy claim.",
+      "verified_date": "2026-09-07"
+    }
+  ]
+}

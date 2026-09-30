@@ -1,0 +1,13 @@
+{
+  "compatible": false,
+  "n_matched": 20,
+  "n_mismatched": 1,
+  "mismatched": {
+    "cutoff_Ry": {
+      "training": 400.0,
+      "validation": 300.0,
+      "material": true
+    }
+  },
+  "note": "MATERIAL reference mismatch \u2014 classify before interpreting model error"
+}
