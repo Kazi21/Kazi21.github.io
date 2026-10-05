@@ -1,13 +1,14 @@
 # Notice
 
 The MIT licence in `LICENSE` covers the website **code** only: `index.html` markup structure,
-`styles/*.css`, `js/app.js` and `tools/*`.
+`styles/*.css`, `js/app.js`, the trajectory inspector code (`lab/cnt/inspector.js`, `lab/cnt/inspector.css`, `lab/cnt/index.html` markup) and `tools/*`.
 
 The following are **not** covered by the MIT licence and remain © Kazi Ehsanul Karim, all rights reserved:
 
 - all prose and scientific text on the site;
 - the curriculum vitae in `assets/cv/`;
-- scientific figures, diagrams and graphics in `assets/` and inline SVG describing the research programme.
+- scientific figures, diagrams and graphics in `assets/` and inline SVG describing the research programme;
+- the trajectory data in `lab/cnt/data/` (atomic positions from the author's CP2K ab initio MD runs), which are shown for viewing and are not licensed for reuse.
 
 Third-party components keep their own licences:
 

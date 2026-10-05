@@ -76,7 +76,7 @@ HEAD = """<!DOCTYPE html>
 FOOT = """</main>
 <footer class="site-footer">
   <div class="container footer-grid">
-    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1.1 (complete package). Website version 0.1.7.</p></div>
+    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1.1 (complete package). Website version 2026.1.</p></div>
     <div><p>Tooling in the package: MIT. Package documentation and this page: © Kazi Ehsanul Karim; see the package NOTICE.</p></div>
     <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
   </div>
@@ -221,7 +221,7 @@ def build_index():
 <section class="section" id="project">
   <div class="container">
     <h2>Project write-up</h2>
-    <p class="section-intro">The package's own project description. Statements about the private campaign are the author's account; no campaign numbers, models or trajectories are published.</p>
+    <p class="section-intro">The package's own project description. Statements about the private campaign are the author's account; no campaign numbers or models are published, and the four AIMD position trajectories are shown separately in the <a href="../../lab/cnt/">Simulation Lab</a>.</p>
     <div class="doc">{md(os.path.join(PKG, 'website', 'MLIP_PROJECT.md'))}</div>
   </div>
 </section>

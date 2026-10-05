@@ -414,3 +414,17 @@
 /* v0.1.7: package workflow schematic on the evidence page */
 .evfig-wide { max-width: 960px; margin: 0 0 var(--space-3); }
 .evfig-wide img { padding: 0.5rem; }
+
+/* v0.1.8: Simulation Lab call to action */
+.lab-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+/* v0.1.9: stage labels inside the lab steps; preview image from the trajectory inspector */
+.lab-steps b .status { margin-left: 0.5rem; vertical-align: 0.1em; font-weight: 400; }
+.lab-preview img { display: block; width: 100%; height: auto; border-radius: var(--radius-m); border: 1px solid var(--line-soft); }
+.lab-preview-link:hover img, .lab-preview-link:focus-visible img { border-color: var(--accent); }
+
+/* Publication status badge and in-page anchor target (release 2026.1) */
+.badge-pub { font-family: var(--font-sans); font-size: 0.78rem; color: var(--ok); border-color: rgba(98, 214, 194, 0.5); margin-left: 0.35rem; vertical-align: 0.1em; white-space: nowrap; }
+.pubs li[id] { scroll-margin-top: 5rem; }
+.pubs li:target { border-top-color: var(--accent); }
+.hero-evidence { max-width: 64ch; } /* keeps the three-article line to two lines so the hero buttons stay where they were */

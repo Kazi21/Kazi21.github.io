@@ -1,0 +1,218 @@
+{
+ "format": "cnt-inspector-1",
+ "synthetic": false,
+ "units": {
+  "position": "milli-angstrom int16, little-endian",
+  "time": "fs"
+ },
+ "layout": "positions[frames][atoms][3] then h_owner[frames][nH] (atom index of the owning O)",
+ "species_codes": {
+  "C": "carbon",
+  "O": "oxygen",
+  "H": "hydrogen",
+  "N": "sodium",
+  "L": "chloride"
+ },
+ "tubes": [
+  {
+   "id": "cnt_6_6",
+   "label": "(6,6)",
+   "n": 6,
+   "diameter_nm": 0.824,
+   "length_nm": 2.46,
+   "cell_A": [
+    24.136,
+    24.136,
+    24.5951
+   ],
+   "n_atoms": 260,
+   "n_water": 6,
+   "n_na": 1,
+   "n_cl": 1,
+   "n_c": 240,
+   "species": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCOHHOHHOHHOHHOHHOHHNL",
+   "n_frames": 376,
+   "frame_spacing_fs": 2.0,
+   "t0_fs": 0.0,
+   "duration_ps": 0.75,
+   "run_length_ps": 0.75,
+   "frames_with_irregular_water": 0,
+   "max_oh_nm": 0.1167,
+   "file": "cnt_6_6.bin",
+   "bytes": 595584,
+   "sha256": "b7f50624bf8a65bd90ba8a945c0813ab6f817bbaa5a66f11a658856fa8b805b2",
+   "method": {
+    "code": "CP2K 2026.1",
+    "xc": "PBE",
+    "dispersion": "DFTD3(BJ)",
+    "cutoff_Ry": "400",
+    "rel_cutoff_Ry": "60",
+    "basis": [
+     "DZVP-MOLOPT-GTH",
+     "DZVP-MOLOPT-SR-GTH"
+    ],
+    "pseudopotentials": [
+     "GTH-PBE-q1",
+     "GTH-PBE-q4",
+     "GTH-PBE-q6",
+     "GTH-PBE-q7",
+     "GTH-PBE-q9"
+    ],
+    "ensemble": "NVT",
+    "T_K": 300.0,
+    "dt_fs": 0.25
+   },
+   "source_sha256": "92bee82b9671d9bf1b7a164641c36f125918a7e0be2e084253af5d792ab16b6f"
+  },
+  {
+   "id": "cnt_7_7",
+   "label": "(7,7)",
+   "n": 7,
+   "diameter_nm": 0.959,
+   "length_nm": 2.46,
+   "cell_A": [
+    25.492,
+    25.492,
+    24.5951
+   ],
+   "n_atoms": 330,
+   "n_water": 16,
+   "n_na": 1,
+   "n_cl": 1,
+   "n_c": 280,
+   "species": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHNL",
+   "n_frames": 251,
+   "frame_spacing_fs": 2.0,
+   "t0_fs": 0.0,
+   "duration_ps": 0.5,
+   "run_length_ps": 0.5,
+   "frames_with_irregular_water": 0,
+   "max_oh_nm": 0.1166,
+   "file": "cnt_7_7.bin",
+   "bytes": 513044,
+   "sha256": "9069212d16e490d5464c9413a2f64906ba7fe4d49259f2d2c30e91ff05e1c06e",
+   "method": {
+    "code": "CP2K 2026.1",
+    "xc": "PBE",
+    "dispersion": "DFTD3(BJ)",
+    "cutoff_Ry": "400",
+    "rel_cutoff_Ry": "60",
+    "basis": [
+     "DZVP-MOLOPT-GTH",
+     "DZVP-MOLOPT-SR-GTH"
+    ],
+    "pseudopotentials": [
+     "GTH-PBE-q1",
+     "GTH-PBE-q4",
+     "GTH-PBE-q6",
+     "GTH-PBE-q7",
+     "GTH-PBE-q9"
+    ],
+    "ensemble": "NVT",
+    "T_K": 300.0,
+    "dt_fs": 0.25
+   },
+   "source_sha256": "18658f87ec97c575593c265858e88ef341c36de85d9d48c2380b69a7f10b03f3"
+  },
+  {
+   "id": "cnt_9_9",
+   "label": "(9,9)",
+   "n": 9,
+   "diameter_nm": 1.23,
+   "length_nm": 2.46,
+   "cell_A": [
+    28.204,
+    28.204,
+    24.5951
+   ],
+   "n_atoms": 481,
+   "n_water": 39,
+   "n_na": 2,
+   "n_cl": 2,
+   "n_c": 360,
+   "species": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHNLNL",
+   "n_frames": 251,
+   "frame_spacing_fs": 2.0,
+   "t0_fs": 0.0,
+   "duration_ps": 0.5,
+   "run_length_ps": 0.5,
+   "frames_with_irregular_water": 0,
+   "max_oh_nm": 0.1179,
+   "file": "cnt_9_9.bin",
+   "bytes": 763542,
+   "sha256": "44c9b0f444ebac14bf03ae59562ceef4aac7d9698f22a6d0bf8bfa5e21607001",
+   "method": {
+    "code": "CP2K 2026.1",
+    "xc": "PBE",
+    "dispersion": "DFTD3(BJ)",
+    "cutoff_Ry": "400",
+    "rel_cutoff_Ry": "60",
+    "basis": [
+     "DZVP-MOLOPT-GTH",
+     "DZVP-MOLOPT-SR-GTH"
+    ],
+    "pseudopotentials": [
+     "GTH-PBE-q1",
+     "GTH-PBE-q4",
+     "GTH-PBE-q6",
+     "GTH-PBE-q7",
+     "GTH-PBE-q9"
+    ],
+    "ensemble": "NVT",
+    "T_K": 300.0,
+    "dt_fs": 0.25
+   },
+   "source_sha256": "75ff38b0d01a3c0f3d77d952f99c597b582aabd8d07eda647f6ea98158ae6c17"
+  },
+  {
+   "id": "cnt_11_11",
+   "label": "(11,11)",
+   "n": 11,
+   "diameter_nm": 1.501,
+   "length_nm": 2.46,
+   "cell_A": [
+    30.916,
+    30.916,
+    24.5951
+   ],
+   "n_atoms": 645,
+   "n_water": 67,
+   "n_na": 2,
+   "n_cl": 2,
+   "n_c": 440,
+   "species": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHOHHNLNL",
+   "n_frames": 251,
+   "frame_spacing_fs": 2.0,
+   "t0_fs": 0.0,
+   "duration_ps": 0.5,
+   "run_length_ps": 0.5,
+   "frames_with_irregular_water": 2,
+   "max_oh_nm": 0.1257,
+   "file": "cnt_11_11.bin",
+   "bytes": 1038638,
+   "sha256": "beef740b3cd64fdbf763acca77b92eb485ca5874b1cc470e8a8d308915162141",
+   "method": {
+    "code": "CP2K 2026.1",
+    "xc": "PBE",
+    "dispersion": "DFTD3(BJ)",
+    "cutoff_Ry": "400",
+    "rel_cutoff_Ry": "60",
+    "basis": [
+     "DZVP-MOLOPT-GTH",
+     "DZVP-MOLOPT-SR-GTH"
+    ],
+    "pseudopotentials": [
+     "GTH-PBE-q1",
+     "GTH-PBE-q4",
+     "GTH-PBE-q6",
+     "GTH-PBE-q7",
+     "GTH-PBE-q9"
+    ],
+    "ensemble": "NVT",
+    "T_K": 300.0,
+    "dt_fs": 0.25
+   },
+   "source_sha256": "ed2e9376ca75a62a469defdf5c932a4c65ae043e40586d1d4565ffd9f7bebb1b"
+  }
+ ]
+}

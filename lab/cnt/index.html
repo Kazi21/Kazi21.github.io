@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNT trajectory inspector — Kazi Ehsanul Karim</title>
+<meta name="description" content="Interactive viewer of ab initio molecular dynamics of NaCl–water inside four armchair carbon nanotubes, (6,6) to (11,11): rotate, play and inspect atoms. Simulation Lab, stage 1, by Kazi Ehsanul Karim.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="CNT trajectory inspector — Kazi Ehsanul Karim">
+<meta property="og:description" content="Rotate, play and inspect ab initio MD of NaCl–water in four carbon nanotubes.">
+<meta property="og:image" content="../../assets/icons/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#0d1b2a">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="inspector.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="../../index.html#projects">Research Projects</a>
+      <a href="../../index.html#practice">Research in Practice</a>
+      <a href="../../index.html#lab" aria-current="true">Simulation Lab</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section insp-top" id="top">
+  <div class="container">
+    <p class="project-kicker">Simulation Lab · stage 1 (available) · ab initio MD (CP2K)</p>
+    <h1 class="evidence-title insp-title">Four confined electrolytes, atom by atom</h1>
+    <p class="insp-lede">Rotate, play and inspect NaCl–water inside four armchair carbon nanotubes; click any atom to read where it sits and how it is bonded.</p>
+
+    <div id="inspector" class="inspector" data-src="data/" data-default="cnt_11_11">
+      <div class="insp-stage">
+        <canvas class="insp-canvas" tabindex="0" role="img" aria-label="Molecular view of a carbon nanotube trajectory"></canvas>
+        <p class="insp-status" role="status">Loading…</p>
+        <noscript><p class="insp-noscript">The inspector needs JavaScript. The table below lists the four systems.</p></noscript>
+        <ul class="insp-legend">
+          <li><i style="background:#8c8c8c"></i>Carbon</li>
+          <li><i style="background:#e03030"></i>Oxygen</li>
+          <li><i style="background:#f2f4f7"></i>Hydrogen</li>
+          <li><i style="background:#a05cc8"></i>Na⁺</li>
+          <li><i style="background:#2ecc40"></i>Cl⁻</li>
+        </ul>
+        <p class="insp-help">Drag to rotate · scroll or pinch to zoom · click an atom to inspect it · Space plays or pauses, ← and → step one frame.</p>
+        <section class="insp-tour" aria-labelledby="insp-tour-h">
+          <h2 id="insp-tour-h" class="insp-tour-h">What to look for</h2>
+          <ul>
+            <li><b>Water reorients at each ion.</b> In the narrow tubes, water on either side of an ion points opposite ways: hydrogens towards Cl⁻, away from Na⁺.
+              <span class="insp-tour-btns"><button type="button" class="btn btn-small" data-preset='{"tube":"cnt_7_7","view":"side","dip":true,"hb":false,"pbc":false}'>Show in (7,7)</button></span></li>
+            <li><b>Confinement thins the hydration shell.</b> Fewer water molecules fit around an ion in the narrowest tube. Compare the hydration count of Na⁺:
+              <span class="insp-tour-btns"><button type="button" class="btn btn-small" data-preset='{"tube":"cnt_6_6","view":"side","dip":false,"hb":false,"pbc":false,"select":"N"}'>Na⁺ in (6,6)</button><button type="button" class="btn btn-small" data-preset='{"tube":"cnt_11_11","view":"side","dip":false,"hb":false,"pbc":false,"select":"N"}'>Na⁺ in (11,11)</button></span></li>
+            <li><b>From a single file to shells.</b> Looking down the axis, water forms a single file in (6,6) and a shell along the wall with a core on the axis in (11,11).
+              <span class="insp-tour-btns"><button type="button" class="btn btn-small" data-preset='{"tube":"cnt_6_6","view":"axial","dip":false,"hb":false,"pbc":false}'>(6,6) down the axis</button><button type="button" class="btn btn-small" data-preset='{"tube":"cnt_11_11","view":"axial","dip":false,"hb":false,"pbc":false}'>(11,11) down the axis</button></span></li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="insp-panel">
+        <div class="insp-tubes" role="group" aria-label="Nanotube"></div>
+        <dl class="insp-facts"></dl>
+        <div class="insp-transport">
+          <button class="btn btn-primary btn-small insp-play" type="button">Play</button>
+          <label class="visually-hidden" for="insp-frame">Frame</label>
+          <input id="insp-frame" class="insp-slider" type="range" min="0" max="0" value="0" step="1">
+          <output class="insp-time" for="insp-frame">t = 0 fs</output>
+          <label class="visually-hidden" for="insp-speed">Playback speed</label>
+          <select id="insp-speed" class="insp-speed">
+            <option value="0.25">¼×</option><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option>
+          </select>
+        </div>
+        <div class="insp-views" role="group" aria-label="View">
+          <span class="insp-views-label">View</span>
+          <button type="button" class="btn btn-small insp-view-side">Side</button>
+          <button type="button" class="btn btn-small insp-view-axial">Down the axis</button>
+          <button type="button" class="btn btn-small insp-view-reset">Reset</button>
+        </div>
+        <fieldset class="insp-options">
+          <legend>Show</legend>
+          <label><input type="checkbox" id="insp-cut" checked> Cut away the front wall</label>
+          <label><input type="checkbox" id="insp-hb"> Hydrogen bonds</label>
+          <label><input type="checkbox" id="insp-dip"> Colour water by orientation</label>
+          <label><input type="checkbox" id="insp-pbc"> Periodic copies along the axis</label>
+        </fieldset>
+        <div class="insp-dipole-legend" hidden>
+          <div class="insp-dipole-bar"></div>
+          <p class="insp-dipole-title">H–O–H bisector relative to the tube axis</p>
+          <div class="insp-dipole-labels"><span>along −axis</span><span>perpendicular</span><span>along +axis</span></div>
+        </div>
+        <section class="insp-info" aria-live="polite" aria-labelledby="insp-info-h">
+          <h2 id="insp-info-h" class="insp-info-h">Selected atom</h2>
+          <div class="insp-info-body"><p>Click any atom to inspect it.</p></div>
+          <button type="button" class="btn-link insp-clear" hidden>Clear selection</button>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-band" id="about">
+  <div class="container">
+    <h2>What you are looking at</h2>
+    <p class="section-intro">Each system is a periodic 2.46 nm segment of an armchair carbon nanotube holding water and one or two Na⁺–Cl⁻ pairs. The trajectories are the short ab initio runs (0.5–0.75 ps) that started the machine-learned-potential campaign of Project 2. They show local structure, hydration and thermal motion; they are too short for diffusion or transport, and no machine-learned model is involved.</p>
+    <div class="insp-table-wrap">
+      <table class="runtable insp-table">
+        <caption class="visually-hidden">The four simulated systems</caption>
+        <thead><tr><th>Tube</th><th>Diameter (nm)</th><th>Water</th><th>Na⁺</th><th>Cl⁻</th><th>Carbon atoms</th><th>Run length (ps)</th><th>Frames shown</th></tr></thead>
+        <tbody>
+          <tr><td>(6,6)</td><td>0.824</td><td>6</td><td>1</td><td>1</td><td>240</td><td>0.750</td><td>376</td></tr>
+          <tr><td>(7,7)</td><td>0.959</td><td>16</td><td>1</td><td>1</td><td>280</td><td>0.500</td><td>251</td></tr>
+          <tr><td>(9,9)</td><td>1.23</td><td>39</td><td>2</td><td>2</td><td>360</td><td>0.500</td><td>251</td></tr>
+          <tr><td>(11,11)</td><td>1.50</td><td>67</td><td>2</td><td>2</td><td>440</td><td>0.500</td><td>251</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="agent-note">Method: CP2K 2026.1 (Quickstep, GPW): PBE with D3(BJ) dispersion, DZVP-MOLOPT-GTH and DZVP-MOLOPT-SR-GTH basis sets, GTH pseudopotentials, 400 Ry cutoff (60 Ry relative), NVT at 300 K with a 0.25 fs time step. The cell is periodic in all three directions, with about 1.59 nm of vacuum between the walls of neighbouring tube images. Positions are shown every 2 fs. For display, each tube is centred, every water is made whole across the periodic boundary, and the view is orthographic. Diameters are twice the mean carbon distance from the axis over the frames shown. In 2 frames of the (11,11) run one O–H bond briefly stretches to 0.126 nm; it is shown as recorded.</p>
+
+    <h3 class="insp-h3" id="readouts">How the readouts are computed</h3>
+    <ul class="insp-defs">
+      <li><b>Distance from the axis</b> radial distance from the line through the carbon centroid of the tube.</li>
+      <li><b>Orientation</b> angle between the H–O–H bisector (the vector from O to the midpoint of its two H) and the tube axis; 0° points along +axis. This is a geometric orientation, not the electronic dipole, which would require the electron density.</li>
+      <li><b>Hydrogen bond</b> O···O distance below 0.35 nm and H–O···O angle below 30°, a common geometric criterion.</li>
+      <li><b>Hydration count</b> water oxygens within 0.32 nm of Na⁺ or 0.38 nm of Cl⁻, approximate first-shell radii from bulk solution.</li>
+      <li><b>Nearest wall carbon</b> shortest distance to any carbon of the tube, using the periodic image along the axis.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="next">
+  <div class="container">
+    <h2>Next stages</h2>
+    <ul class="worklist">
+      <li><span class="status status-proposed">Planned</span><span><b>Molecular interaction in one tube.</b> Move or rotate a molecule and see which neighbours' forces change, then watch the liquid respond.</span></li>
+      <li><span class="status status-proposed">Planned</span><span><b>Reference-guided learning.</b> A learned model checked against reference calculations, with errors resolved by species and environment and each next calculation chosen for a stated reason.</span></li>
+    </ul>
+    <p><a href="../../index.html#lab">Back to the Simulation Lab</a></p>
+    <p class="agent-note">Trajectory data © Kazi Ehsanul Karim, shown for viewing and not licensed for reuse. The viewer code is MIT-licensed, like the rest of the website code.</p>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Simulation Lab, stage 1. Website version 2026.1.</p></div>
+    <div><p>Viewer code: MIT. Trajectory data and text: © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics. It loads only its own data files.</p></div>
+  </div>
+</footer>
+<script src="inspector.js"></script>
+</body>
+</html>

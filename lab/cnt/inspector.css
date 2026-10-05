@@ -1,0 +1,96 @@
+/* inspector.css — CNT trajectory inspector (Simulation Lab, stage 1). Uses the site tokens. */
+
+.insp-top { padding-block: var(--space-4) var(--space-5); border-top: 0; }
+.insp-title { margin-bottom: var(--space-1); }
+.insp-lede { color: var(--muted); max-width: 62ch; margin-bottom: 0; }
+
+.inspector {
+  display: grid; gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+  align-items: start; margin-top: var(--space-3);
+}
+.insp-stage { position: relative; min-width: 0; display: grid; gap: 0.6rem; }
+.insp-canvas {
+  display: block; width: 100%; aspect-ratio: 16 / 11;
+  background: #0b1828; border: 1px solid var(--line-soft); border-radius: var(--radius-m);
+  touch-action: none; cursor: grab;
+}
+.insp-canvas:active { cursor: grabbing; }
+.insp-status {
+  position: absolute; left: 0; right: 0; top: 0; aspect-ratio: 16 / 11;
+  display: grid; place-items: center; margin: 0; max-width: none; padding: var(--space-3);
+  text-align: center; color: var(--muted); font-size: var(--step--1); pointer-events: none;
+}
+.insp-noscript { color: var(--warn); font-size: var(--step--1); }
+.insp-legend { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-size: 0.82rem; color: var(--muted); max-width: none; }
+.insp-legend li { display: flex; align-items: center; gap: 0.4rem; margin: 0; }
+.insp-legend i { width: 0.75rem; height: 0.75rem; border-radius: 50%; display: inline-block; border: 1px solid rgba(0, 0, 0, 0.45); }
+.insp-help { font-size: 0.82rem; color: var(--dim); margin: 0; max-width: none; }
+
+.insp-panel { display: grid; gap: var(--space-2); min-width: 0; }
+.insp-tubes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.4rem; }
+.insp-tube {
+  display: grid; gap: 0.1rem; justify-items: center; padding: 0.45rem 0.2rem;
+  background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-s);
+  font: inherit; font-size: var(--step--1); cursor: pointer;
+}
+.insp-tube:hover { border-color: var(--accent); }
+.insp-tube[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.insp-tube-label { font-family: var(--font-mono); }
+.insp-tube-d { color: var(--dim); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
+
+.insp-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 0.8rem; margin: 0; font-size: var(--step--1); }
+.insp-facts div { min-width: 0; }
+.insp-facts dt { color: var(--dim); font-size: 0.78rem; }
+.insp-facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+.insp-transport { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 0.5rem; }
+.insp-play { min-width: 4.6rem; }
+.insp-slider { width: 100%; accent-color: var(--accent); }
+.insp-time { font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); min-width: 7ch; text-align: right; font-variant-numeric: tabular-nums; }
+.insp-speedrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: var(--step--1); color: var(--muted); }
+.insp-speed { background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-s); padding: 0.25rem 0.4rem; font: inherit; font-size: var(--step--1); }
+.insp-views { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.insp-views-label { color: var(--dim); font-size: 0.78rem; margin-right: 0.2rem; }
+
+.insp-options { border: 0; padding: 0; margin: 0; display: grid; gap: 0.35rem; font-size: var(--step--1); min-width: 0; }
+.insp-options legend { color: var(--dim); font-size: 0.78rem; margin-bottom: 0.2rem; padding: 0; }
+.insp-options label { display: flex; gap: 0.5rem; align-items: center; cursor: pointer; }
+.insp-options input { accent-color: var(--accent); width: 1rem; height: 1rem; margin: 0; }
+
+.insp-dipole-legend { font-size: 0.78rem; color: var(--muted); }
+.insp-dipole-bar { height: 0.55rem; border-radius: 3px; background: linear-gradient(90deg, #3d8fe0, #e6ebf0, #f0913f); margin-bottom: 0.25rem; }
+.insp-dipole-labels { display: flex; justify-content: space-between; gap: 0.5rem; }
+
+.insp-info { background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius-m); padding: 0.75rem 0.9rem; min-height: 10rem; }
+.insp-info-h { font-size: 0.78rem; font-weight: 500; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.45rem; }
+.insp-info-body p { font-size: var(--step--1); color: var(--muted); margin-bottom: 0.4rem; }
+.insp-info-body .insp-sel-title { color: var(--text); font-weight: 500; }
+.insp-info-body dl { margin: 0 0 0.45rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.3rem 0.75rem; font-size: var(--step--1); }
+.insp-info-body dt { color: var(--muted); }
+.insp-info-body dd { margin: 0; font-family: var(--font-mono); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; color: var(--text); }
+.insp-info-body .insp-sel-time { font-size: 0.78rem; color: var(--dim); }
+.insp-clear { font-size: var(--step--1); }
+
+.insp-table-wrap { overflow-x: auto; margin-bottom: var(--space-2); }
+.insp-table { min-width: 36rem; }
+.insp-table td, .insp-table th { font-variant-numeric: tabular-nums; }
+.insp-h3 { margin-top: var(--space-4); }
+.insp-defs { list-style: none; padding: 0; }
+.insp-defs li { padding: 0.45rem 0; border-top: 1px solid var(--line-soft); }
+.insp-defs b { font-weight: 500; margin-right: 0.35rem; }
+.insp-test-banner { background: var(--warn); color: var(--accent-ink); font-weight: 600; padding: 0.4rem 0.8rem; border-radius: var(--radius-s); max-width: none; }
+
+@media (max-width: 960px) {
+  .inspector { grid-template-columns: 1fr; }
+  .insp-canvas, .insp-status { aspect-ratio: 4 / 3.4; }
+}
+
+/* v0.1.9: guided observations and orientation legend title */
+.insp-dipole-title { margin: 0 0 0.25rem; font-size: 0.78rem; color: var(--muted); max-width: none; }
+.insp-tour { margin-top: var(--space-1); padding: 0.8rem 0.95rem; background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius-m); }
+.insp-tour-h { font-size: 0.78rem; font-weight: 500; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.5rem; }
+.insp-tour ul { list-style: none; padding: 0; margin: 0; max-width: none; display: grid; gap: 0.7rem; }
+.insp-tour li { margin: 0; font-size: var(--step--1); color: var(--muted); }
+.insp-tour b { color: var(--text); font-weight: 500; }
+.insp-tour-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
