@@ -50,9 +50,9 @@
   <div class="container">
     <a class="brand" href="#top">Kazi Ehsanul Karim</a>
     <nav class="site-nav" aria-label="Sections">
+      <a href="#lab">Simulation Lab</a>
       <a href="#projects">Research Projects</a>
       <a href="#practice">Research in Practice</a>
-      <a href="#lab">Simulation Lab</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -96,14 +96,95 @@
   </div>
 </section>
 
-<!-- 2. Research Projects ---------------------------------------------------------------- -->
-<section class="section section-band" id="projects">
+<!-- 1b. Research question: from molecular interactions to collective transport -------------------- -->
+<section class="section" id="question">
+  <div class="container">
+    <p class="project-kicker">Research question</p>
+    <h2>From molecular interactions to collective transport</h2>
+    <p class="statement question-lead">When do individual molecular interactions matter, and when can we trust the average?</p>
+    <p>Transport in a fluid is the collective result of molecules interacting with one another and with surfaces. In channels only a few molecules wide, packing, correlations and the wall shape the flow; in wider channels, averaged fields and constitutive relations carry the same physics. I study where continuum descriptions hold, where they fail and which molecular details they must retain.</p>
+    <figure class="scales-figure">
+      <picture>
+        <source media="(max-width: 960px)" srcset="assets/figures/across-scales-stacked.png" width="1080" height="2154">
+        <img src="assets/figures/across-scales.png" width="2400" height="848" loading="lazy" decoding="async" alt="Diagram from molecular interactions to collective transport. Four illustrative scales: a molecule (about 0.3 nm) whose thermal motion is governed by molecular interactions; nanoconfinement (subnanometre to 10 nm), where packing, correlations and the wall shape transport; microflow, with averaged fields and tested constitutive relations; and macroflow, solved by CFD. Statistical mechanics and physical closures, with physics-constrained learning as one method, link the molecular and continuum descriptions, and a return arrow marks validation against molecular evidence.">
+      </picture>
+      <figcaption>Illustrative scales: whether a continuum description holds depends on the system, the observable and the separation of length and time scales, not on a single size. Every closure is checked against molecular evidence.</figcaption>
+    </figure>
+    <p class="scale-links-title">Where to inspect each part of the diagram</p>
+    <ul class="scale-links">
+      <li><b>Molecular interactions</b><a href="lab/cnt/">trajectory inspector</a> · <a href="#project-2">error-aware potentials (Project 2)</a></li>
+      <li><b>Statistical mechanics and physical closures</b><a href="#project-1">boundary and transport papers (Project 1)</a> · <a href="#project-3">physics-constrained learning (Project 3)</a></li>
+      <li><b>Collective transport</b><a href="#publications">peer-reviewed articles</a> · <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a></li>
+    </ul>
+    <p>I combine molecular simulation, statistical mechanics and continuum modelling, and deliver results in the form a continuum solver uses: a wall law with a test of where it stops being reliable. Currently, molecular simulation supplies the wall physics, continuum theory carries the solution, and machine learning corrects only what the theory misses. Applications include membrane separation, nanofluidic devices and energy conversion, and interfacial thermal management; my longer-term aim is <a href="#vision">adaptive simulation</a>.</p>
+    <details class="disclosure">
+      <summary>Why I think across scales</summary>
+      <div class="disclosure-body">
+        <p>From an ant to a colony, a person to a community and a star to a galaxy, I am fascinated by how interactions give rise to collective organisation. A single individual is hard to predict, yet the collective often moves in recognisable patterns. The mechanisms differ, but the question keeps returning: what must we understand about the parts to explain the whole? My research makes that question quantitative for molecular transport.</p>
+        <figure class="scales-figure scales-society">
+          <picture>
+            <source media="(max-width: 960px)" srcset="assets/figures/across-scales-collective-stacked.png" width="1080" height="1680">
+            <img src="assets/figures/across-scales-collective.png" width="2400" height="540" loading="lazy" decoding="async" alt="Three pairs drawn at increasing scale: a single ant and a colony following a trail; a single person and a community; a single star and a spiral galaxy. Collective patterns require different descriptions.">
+          </picture>
+        </figure>
+      </div>
+    </details>
+    <details class="disclosure">
+      <summary>Scientific background</summary>
+      <div class="disclosure-body">
+        <p>These works frame the approach; my own contributions are listed under <a href="#projects">Research Projects</a> and <a href="#publications">Publications</a>.</p>
+        <ol class="refs">
+          <li>J. Ling, A. Kurzawski and J. Templeton, <em>J. Fluid Mech.</em> 807, 155–166 (2016), <a href="https://doi.org/10.1017/jfm.2016.615">doi:10.1017/jfm.2016.615</a>. Physical invariance embedded in learned turbulence closures.</li>
+          <li>K. Duraisamy, G. Iaccarino and H. Xiao, <em>Annu. Rev. Fluid Mech.</em> 51, 357–377 (2019), <a href="https://doi.org/10.1146/annurev-fluid-010518-040547">doi:10.1146/annurev-fluid-010518-040547</a>. Turbulence modelling with data: opportunities and limits.</li>
+          <li>S. L. Brunton, B. R. Noack and P. Koumoutsakos, <em>Annu. Rev. Fluid Mech.</em> 52, 477–508 (2020), <a href="https://doi.org/10.1146/annurev-fluid-010719-060214">doi:10.1146/annurev-fluid-010719-060214</a>. Machine learning for fluid mechanics.</li>
+          <li>M. Raissi, P. Perdikaris and G. E. Karniadakis, <em>J. Comput. Phys.</em> 378, 686–707 (2019), <a href="https://doi.org/10.1016/j.jcp.2018.10.045">doi:10.1016/j.jcp.2018.10.045</a>. Physics-informed neural networks.</li>
+          <li>G. E. Karniadakis, I. G. Kevrekidis, L. Lu, P. Perdikaris, S. Wang and L. Yang, <em>Nat. Rev. Phys.</em> 3, 422–440 (2021), <a href="https://doi.org/10.1038/s42254-021-00314-5">doi:10.1038/s42254-021-00314-5</a>. Physics-informed machine learning.</li>
+          <li>L. Bocquet and E. Charlaix, <em>Chem. Soc. Rev.</em> 39, 1073–1095 (2010), <a href="https://doi.org/10.1039/B909366B">doi:10.1039/B909366B</a>. How bulk and interfacial physics combine in nanofluidics.</li>
+          <li>K. Ritos, M. K. Borg, D. A. Lockerby, D. R. Emerson and J. M. Reese, <em>Microfluid. Nanofluid.</em> 19, 997–1010 (2015), <a href="https://doi.org/10.1007/s10404-015-1617-x">doi:10.1007/s10404-015-1617-x</a>. Hybrid molecular–continuum simulation of water flow through carbon-nanotube membranes.</li>
+        </ol>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- 2. Simulation Lab: the first thing to explore -------------------------------------------------------------------------- -->
+<section class="section section-band" id="lab">
+  <div class="container">
+    <h2>Simulation Lab</h2>
+    <div class="lab-grid">
+      <div class="lab-copy">
+        <h3 class="lab-title">Explore water and ions inside four carbon nanotubes.</h3>
+        <p>The lab is being built in three stages around the four CNT electrolytes of <a href="#project-2">Project 2</a>. The trajectory inspector is available now: rotate, play and inspect the ab initio trajectories, click any atom to read its distance from the tube axis, its hydrogen bonds or its hydration count, and follow guided observations of how confinement reshapes water and hydration.</p>
+        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/cnt/">Open the trajectory inspector</a></p>
+        <ol class="lab-steps">
+          <li><b>Trajectory inspector <span class="status status-live">Available</span></b> four CP2K trajectories, (6,6) to (11,11): rotate, play, click an atom, colour water by orientation.</li>
+          <li><b>Molecular interaction <span class="status status-proposed">Planned</span></b> in one tube, move or rotate a molecule; an influence view shows which neighbours' forces change, then the liquid relaxes.</li>
+          <li><b>Reference-guided learning <span class="status status-proposed">Planned</span></b> a learned model checked against reference calculations, with errors resolved by species and environment and each next calculation chosen for a stated reason.</li>
+        </ol>
+        <details class="disclosure">
+          <summary>What stage 1 shows, and what it does not</summary>
+          <div class="disclosure-body">
+            <p>The trajectories are the short ab initio runs (CP2K, PBE-D3(BJ), NVT at 300 K, 0.5–0.75 ps) that started the machine-learned-potential campaign. They show local structure, hydration and thermal motion; they are too short for diffusion or transport, and no machine-learned model is involved. Positions are shown every 2 fs. The trajectory data are © the author and shown for viewing only.</p>
+          </div>
+        </details>
+      </div>
+
+      <figure class="lab-figure lab-preview">
+        <a class="lab-preview-link" href="lab/cnt/"><img src="assets/figures/inspector-four-tubes-axial.png" width="1082" height="1082" loading="lazy" decoding="async" alt="The four carbon nanotubes viewed down their axes at the same scale, one frame each from the CP2K trajectories: a single file of water with one Na⁺ and one Cl⁻ in the (6,6) tube, progressively more water in (7,7) and (9,9), and in (11,11) a shell of water along the wall with a core on the axis."></a>
+        <figcaption>Preview from the trajectory inspector: the four tubes viewed down their axes at the same scale, one frame each (t = 250 fs). Water goes from a single file in (6,6) to a shell along the wall with a core on the axis in (11,11). <a href="lab/cnt/">Open the inspector</a> to rotate and play them.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Research Projects ---------------------------------------------------------------- -->
+<section class="section" id="projects">
   <div class="container">
     <h2>Research Projects</h2>
-    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and the physics-informed closure that links molecular structure to flow. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
+    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and the physics-constrained closure that carries wall physics into continuum flow. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
 
     <div class="projects">
-      <article class="project project-major">
+      <article class="project project-major" id="project-1">
         <p class="project-kicker">Project 1</p>
         <h3>Molecular structure, boundary conditions and nanoscale transport</h3>
         <p class="project-status"><span class="status status-live">Peer-reviewed research</span></p>
@@ -124,7 +205,7 @@
         </details>
       </article>
 
-      <article class="project project-major">
+      <article class="project project-major" id="project-2">
         <p class="project-kicker">Project 2</p>
         <h3>Error-aware MLIPs for CNT-confined NaCl–water</h3>
         <p class="project-status"><span class="status">Current research</span></p>
@@ -153,23 +234,23 @@
         </details>
       </article>
 
-      <article class="project project-major">
+      <article class="project project-major" id="project-3">
         <p class="project-kicker">Project 3</p>
-        <h3>Physics-informed structure–friction–flow closure</h3>
-        <p class="project-status"><span class="status">Current research</span></p>
+        <h3>Physics-constrained learning for nanoscale flow</h3>
+        <p class="project-status"><span class="status">Manuscript in preparation</span></p>
         <dl class="project-dl">
           <dt>Scientific question</dt>
-          <dd>Can a physically constrained model connect molecular structure, interfacial friction and flow into a transport closure that is useful, and inspectable, within a clearly defined physical regime?</dd>
+          <dd>In channels only a few molecules wide, the wall boundary condition can control the flow as strongly as the bulk equations do. Can a physically constrained model carry that wall physics into a closure a continuum solver can use, and show where it stops being reliable?</dd>
           <dt>My contribution</dt>
-          <dd>Physics-informed neural-network models in which physical constraints, not only data, shape the mapping from confined molecular structure to friction and flow; the implementation is in development.</dd>
+          <dd>This project combines molecular simulation, slip-flow theory and physics-constrained neural networks: an analytic solution carries the physics, and a network learns only the residual that the theory misses. Symmetries and the zero-forcing limit are built into the model's architecture rather than added as loss penalties, and models are scored only on geometries withheld from training.</dd>
           <dt>Available evidence</dt>
-          <dd>Project scope in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>; the molecular data come from the transport work of Project 1. A benchmark will be linked here when it is ready.</dd>
+          <dd>Project scope in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>; the molecular data come from the transport work of Project 1. Results are held until publication; a benchmark will be linked here when it is ready.</dd>
         </dl>
         <details class="disclosure">
           <summary>Methods and next development</summary>
           <div class="disclosure-body">
             <p>The aim is a closure whose useful range and failure modes can be examined, rather than a fit that reproduces simulation data. Physics enters through the constraints imposed on the model, and the evaluation design separates training, validation and untouched evaluation conditions so that reported performance is not selected on the data that reports it.</p>
-            <p><strong>Next development.</strong> A benchmark comparing a conventional closure, a data-driven baseline and the physics-informed model on held-out simulation conditions, with explicit checks on physical consistency and predictive uncertainty.</p>
+            <p><strong>Next development.</strong> A benchmark comparing a conventional closure, a data-driven baseline and the physics-constrained model on geometries withheld from training, with explicit checks on physical consistency and predictive uncertainty.</p>
           </div>
         </details>
       </article>
@@ -196,8 +277,8 @@
   </div>
 </section>
 
-<!-- 3. Future vision ----------------------------------------------------------------------- -->
-<section class="section" id="vision">
+<!-- 4. Future vision ----------------------------------------------------------------------- -->
+<section class="section section-band" id="vision">
   <div class="container">
     <div class="vision-grid">
       <div>
@@ -266,8 +347,8 @@
   </div>
 </section>
 
-<!-- 4. Research in Practice ---------------------------------------------------------------- -->
-<section class="section section-band" id="practice">
+<!-- 5. Research in Practice ---------------------------------------------------------------- -->
+<section class="section" id="practice">
   <div class="container">
     <h2>Research in Practice</h2>
     <p class="section-intro">Explore the proposed workflow. This walkthrough explains the method behind Project 2; it does not report executed training or scientific outcomes. Select a step to read its purpose. Steps 2–4 link to the <a href="evidence/nacl-water-cnt/index.html">methods and software demonstration</a> (synthetic example data).</p>
@@ -361,43 +442,13 @@
   </div>
 </section>
 
-<!-- 5. Simulation Lab -------------------------------------------------------------------------- -->
-<section class="section" id="lab">
-  <div class="container">
-    <h2>Simulation Lab</h2>
-    <div class="lab-grid">
-      <div class="lab-copy">
-        <h3 class="lab-title">Explore water and ions inside four carbon nanotubes.</h3>
-        <p>The lab is being built in three stages around the four CNT electrolytes of Project 2. The trajectory inspector is available now: rotate, play and inspect the ab initio trajectories, click any atom to read its distance from the tube axis, its hydrogen bonds or its hydration count, and follow guided observations of how confinement reshapes water and hydration.</p>
-        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/cnt/">Open the trajectory inspector</a></p>
-        <ol class="lab-steps">
-          <li><b>Trajectory inspector <span class="status status-live">Available</span></b> four CP2K trajectories, (6,6) to (11,11): rotate, play, click an atom, colour water by orientation.</li>
-          <li><b>Molecular interaction <span class="status status-proposed">Planned</span></b> in one tube, move or rotate a molecule; an influence view shows which neighbours' forces change, then the liquid relaxes.</li>
-          <li><b>Reference-guided learning <span class="status status-proposed">Planned</span></b> a learned model checked against reference calculations, with errors resolved by species and environment and each next calculation chosen for a stated reason.</li>
-        </ol>
-        <details class="disclosure">
-          <summary>What stage 1 shows, and what it does not</summary>
-          <div class="disclosure-body">
-            <p>The trajectories are the short ab initio runs (CP2K, PBE-D3(BJ), NVT at 300 K, 0.5–0.75 ps) that started the machine-learned-potential campaign. They show local structure, hydration and thermal motion; they are too short for diffusion or transport, and no machine-learned model is involved. Positions are shown every 2 fs. The trajectory data are © the author and shown for viewing only.</p>
-          </div>
-        </details>
-      </div>
-
-      <figure class="lab-figure lab-preview">
-        <a class="lab-preview-link" href="lab/cnt/"><img src="assets/figures/inspector-four-tubes-axial.png" width="1082" height="1082" loading="lazy" decoding="async" alt="The four carbon nanotubes viewed down their axes at the same scale, one frame each from the CP2K trajectories: a single file of water with one Na⁺ and one Cl⁻ in the (6,6) tube, progressively more water in (7,7) and (9,9), and in (11,11) a shell of water along the wall with a core on the axis."></a>
-        <figcaption>Preview from the trajectory inspector: the four tubes viewed down their axes at the same scale, one frame each (t = 250 fs). Water goes from a single file in (6,6) to a shell along the wall with a core on the axis in (11,11). <a href="lab/cnt/">Open the inspector</a> to rotate and play them.</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
 <!-- 6. Contribution, current work, additional direction ------------------------------------------ -->
 <section class="section section-band" id="contribution">
   <div class="container">
     <h2>What I can contribute to your group</h2>
     <ul class="deliverables">
       <li><h3>Molecular simulation and transport analysis with LAMMPS EMD/NEMD</h3><p>Equilibrium and non-equilibrium studies of confined transport and interfacial friction, with replica-based uncertainty, convergence diagnostics and explicit stopping criteria from the first campaign.</p></li>
-      <li><h3>Connecting molecular mechanisms to boundary conditions and reduced transport descriptions</h3><p>Define the boundary, the accessible region and the quantity a transport model actually needs; test whether a continuum description remains valid before it is used.</p></li>
+      <li><h3>Connecting molecular mechanisms to boundary conditions and reduced transport descriptions</h3><p>Define the boundary, the accessible region and the quantity a transport model actually needs; test whether a continuum description remains valid before it is used. For CFD and microfluidics groups, this means wall laws derived from molecular simulation, delivered in the form a continuum solver uses, with a test of where they stop being reliable.</p></li>
       <li><h3>Reproducible, physics-informed learning and reference-data workflows</h3><p>Reference calculations, learned potentials and physics-informed closures with species- and environment-resolved error checks, versioned inputs and a traceable route from reference data to prediction.</p></li>
     </ul>
     <p class="section-intro" style="margin-top: var(--space-3)">An initial collaboration would agree on one system and one observable, establish a reproducible baseline, test its predictive limits and identify the next calculation with the greatest scientific value.</p>
@@ -408,7 +459,7 @@
       <div class="disclosure-body">
     <ul class="worklist">
       <li><span class="status">In progress</span><span>CP2K reference data, DP-GEN active learning and DeePMD-kit models for CNT-confined NaCl–water across four tube diameters are complete; the species-specific error and the choice of friction estimator are under analysis (Project 2); methods tooling published as a software demonstration.</span></li>
-      <li><span class="status">In progress</span><span>Physics-informed structure–friction–flow closure: model formulation and benchmark design (Project 3).</span></li>
+      <li><span class="status">In progress</span><span>Physics-constrained learning for nanoscale flow: manuscript in preparation, with models scored on geometries withheld from training (Project 3).</span></li>
       <li><span class="status status-proposed">Planned</span><span>Reproducible reference example: inputs, settings and consistency checks that another group can rerun.</span></li>
       <li><span class="status">In progress</span><span>Held-out model evaluation on fresh reference calculations: species-resolved errors done (unpublished); environment-resolved errors planned.</span></li>
       <li><span class="status status-proposed">Planned</span><span>Closure benchmark: conventional closure, data-driven baseline and physics-informed model on held-out conditions.</span></li>
@@ -553,7 +604,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.1. Research website with ab initio MD snapshots, an interactive inspector for the four CNT trajectories with guided observations, the complete methods-and-software package for Project 2 and a staged Simulation Lab plan.</p>
+      <p class="version">Version 2026.3. Research website with a multiscale research question, ab initio MD snapshots, an interactive inspector for the four CNT trajectories with guided observations, the complete methods-and-software package for Project 2 and a staged Simulation Lab plan.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>
