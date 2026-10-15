@@ -90,6 +90,7 @@
           <dt>Degree timeline</dt><dd>Defense planned November 2026; formal degree conferral expected February 2027</dd>
           <dt>Methods</dt><dd>LAMMPS EMD/NEMD, CP2K, DP-GEN and DeePMD-kit, Green–Kubo transport, continuum boundary conditions, Python on Linux/HPC</dd>
           <dt>Record</dt><dd>Three first-author articles in PRE and PCCP: two published and one accepted (<a href="#paper-pccp-2026">PCCP, accepted 2026</a>); <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV (PDF)</a></dd>
+          <dt>Thesis</dt><dd>Seven studies: three published or accepted, two in submission and two in preparation (<a href="#thesis">overview</a>)</dd>
         </dl>
       </aside>
     </div>
@@ -113,7 +114,7 @@
     <p class="scale-links-title">Where to inspect each part of the diagram</p>
     <ul class="scale-links">
       <li><b>Molecular interactions</b><a href="lab/cnt/">trajectory inspector</a> · <a href="#project-2">error-aware potentials (Project 2)</a></li>
-      <li><b>Statistical mechanics and physical closures</b><a href="#project-1">boundary and transport papers (Project 1)</a> · <a href="#project-3">physics-constrained learning (Project 3)</a></li>
+      <li><b>Statistical mechanics and physical closures</b><a href="#project-1">boundary and transport papers (Project 1)</a> · <a href="#project-3">PINN closure (Project 3)</a></li>
       <li><b>Collective transport</b><a href="#publications">peer-reviewed articles</a> · <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a></li>
     </ul>
     <p>I combine molecular simulation, statistical mechanics and continuum modelling, and deliver results in the form a continuum solver uses: a wall law with a test of where it stops being reliable. Currently, molecular simulation supplies the wall physics, continuum theory carries the solution, and machine learning corrects only what the theory misses. Applications include membrane separation, nanofluidic devices and energy conversion, and interfacial thermal management; my longer-term aim is <a href="#vision">adaptive simulation</a>.</p>
@@ -181,7 +182,7 @@
 <section class="section" id="projects">
   <div class="container">
     <h2>Research Projects</h2>
-    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and the physics-constrained closure that carries wall physics into continuum flow. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
+    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and the PINN closure that carries wall physics into continuum flow. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
 
     <div class="projects">
       <article class="project project-major" id="project-1">
@@ -200,7 +201,7 @@
           <summary>Methods and next development</summary>
           <div class="disclosure-body">
             <p>In <em>Physical Review E</em> (2021) I developed a first-law energy-balance analysis that locates the flow boundary for a simple liquid inside a single-walled carbon nanotube from non-equilibrium and equilibrium molecular dynamics, and tested the resulting boundary against Hagen–Poiseuille limits under controlled wall–fluid interaction. In <em>Physical Chemistry Chemical Physics</em> (2024) I led a critical review of experimental and simulation estimates of water transport in carbon nanotubes and a scale-effects analysis of how boundary definitions enter Hagen–Poiseuille-type estimates. In <em>Physical Chemistry Chemical Physics</em> (accepted, 2026) I examined how molecular admission and packing govern transport in subnanometre graphene slits.</p>
-            <p><strong>Next development.</strong> Ongoing work on interfacial friction and slip, finite-time diffusivity and hydraulic resistance in nanotubes and graphene nanoslits. The study of wall–fluid interaction strength and finite-time diffusivity is a separate manuscript from the accepted PCCP paper; it and the other pending manuscripts are listed by title in the public CV.</p>
+            <p><strong>Next development.</strong> Two further manuscripts from this work are in submission: one on finite-time diffusivity and wall–fluid interaction strength, one on hydraulic resistance and the limits of Navier-slip transferability in graphene nanoslits. The <a href="#thesis">seven studies of the doctoral thesis</a> are summarised under Publications, with full titles in the public CV.</p>
           </div>
         </details>
       </article>
@@ -236,21 +237,21 @@
 
       <article class="project project-major" id="project-3">
         <p class="project-kicker">Project 3</p>
-        <h3>Physics-constrained learning for nanoscale flow</h3>
+        <h3>PINN closure for wall friction and flow in nanoconfined water</h3>
         <p class="project-status"><span class="status">Manuscript in preparation</span></p>
         <dl class="project-dl">
           <dt>Scientific question</dt>
           <dd>In channels only a few molecules wide, the wall boundary condition can control the flow as strongly as the bulk equations do. Can a physically constrained model carry that wall physics into a closure a continuum solver can use, and show where it stops being reliable?</dd>
           <dt>My contribution</dt>
-          <dd>This project combines molecular simulation, slip-flow theory and physics-constrained neural networks: an analytic solution carries the physics, and a network learns only the residual that the theory misses. Symmetries and the zero-forcing limit are built into the model's architecture rather than added as loss penalties, and models are scored only on geometries withheld from training.</dd>
+          <dd>This project combines molecular simulation, slip-flow theory and physics-informed neural networks (PINNs): an analytic solution carries the physics, and a network learns only the residual that the theory misses. Symmetries and the zero-forcing limit are built into the model's architecture rather than added as loss penalties, and models are scored only on geometries withheld from training.</dd>
           <dt>Available evidence</dt>
-          <dd>Project scope in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>; the molecular data come from the transport work of Project 1. Results are held until publication; a benchmark will be linked here when it is ready.</dd>
+          <dd>Title and scope in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a> (the closing study of the <a href="#thesis">doctoral thesis</a>); the molecular data come from the transport work of Project 1. Results are held until publication; a benchmark will be linked here when it is ready.</dd>
         </dl>
         <details class="disclosure">
           <summary>Methods and next development</summary>
           <div class="disclosure-body">
             <p>The aim is a closure whose useful range and failure modes can be examined, rather than a fit that reproduces simulation data. Physics enters through the constraints imposed on the model, and the evaluation design separates training, validation and untouched evaluation conditions so that reported performance is not selected on the data that reports it.</p>
-            <p><strong>Next development.</strong> A benchmark comparing a conventional closure, a data-driven baseline and the physics-constrained model on geometries withheld from training, with explicit checks on physical consistency and predictive uncertainty.</p>
+            <p><strong>Next development.</strong> A benchmark comparing a conventional closure, a data-driven baseline and the PINN on geometries withheld from training, with explicit checks on physical consistency and predictive uncertainty.</p>
           </div>
         </details>
       </article>
@@ -455,11 +456,12 @@
 
     <h2 style="margin-top: var(--space-5)">Current work and next outputs</h2>
     <details class="disclosure">
-      <summary>Eight items with explicit status</summary>
+      <summary>Nine items with explicit status</summary>
       <div class="disclosure-body">
     <ul class="worklist">
+      <li><span class="status">In progress</span><span>Doctoral thesis: two manuscripts in submission and two in preparation, completing seven studies (<a href="#thesis">overview</a>).</span></li>
       <li><span class="status">In progress</span><span>CP2K reference data, DP-GEN active learning and DeePMD-kit models for CNT-confined NaCl–water across four tube diameters are complete; the species-specific error and the choice of friction estimator are under analysis (Project 2); methods tooling published as a software demonstration.</span></li>
-      <li><span class="status">In progress</span><span>Physics-constrained learning for nanoscale flow: manuscript in preparation, with models scored on geometries withheld from training (Project 3).</span></li>
+      <li><span class="status">In progress</span><span>PINN closure for wall friction and flow in nanoconfined water: manuscript in preparation, with models scored on geometries withheld from training (Project 3).</span></li>
       <li><span class="status status-proposed">Planned</span><span>Reproducible reference example: inputs, settings and consistency checks that another group can rerun.</span></li>
       <li><span class="status">In progress</span><span>Held-out model evaluation on fresh reference calculations: species-resolved errors done (unpublished); environment-resolved errors planned.</span></li>
       <li><span class="status status-proposed">Planned</span><span>Closure benchmark: conventional closure, data-driven baseline and physics-informed model on held-out conditions.</span></li>
@@ -556,6 +558,38 @@
 <section class="section" id="publications">
   <div class="container">
     <h2>Publications and profile</h2>
+    <div class="thesis" id="thesis">
+      <h3>Doctoral thesis: seven studies, one argument</h3>
+      <p class="thesis-lead">Define the descriptor, gate it, then predict. Three studies are published or accepted, two are in submission and two are in preparation; full titles are listed in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>.</p>
+      <div class="thesis-parts">
+        <div class="thesis-part">
+          <p class="project-kicker">Part I · CNTs · argon and water</p>
+          <h4>Where is the wall?</h4>
+          <ol class="thesis-studies">
+            <li><span class="thesis-num">1</span><div><b><a href="https://doi.org/10.1103/PhysRevE.103.053115">Boundary moves with energy</a></b><span class="thesis-sys">Argon in a (20,20) CNT</span><span class="status status-live">Published · PRE 2021</span></div></li>
+            <li><span class="thesis-num">2</span><div><b><a href="https://doi.org/10.1039/D4CP01068J">Boundary choice versus experiment</a></b><span class="thesis-sys">Water in (6,6) to (20,20) CNTs</span><span class="status status-live">Published · PCCP 2024</span></div></li>
+          </ol>
+        </div>
+        <div class="thesis-part">
+          <p class="project-kicker">Part II · graphene slits · argon</p>
+          <h4>Who gets in — and how does it move?</h4>
+          <ol class="thesis-studies" start="3">
+            <li><span class="thesis-num">3</span><div><b><a href="#paper-pccp-2026">Admission, loading and capacity</a></b><span class="thesis-sys">Slit widths 0.396–3.40 nm</span><span class="status status-live">Accepted · PCCP 2026</span></div></li>
+            <li><span class="thesis-num">4</span><div><b>Finite-time diffusivity and wall–fluid interaction strength</b><span class="thesis-sys">Equilibrium MD</span><span class="status">In submission</span></div></li>
+            <li><span class="thesis-num">5</span><div><b>Nanoflow in subnanometre slits</b><span class="thesis-sys">Pressure-driven NEMD; slip routes</span><span class="status">In submission</span></div></li>
+          </ol>
+        </div>
+        <div class="thesis-part">
+          <p class="project-kicker">Part III · CNTs · argon and water</p>
+          <h4>What can we average — and predict?</h4>
+          <ol class="thesis-studies" start="6">
+            <li><span class="thesis-num">6</span><div><b>Gated ergodic averaging</b><span class="thesis-sys">Argon in a (6,6) CNT</span><span class="status">In preparation</span></div></li>
+            <li><span class="thesis-num">7</span><div><b><a href="#project-3">Equilibrium-friction closure with a PINN</a></b><span class="thesis-sys">Water in CNTs</span><span class="status">In preparation</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
     <div class="grid-2">
       <div>
         <h3>Selected peer-reviewed articles — published and accepted</h3>
@@ -604,7 +638,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.3. Research website with a multiscale research question, ab initio MD snapshots, an interactive inspector for the four CNT trajectories with guided observations, the complete methods-and-software package for Project 2 and a staged Simulation Lab plan.</p>
+      <p class="version">Version 2026.4. Research website with a multiscale research question, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories with guided observations, the complete methods-and-software package for Project 2 and a staged Simulation Lab plan.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>
