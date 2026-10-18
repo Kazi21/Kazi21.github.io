@@ -52,7 +52,7 @@ HEAD = """<!DOCTYPE html>
 <meta name="description" content="{desc}">
 <meta name="robots" content="index,follow">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#F8FAFC">
 <link rel="stylesheet" href="../../styles/tokens.css">
 <link rel="stylesheet" href="../../styles/layout.css">
 <link rel="stylesheet" href="../../styles/components.css">
@@ -62,10 +62,12 @@ HEAD = """<!DOCTYPE html>
 <header class="site-header">
   <div class="container">
     <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
-    <nav class="site-nav" aria-label="Sections">
-      <a href="../../index.html#projects">Research Projects</a>
-      <a href="../../index.html#practice">Research in Practice</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
       <a href="../../index.html#lab">Simulation Lab</a>
+      <a href="../../index.html#practice" aria-current="page">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
       <a href="../../index.html#contact">Contact</a>
     </nav>
   </div>
@@ -76,11 +78,12 @@ HEAD = """<!DOCTYPE html>
 FOOT = """</main>
 <footer class="site-footer">
   <div class="container footer-grid">
-    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1.1 (complete package). Website version 2026.4.</p></div>
+    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1.1 (complete package). Website version 2026.5.1.</p></div>
     <div><p>Tooling in the package: MIT. Package documentation and this page: © Kazi Ehsanul Karim; see the package NOTICE.</p></div>
     <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
   </div>
 </footer>
+<script src="../../js/nav.js" defer></script>
 </body>
 </html>
 """
@@ -148,7 +151,7 @@ def build_index():
     body = f"""
 <section class="section" id="top">
   <div class="container">
-    <p class="project-kicker">Research in Practice · evidence</p>
+    <p class="project-kicker">Methods and code · evidence</p>
     <h1 class="evidence-title">Error-aware MLIPs for confined electrolytes: methods and software demonstration</h1>
     <p class="statement">Runnable tooling and synthetic fixtures that show how the CNT-confined NaCl–water MLIP work checks its references, exposes per-species errors and chooses the next calculation.</p>
     <p><span class="badge badge-label">Methods and software demonstration · synthetic example data</span></p>
@@ -203,7 +206,7 @@ def build_index():
 <section class="section" id="cards">
   <div class="container">
     <h2>Three entry points</h2>
-    <p class="section-intro">The same three steps that the Research in Practice walkthrough describes, each with its status, its limitation and the code to inspect.</p>
+    <p class="section-intro">The same three steps that the Methods and code walkthrough on the main page describes, each with its status, its limitation and the code to inspect.</p>
     <div class="projects">{''.join(card_html)}
     </div>
   </div>
@@ -259,7 +262,7 @@ def build_source():
     body = f"""
 <section class="section" id="top">
   <div class="container">
-    <p class="project-kicker">Research in Practice · evidence · source</p>
+    <p class="project-kicker">Methods and code · evidence · source</p>
     <h1 class="evidence-title">Source of the methods package</h1>
     <p class="section-intro">The package's Python modules, tests and fixtures, shown verbatim for inspection. Tooling is MIT-licensed; {html.escape(PROVENANCE)} <a href="index.html">Back to the evidence overview</a>.</p>
     <ul class="links">{''.join(toc)}</ul>

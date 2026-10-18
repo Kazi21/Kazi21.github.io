@@ -1,4 +1,4 @@
-/* tokens.css — design tokens for kazi-ehsanul-karim.github.io (v0.1)
+/* tokens.css — design tokens for kazi21.github.io (light theme, release 2026.5)
    Fonts are vendored (OFL, see vendor/fonts/LICENSE-IBM-Plex-OFL.txt).
    No external requests are made by this stylesheet. */
 
@@ -24,47 +24,70 @@
 }
 
 :root {
-  /* Palette: deep water, chalk, mist; semantic gate colours */
-  --bg:        #0d1b2a;  /* deep water */
-  --bg-2:      #10233a;  /* slightly lifted background band */
-  --surface:   #142b45;  /* panel surface */
-  --line:      rgba(233, 238, 243, 0.14);
-  --line-soft: rgba(233, 238, 243, 0.08);
-  --text:      #e9eef3;  /* chalk */
-  --muted:     #a7b6c6;  /* mist */
-  --dim:       #7f90a3;
-  --accent:    #62d6c2;  /* interactive: links, primary button */
-  --accent-ink:#0b1a28;
-  --ok:        #62d6c2;  /* admissible / demonstrated */
-  --warn:      #f2b950;  /* insufficient / in development */
-  --stop:      #ff7b66;  /* MD-only regime / invalid */
-  --proposed:  #8fb4ea;  /* proposed programme */
+  /* Light reading theme (release 2026.5). Contrast measured against #F8FAFC, #FFFFFF and #EEF4F5:
+     text tokens >= 4.5:1, control outlines >= 3:1 (see docs/contrast table in the release notes). */
+  --bg:         #F8FAFC;  /* page background */
+  --bg-2:       #EEF4F5;  /* occasional softly tinted section */
+  --surface:    #FFFFFF;  /* cards and scientific plot backgrounds */
+  --heading:    #16324F;  /* headings */
+  --text:       #243447;  /* body text */
+  --muted:      #526477;  /* secondary text and captions */
+  --dim:        #5B6B7C;  /* tertiary labels (kickers); still >= 4.5:1 */
+  --line:       #D9E2E8;  /* decorative dividers and card borders */
+  --line-soft:  #E6ECF0;  /* quieter decorative separators */
+  --control:    #718096;  /* outlines needed to recognise controls (>= 3:1) */
+  --accent:     #006B62;  /* links and primary buttons */
+  --accent-hover: #00554E;
+  --accent-ink: #FFFFFF;  /* text on primary buttons */
+  --accent-tint: rgba(0, 107, 98, 0.08);   /* selected-state fill */
+  --focus:      #005FCC;  /* focus indicator on light surfaces (paired with a white ring) */
+  --code-bg:    #F1F5F8;
+  --shadow:     0 1px 2px rgba(22, 50, 79, 0.06), 0 1px 1px rgba(22, 50, 79, 0.04);
+
+  /* Evidence status (text and dots; >= 4.5:1 on all light surfaces) */
+  --ok:         #1F7A4D;  /* published, available, executed */
+  --warn:       #9A5B00;  /* in progress, in development, prototype */
+  --stop:       #B3261E;  /* refused, invalid */
+  --proposed:   #3366AA;  /* planned, proposed */
+
+  /* Molecular viewing panel (the only dark surface) */
+  --viewer-bg:    #0D1B2A;
+  --viewer-text:  #E9EEF3;
+  --viewer-muted: #A7B6C6;
+  --viewer-line:  rgba(233, 238, 243, 0.18);
+  --viewer-accent:#62D6C2;  /* checked on #0D1B2A (9.9:1); never used on white */
+
+  /* Data colours, kept separate from interface colours (Okabe-Ito; pair with markers or dashes) */
+  --series-1: #0072B2;
+  --series-2: #D55E00;
+  --series-3: #009E73;
+  --series-4: #CC79A7;
 
   /* Type */
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-  /* Modular scale, ratio ≈ 1.25, fluid between 360 px and 1440 px */
-  --step--1: clamp(0.84rem, 0.80rem + 0.18vw, 0.94rem);
-  --step-0:  clamp(1.00rem, 0.96rem + 0.22vw, 1.13rem);
-  --step-1:  clamp(1.25rem, 1.18rem + 0.35vw, 1.44rem);
-  --step-2:  clamp(1.56rem, 1.42rem + 0.65vw, 1.95rem);
-  --step-3:  clamp(1.95rem, 1.70rem + 1.20vw, 2.60rem);
-  --step-4:  clamp(2.40rem, 1.90rem + 2.40vw, 3.90rem);
+  /* Fluid scale between 360 px and 1440 px; body 16-18 px, headline about 32-58 px */
+  --step--1: clamp(0.875rem, 0.85rem + 0.12vw, 0.95rem);
+  --step-0:  clamp(1.00rem, 0.94rem + 0.28vw, 1.125rem);
+  --step-1:  clamp(1.20rem, 1.12rem + 0.35vw, 1.40rem);
+  --step-2:  clamp(1.45rem, 1.30rem + 0.60vw, 1.85rem);
+  --step-3:  clamp(1.80rem, 1.55rem + 1.10vw, 2.40rem);
+  --step-4:  clamp(2.00rem, 1.40rem + 2.60vw, 3.60rem);
 
-  --leading-tight: 1.12;
-  --leading-body: 1.62;
+  --leading-tight: 1.15;
+  --leading-body: 1.6;
 
   /* Layout */
   --container: 72rem;
-  --measure: 66ch;
+  --measure: 64ch;
   --gutter: clamp(1rem, 2.5vw, 2rem);
   --space-1: 0.5rem;
   --space-2: 1rem;
   --space-3: 1.5rem;
   --space-4: 2.5rem;
   --space-5: 4rem;
-  --space-6: 6rem;
+  --space-6: 5.5rem;
 
   --radius-s: 4px;
   --radius-m: 8px;

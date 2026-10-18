@@ -1,9 +1,9 @@
 {
   "site": "kazi21.github.io",
-  "version": "2026.4",
-  "status": "research-site-with-aimd-snapshots-trajectory-inspector-complete-evidence-package-and-staged-simulation-lab",
+  "version": "2026.5.1",
+  "status": "research-site-light-theme-with-trajectory-inspector-live-water-lab-and-complete-evidence-package",
   "evidence_package": "NaCl_Water_CNT_Website_Evidence v0.1.1: complete (28 files plus MANIFEST.json); documented tests 13 passed; synthetic fixtures only",
   "thesis": "seven studies: three published or accepted, two in submission, two in preparation",
-  "simulation_lab": "stage 1 available: trajectory inspector for the four CNT ab initio seed runs (positions only, every 2 fs) with guided observations; molecular interaction is planned next",
-  "built": "2026-10-15"
+  "simulation_lab": "stage 1: trajectory inspector for the four CNT ab initio seed runs (opened on demand); Live Water Lab: rigid SPC/E water simulated live by LAMMPS 22 Jul 2025 compiled to WebAssembly, with a centre-of-mass tether experiment, conditions experiment, validation checks 1-10, allowed-range check S1 and reproducible export; molecular interaction in a nanotube is planned",
+  "built": "2026-10-18"
 }

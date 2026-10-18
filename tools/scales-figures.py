@@ -1,6 +1,7 @@
 """Generate the 'From molecular interactions to collective transport' figures (website release 2026.2).
 
-Writes four SVG sources (dark theme, matching the site palette):
+Writes four SVG sources in the site palette. Since release 2026.5 the default theme is light (white background);
+set SCALES_THEME=dark for the original dark versions:
   across-scales.svg            main diagram, wide layout (desktop)
   across-scales-stacked.svg    main diagram, stacked layout (phones)
   across-scales-collective.svg          three pairs (ant/colony, person/community, star/galaxy), wide (optional disclosure)
@@ -15,16 +16,29 @@ import math
 import os
 import sys
 
-BG, TEXT, MUTED, DIM = "#10233a", "#e9eef3", "#a7b6c6", "#7f90a3"
-WALL, GRID = "#7f90a3", "rgba(233,238,243,0.13)"
-O_RED, H_WHITE = "#e03030", "#f2f4f7"
-AMBER, AMBER_SOFT, TEAL = "#f2b950", "#e8c98c", "#62d6c2"
-BOX = {  # stroke, fill, pill text
-    "mol": ("#ff7b6b", "rgba(224,48,48,0.10)", "#ff9c8f"),
-    "nano": ("#8fb4ea", "rgba(143,180,234,0.10)", "#b3cdf3"),
-    "micro": ("#62d6c2", "rgba(98,214,194,0.09)", "#86e3d3"),
-    "macro": ("#b39ddb", "rgba(179,157,219,0.11)", "#cdbcec"),
-}
+LIGHT = os.environ.get("SCALES_THEME", "light") != "dark"
+if LIGHT:   # light theme (release 2026.5): text colours >= 4.5:1 on white
+    BG, TEXT, MUTED, DIM = "#FFFFFF", "#243447", "#526477", "#5B6B7C"
+    WALL, GRID = "#718096", "rgba(36,52,71,0.12)"
+    O_RED, H_WHITE, H_EDGE = "#D0342C", "#FFFFFF", "#7A8A9B"
+    AMBER, AMBER_SOFT, TEAL, AMBER_FILL = "#9A5B00", "#8A5A12", "#00897B", "rgba(154,91,0,0.08)"
+    BOX = {  # stroke, fill, pill text
+        "mol": ("#C2412D", "rgba(194,65,45,0.07)", "#A1301F"),
+        "nano": ("#3366AA", "rgba(51,102,170,0.07)", "#2B5590"),
+        "micro": ("#00796B", "rgba(0,121,107,0.07)", "#00695C"),
+        "macro": ("#7B5EA7", "rgba(123,94,167,0.08)", "#674A93"),
+    }
+else:       # original dark theme (releases 2026.2-2026.4)
+    BG, TEXT, MUTED, DIM = "#10233a", "#e9eef3", "#a7b6c6", "#7f90a3"
+    WALL, GRID = "#7f90a3", "rgba(233,238,243,0.13)"
+    O_RED, H_WHITE, H_EDGE = "#e03030", "#f2f4f7", None
+    AMBER, AMBER_SOFT, TEAL, AMBER_FILL = "#f2b950", "#e8c98c", "#62d6c2", "rgba(242,185,80,0.10)"
+    BOX = {  # stroke, fill, pill text
+        "mol": ("#ff7b6b", "rgba(224,48,48,0.10)", "#ff9c8f"),
+        "nano": ("#8fb4ea", "rgba(143,180,234,0.10)", "#b3cdf3"),
+        "micro": ("#62d6c2", "rgba(98,214,194,0.09)", "#86e3d3"),
+        "macro": ("#b39ddb", "rgba(179,157,219,0.11)", "#cdbcec"),
+    }
 FONT = "IBM Plex Sans, 'Segoe UI', Roboto, Arial, sans-serif"
 
 
@@ -54,7 +68,8 @@ def water(cx, cy, s=1.0, rot=0.0, alpha=1.0):
     r_o, r_h, d = 17 * s, 9 * s, 24 * s
     for sign in (-1, 1):
         a = math.radians(90 + rot + sign * 52.25)
-        out.append(f'<circle cx="{cx + d * math.cos(a):.1f}" cy="{cy + d * math.sin(a):.1f}" r="{r_h:.1f}" fill="{H_WHITE}" fill-opacity="{alpha}"/>')
+        edge = f' stroke="{H_EDGE}" stroke-width="{1.3 * s:.2f}"' if H_EDGE else ""
+        out.append(f'<circle cx="{cx + d * math.cos(a):.1f}" cy="{cy + d * math.sin(a):.1f}" r="{r_h:.1f}" fill="{H_WHITE}" fill-opacity="{alpha}"{edge}/>')
     out.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r_o:.1f}" fill="{O_RED}" fill-opacity="{alpha}"/>')
     return "".join(out)
 
@@ -131,23 +146,26 @@ def picto_macro(x0, x1, y_top, y_bot, k=1.0):
         s = 1 if f > 0 else -1
         kk = max(0.0, 0.38 - abs(f) * 0.32) * hh
         out.append(f'<path d="M{x0},{y0:.1f} C{cx - 0.5 * (cx - x0):.1f},{y0:.1f} {cx - 12 * k:.1f},{y0 + s * kk:.1f} {cx:.1f},{y0 + s * kk:.1f} '
-                   f'S{cx + 0.45 * (x1 - cx):.1f},{y0:.1f} {x1},{y0:.1f}" fill="none" stroke="#b39ddb" stroke-width="{2 * k:.1f}"/>')
+                   f'S{cx + 0.45 * (x1 - cx):.1f},{y0:.1f} {x1},{y0:.1f}" fill="none" stroke="{MACRO_STROKE}" stroke-width="{2 * k:.1f}"/>')
     out.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{11 * k:.1f}" fill="{WALL}"/>')
     return "".join(out)
+
+
+MACRO_STROKE = BOX["macro"][0]
 
 
 def bridge_glyph(cx, cy, r, k=1.0):
     """Circle with an ensemble-average bracket around three molecules."""
     w = 2.4 * k
-    return (f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="rgba(242,185,80,0.10)" stroke="{AMBER}" stroke-width="{2.6 * k:.1f}"/>'
+    return (f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{AMBER_FILL}" stroke="{AMBER}" stroke-width="{2.6 * k:.1f}"/>'
             f'<polyline points="{cx - 14 * k:.1f},{cy - 15 * k:.1f} {cx - 24 * k:.1f},{cy:.1f} {cx - 14 * k:.1f},{cy + 15 * k:.1f}" fill="none" stroke="{AMBER}" stroke-width="{w:.1f}" stroke-linejoin="round" stroke-linecap="round"/>'
             f'<polyline points="{cx + 14 * k:.1f},{cy - 15 * k:.1f} {cx + 24 * k:.1f},{cy:.1f} {cx + 14 * k:.1f},{cy + 15 * k:.1f}" fill="none" stroke="{AMBER}" stroke-width="{w:.1f}" stroke-linejoin="round" stroke-linecap="round"/>'
             + "".join(f'<circle cx="{cx + dx * k:.1f}" cy="{cy:.1f}" r="{2.8 * k:.1f}" fill="{AMBER}"/>' for dx in (-8, 0, 8)))
 
 
 def defs():
-    return ('<defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#62d6c2" stop-opacity="0"/>'
-            '<stop offset="0.5" stop-color="#62d6c2" stop-opacity="0.26"/><stop offset="1" stop-color="#62d6c2" stop-opacity="0"/></linearGradient></defs>')
+    return (f'<defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{TEAL}" stop-opacity="0"/>'
+            f'<stop offset="0.5" stop-color="{TEAL}" stop-opacity="{0.16 if LIGHT else 0.26}"/><stop offset="1" stop-color="{TEAL}" stop-opacity="0"/></linearGradient></defs>')
 
 
 def pill(cx, y, label, key, anchor="middle", size=12.5):
@@ -259,9 +277,14 @@ def main_stacked():
 # ---------------------------------------------------------------- optional disclosure: three pairs
 import random
 
-HI, MID, LO = "#a7b6c6", "#7f90a3", "#5f7187"
-ANT = "#d29a6c"
-STAR, STAR_WARM = "#f2f4f7", "#f4e2b0"
+if LIGHT:
+    HI, MID, LO = "#526477", "#7A8A9B", "#A3B0BD"
+    ANT = "#9C5A2B"
+    STAR, STAR_WARM, GAL1, GAL2 = "#3B4A5C", "#B07A1E", "#5B6B7C", "#3366AA"
+else:
+    HI, MID, LO = "#a7b6c6", "#7f90a3", "#5f7187"
+    ANT = "#d29a6c"
+    STAR, STAR_WARM, GAL1, GAL2 = "#f2f4f7", "#f4e2b0", "#c9d6e3", "#8fb4ea"
 
 
 def person(cx, base, s, fill):
@@ -305,7 +328,7 @@ def crowd(cx, base, w, k=1.0, seed=5):
         for i in range(n):
             x = cx + (i - (n - 1) / 2) * (w / 7) + rnd.uniform(-3, 3) * k
             y = base - (rows - 1 - r) * 15 * k + rnd.uniform(-2, 2) * k
-            col = [LO, MID, MID, HI][r] if rnd.random() > 0.12 else "#62d6c2"
+            col = [LO, MID, MID, HI][r] if rnd.random() > 0.12 else TEAL
             o.append(person(x, y, (0.34 + 0.05 * r) * k, col))
     return "".join(o)
 
@@ -331,7 +354,7 @@ def galaxy(cx, cy, R, k=1.0, seed=7, gid="core"):
             a = th + arm + rnd.uniform(-0.10, 0.10)
             rr = r * rnd.uniform(0.94, 1.06)
             x, y = cx + rr * math.cos(a), cy + 0.62 * rr * math.sin(a)
-            o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{max(0.8, 2.6 - 1.6 * r / R) * k:.2f}" fill="{rnd.choice((STAR, STAR, "#c9d6e3", "#8fb4ea"))}" fill-opacity="{0.95 - 0.45 * r / R:.2f}"/>')
+            o.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{max(0.8, 2.6 - 1.6 * r / R) * k:.2f}" fill="{rnd.choice((STAR, STAR, GAL1, GAL2))}" fill-opacity="{0.95 - 0.45 * r / R:.2f}"/>')
     for _ in range(26):
         a, r = rnd.uniform(0, 2 * math.pi), R * math.sqrt(rnd.random())
         o.append(f'<circle cx="{cx + r * math.cos(a):.1f}" cy="{cy + 0.62 * r * math.sin(a):.1f}" r="{0.8 * k:.2f}" fill="{STAR}" fill-opacity="0.45"/>')

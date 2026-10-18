@@ -7,7 +7,7 @@
 <meta name="description" content="Verbatim source of the mlip_evidence methods package: reference-protocol parser, frame-mapping and leakage checks, per-species force metrics, group-aware bootstrap, rules-based decision prototype, release builder, tests and synthetic fixtures.">
 <meta name="robots" content="index,follow">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#F8FAFC">
 <link rel="stylesheet" href="../../styles/tokens.css">
 <link rel="stylesheet" href="../../styles/layout.css">
 <link rel="stylesheet" href="../../styles/components.css">
@@ -17,10 +17,12 @@
 <header class="site-header">
   <div class="container">
     <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
-    <nav class="site-nav" aria-label="Sections">
-      <a href="../../index.html#projects">Research Projects</a>
-      <a href="../../index.html#practice">Research in Practice</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
       <a href="../../index.html#lab">Simulation Lab</a>
+      <a href="../../index.html#practice" aria-current="page">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
       <a href="../../index.html#contact">Contact</a>
     </nav>
   </div>
@@ -29,7 +31,7 @@
 
 <section class="section" id="top">
   <div class="container">
-    <p class="project-kicker">Research in Practice · evidence · source</p>
+    <p class="project-kicker">Methods and code · evidence · source</p>
     <h1 class="evidence-title">Source of the methods package</h1>
     <p class="section-intro">The package's Python modules, tests and fixtures, shown verbatim for inspection. Tooling is MIT-licensed; Analysis code drafted with AI assistance and checked against raw outputs; scientific decisions and validation design are the author&#x27;s. See NOTICE. <a href="index.html">Back to the evidence overview</a>.</p>
     <ul class="links"><li><a href="#mlip_evidence-__init__-py">mlip_evidence/__init__.py</a></li><li><a href="#mlip_evidence-constants-py">mlip_evidence/constants.py</a></li><li><a href="#mlip_evidence-reference_protocol-py">mlip_evidence/reference_protocol.py</a></li><li><a href="#mlip_evidence-frame_mapping-py">mlip_evidence/frame_mapping.py</a></li><li><a href="#mlip_evidence-metrics-py">mlip_evidence/metrics.py</a></li><li><a href="#mlip_evidence-uncertainty-py">mlip_evidence/uncertainty.py</a></li><li><a href="#mlip_evidence-decision-py">mlip_evidence/decision.py</a></li><li><a href="#mlip_evidence-figures-py">mlip_evidence/figures.py</a></li><li><a href="#mlip_evidence-release-py">mlip_evidence/release.py</a></li><li><a href="#mlip_evidence-cli-py">mlip_evidence/cli.py</a></li><li><a href="#tests-test_mlip_evidence-py">tests/test_mlip_evidence.py</a></li><li><a href="#examples-synthetic-make_fixture-py">examples/synthetic/make_fixture.py</a></li><li><a href="#examples-synthetic-example_evidence-json">examples/synthetic/example_evidence.json</a></li><li><a href="#examples-synthetic-example_cp2k-inp">examples/synthetic/example_cp2k.inp</a></li><li><a href="#website-evidence_cards-json">website/evidence_cards.json</a></li><li><a href="#MANIFEST-json">MANIFEST.json</a></li><li><a href="#LICENSE">LICENSE</a></li></ul>
@@ -1498,10 +1500,11 @@ See NOTICE.md for attribution.
 </main>
 <footer class="site-footer">
   <div class="container footer-grid">
-    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1.1 (complete package). Website version 2026.4.</p></div>
+    <div><p class="version">Evidence pages built from NaCl_Water_CNT_Website_Evidence v0.1.1 (complete package). Website version 2026.5.1.</p></div>
     <div><p>Tooling in the package: MIT. Package documentation and this page: © Kazi Ehsanul Karim; see the package NOTICE.</p></div>
     <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
   </div>
 </footer>
+<script src="../../js/nav.js" defer></script>
 </body>
 </html>

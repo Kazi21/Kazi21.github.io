@@ -114,4 +114,16 @@
     initWorkflowSteps();
     runPageSelfCheck();
   });
+
+  /* Open a closed disclosure when a link or the address points into it (for example #vision). */
+  function openTarget() {
+    var id = decodeURIComponent((location.hash || "").slice(1));
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    var d = el.tagName === "DETAILS" ? el : el.closest && el.closest("details");
+    if (d && !d.open) { d.open = true; el.scrollIntoView(); }
+  }
+  window.addEventListener("hashchange", openTarget);
+  openTarget();
 })();

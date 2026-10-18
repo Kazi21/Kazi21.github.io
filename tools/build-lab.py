@@ -6,7 +6,7 @@ import json, os, html
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LAB = os.path.join(ROOT, "lab", "cnt")
-WEBSITE_VERSION = "2026.4"
+WEBSITE_VERSION = "2026.5.1"
 
 man = json.load(open(os.path.join(LAB, "data", "manifest.json")))
 tubes = man["tubes"]
@@ -61,7 +61,7 @@ page = f"""<!DOCTYPE html>
 <meta property="og:description" content="Rotate, play and inspect ab initio MD of NaCl–water in four carbon nanotubes.">
 <meta property="og:image" content="../../assets/icons/og-image.png">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#F8FAFC">
 <link rel="stylesheet" href="../../styles/tokens.css">
 <link rel="stylesheet" href="../../styles/layout.css">
 <link rel="stylesheet" href="../../styles/components.css">
@@ -72,10 +72,12 @@ page = f"""<!DOCTYPE html>
 <header class="site-header">
   <div class="container">
     <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
-    <nav class="site-nav" aria-label="Sections">
-      <a href="../../index.html#projects">Research Projects</a>
-      <a href="../../index.html#practice">Research in Practice</a>
-      <a href="../../index.html#lab" aria-current="true">Simulation Lab</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
+      <a href="../../index.html#lab" aria-current="page">Simulation Lab</a>
+      <a href="../../index.html#practice">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
       <a href="../../index.html#contact">Contact</a>
     </nav>
   </div>
@@ -84,14 +86,15 @@ page = f"""<!DOCTYPE html>
 
 <section class="section insp-top" id="top">
   <div class="container">
-    {banner}<p class="project-kicker">Simulation Lab · stage 1 (available) · ab initio MD (CP2K)</p>
+    {banner}<p class="project-kicker">Simulation Lab · recorded trajectories · ab initio MD (CP2K)</p>
     <h1 class="evidence-title insp-title">Four confined electrolytes, atom by atom</h1>
     <p class="insp-lede">Rotate, play and inspect NaCl–water inside four armchair carbon nanotubes; click any atom to read where it sits and how it is bonded.</p>
 
     <div id="inspector" class="inspector" data-src="data/" data-default="cnt_11_11">
       <div class="insp-stage">
         <canvas class="insp-canvas" tabindex="0" role="img" aria-label="Molecular view of a carbon nanotube trajectory"></canvas>
-        <p class="insp-status" role="status">Loading…</p>
+        <p class="insp-status" role="status"></p>
+        <div class="insp-poster"><button type="button" class="btn btn-primary insp-start" hidden>Open the 3D viewer</button><p class="insp-poster-note">Loads about 0.5–1 MB per tube. Recorded trajectories, played back; nothing is simulated in your browser here.</p></div>
         <noscript><p class="insp-noscript">The inspector needs JavaScript. The table below lists the four systems.</p></noscript>
         <ul class="insp-legend">
           <li><i style="background:#8c8c8c"></i>Carbon</li>
@@ -143,7 +146,7 @@ page = f"""<!DOCTYPE html>
         <div class="insp-dipole-legend" hidden>
           <div class="insp-dipole-bar"></div>
           <p class="insp-dipole-title">H–O–H bisector relative to the tube axis</p>
-          <div class="insp-dipole-labels"><span>along −axis</span><span>perpendicular</span><span>along +axis</span></div>
+          <div class="insp-dipole-labels"><span>along −axis (0° ↔ 180°: cos θ = −1)</span><span>perpendicular (cos θ = 0)</span><span>along +axis (cos θ = +1)</span></div>
         </div>
         <section class="insp-info" aria-live="polite" aria-labelledby="insp-info-h">
           <h2 id="insp-info-h" class="insp-info-h">Selected atom</h2>
@@ -185,7 +188,8 @@ page = f"""<!DOCTYPE html>
   <div class="container">
     <h2>Next stages</h2>
     <ul class="worklist">
-      <li><span class="status status-proposed">Planned</span><span><b>Molecular interaction in one tube.</b> Move or rotate a molecule and see which neighbours' forces change, then watch the liquid respond.</span></li>
+      <li><span class="status status-live">Available</span><span><b><a href="../water/">Live Water Lab.</a></b> Bulk SPC/E water simulated live by LAMMPS in the browser: pull one molecule with a harmonic tether, follow forces, work and thermodynamics, and download a reproducible experiment.</span></li>
+      <li><span class="status status-proposed">Planned</span><span><b>Molecular interaction in one tube.</b> The same pulling experiment inside one CNT electrolyte, with a view of which neighbours' forces change.</span></li>
       <li><span class="status status-proposed">Planned</span><span><b>Reference-guided learning.</b> A learned model checked against reference calculations, with errors resolved by species and environment and each next calculation chosen for a stated reason.</span></li>
     </ul>
     <p><a href="../../index.html#lab">Back to the Simulation Lab</a></p>
@@ -201,6 +205,7 @@ page = f"""<!DOCTYPE html>
   </div>
 </footer>
 <script src="inspector.js"></script>
+<script src="../../js/nav.js" defer></script>
 </body>
 </html>
 """

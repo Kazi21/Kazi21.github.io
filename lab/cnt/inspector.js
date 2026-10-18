@@ -1,6 +1,7 @@
 /* inspector.js - CNT trajectory inspector (Simulation Lab, stage 1).
    Plain JavaScript with no libraries. The only network requests are this site's own data files
-   (data/manifest.json and one data/<tube>.bin per tube, loaded when the tube is opened). */
+   (data/manifest.json and one data/<tube>.bin per tube). Nothing is downloaded and nothing is drawn until the visitor
+   opens the viewer (release 2026.5); after that, each tube's trajectory is loaded when the tube is selected. */
 (function () {
   "use strict";
 
@@ -25,7 +26,7 @@
   var RAD = [0.30, 0.55, 0.30, 0.85, 1.00];        // angstrom (carbon drawn smaller so the water stands out)
   var HYD_CUT = { 3: 3.2, 4: 3.8 };                  // first-shell radii, angstrom (Na+, Cl-)
   var HB_OO = 3.5, HB_ANG = 30;                      // hydrogen-bond criterion
-  var BG = "#0b1828";
+  var BG = "#0D1B2A";                                 // molecular-viewer background (site token --viewer-bg)
   var FOG = 6;                                       // depth-shading levels
   var DIPBINS = 21;
 
@@ -47,9 +48,14 @@
   function mix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
   function css(c, a) { return "rgba(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + "," + (a == null ? 1 : a) + ")"; }
   var BGRGB = hex2rgb(BG), WHITE = [255, 255, 255], BLACK = [0, 0, 0];
-  var DIP_NEG = hex2rgb("#3d8fe0"), DIP_MID = hex2rgb("#c9d2dc"), DIP_POS = hex2rgb("#f0913f");
-  function dipColor(c) {                               // c = cos(theta) in [-1, 1]
-    return c < 0 ? mix(DIP_MID, DIP_NEG, -c) : mix(DIP_MID, DIP_POS, c);
+  /* Orientation colour: a diverging map centred on the meaningful reference (bisector perpendicular to the axis,
+     cos(theta) = 0). Colours are the seven inner classes of ColorBrewer BrBG (colour-blind safe); the darkest end
+     classes are omitted so both ends stay visible on the dark viewer background (contrast >= 4.9:1). The angle to the
+     tube axis is not a wrapping quantity, so no cyclic map is used. */
+  var DIP_STOPS = ["#35978f", "#80cdc1", "#c7eae5", "#f5f5f5", "#f6e8c3", "#dfc27d", "#bf812d"].map(hex2rgb);
+  function dipColor(c) {                               // c = cos(theta) in [-1, 1]; -1 along -axis, +1 along +axis
+    var u = Math.max(0, Math.min(1, (c + 1) / 2)) * (DIP_STOPS.length - 1), i = Math.min(DIP_STOPS.length - 2, Math.floor(u));
+    return mix(DIP_STOPS[i], DIP_STOPS[i + 1], u - i);
   }
   var sprites = {};
   var SPR = 96;
@@ -58,7 +64,7 @@
     if (sprites[key]) return sprites[key];
     var c = document.createElement("canvas"); c.width = c.height = SPR;
     var g = c.getContext("2d"), r = SPR / 2 - 2;
-    var base = mix(rgb, BGRGB, level / FOG * 0.5);
+    var base = mix(rgb, BGRGB, level / FOG * 0.25);     // mild depth cue; far atoms stay readable
     var grad = g.createRadialGradient(SPR / 2 - r * 0.35, SPR / 2 - r * 0.35, r * 0.08, SPR / 2, SPR / 2, r);
     grad.addColorStop(0, css(mix(base, WHITE, 0.55)));
     grad.addColorStop(0.45, css(base));
@@ -590,28 +596,45 @@
 
   if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas); else window.addEventListener("resize", resize);
 
-  /* ---- start ---- */
+  /* ---- start: nothing is fetched or animated until the visitor opens the viewer ---- */
   R = homeView();
   resize();
-  requestAnimationFrame(tick);
-  setStatus("Loading\u2026");
-  fetch(DATA + "manifest.json").then(function (r) {
-    if (!r.ok) throw new Error(r.status);
-    return r.json();
-  }).then(function (m) {
-    man = m;
-    ui.tubes.innerHTML = "";
-    m.tubes.forEach(function (t) {
-      var bt = document.createElement("button");
-      bt.type = "button"; bt.className = "insp-tube"; bt.setAttribute("data-id", t.id); bt.setAttribute("aria-pressed", "false");
-      bt.innerHTML = "<span class=\"insp-tube-label\">" + t.label + "</span><span class=\"insp-tube-d\">" + t.diameter_nm.toPrecision(3) + " nm</span>";
-      bt.addEventListener("click", function () { loadTube(t); });
-      ui.tubes.appendChild(bt);
+  var startBtn = root.querySelector(".insp-start");
+  var started = false;
+  function openViewer() {
+    if (started) return;
+    started = true;
+    if (startBtn) startBtn.hidden = true;
+    root.classList.add("is-active");
+    requestAnimationFrame(tick);
+    setStatus("Loading\u2026");
+    fetch(DATA + "manifest.json").then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function (m) {
+      man = m;
+      ui.tubes.innerHTML = "";
+      m.tubes.forEach(function (t) {
+        var bt = document.createElement("button");
+        bt.type = "button"; bt.className = "insp-tube"; bt.setAttribute("data-id", t.id); bt.setAttribute("aria-pressed", "false");
+        bt.innerHTML = "<span class=\"insp-tube-label\">" + t.label + "</span><span class=\"insp-tube-d\">" + t.diameter_nm.toPrecision(3) + " nm</span>";
+        bt.addEventListener("click", function () { loadTube(t); });
+        ui.tubes.appendChild(bt);
+      });
+      var want = (location.hash || "").slice(1), def = root.getAttribute("data-default");
+      var first = m.tubes.filter(function (t) { return t.id === want; })[0] || m.tubes.filter(function (t) { return t.id === def; })[0] || m.tubes[0];
+      loadTube(first);
+    }).catch(function () {
+      fail("The trajectory list could not be loaded. Open this page from the website (not as a local file) and try again.");
     });
-    var want = (location.hash || "").slice(1), def = root.getAttribute("data-default");
-    var first = m.tubes.filter(function (t) { return t.id === want; })[0] || m.tubes.filter(function (t) { return t.id === def; })[0] || m.tubes[0];
-    loadTube(first);
-  }).catch(function () {
-    fail("The trajectory list could not be loaded. Open this page from the website (not as a local file) and try again.");
-  });
+  }
+  if (startBtn) {
+    startBtn.hidden = false;
+    startBtn.addEventListener("click", function () { openViewer(); canvas.focus({ preventScroll: true }); });
+    setStatus("");
+    render();
+  } else {
+    openViewer();
+  }
+  if (EXPORT) openViewer();
 })();

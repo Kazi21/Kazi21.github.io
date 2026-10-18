@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Water Lab — Kazi Ehsanul Karim</title>
+<meta name="description" content="Live molecular dynamics of rigid SPC/E water, computed in the browser by LAMMPS compiled to WebAssembly: change the conditions, pull a molecule with a harmonic tether, follow forces, energy and thermodynamics, and download a reproducible experiment. Simulation Lab, by Kazi Ehsanul Karim.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Live Water Lab — Kazi Ehsanul Karim">
+<meta property="og:description" content="Pull a water molecule and follow the response: real LAMMPS molecular dynamics in the browser.">
+<meta property="og:image" content="../../assets/icons/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#F8FAFC">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="water.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
+      <a href="../../index.html#lab" aria-current="page">Simulation Lab</a>
+      <a href="../../index.html#practice">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section wl-top" id="top">
+  <div class="container">
+    <p class="project-kicker">Simulation Lab · live molecular dynamics · LAMMPS in your browser</p>
+    <h1 class="evidence-title wl-title">Live Water Lab</h1>
+    <p class="wl-lede">Explore how molecular forces produce collective motion. Change the conditions, gently pull a molecule, and follow the response.</p>
+
+    <div class="wl-app" id="water-lab">
+      <div class="wl-stage">
+        <div class="wl-viewport">
+          <canvas class="wl-canvas" tabindex="0" role="img" aria-label="Live molecular view of liquid water (not started)"></canvas>
+          <div class="wl-poster">
+            <p class="wl-poster-title">Pull one molecule. Watch its neighbours respond. Release it and follow the relaxation.</p>
+            <p class="wl-poster-note">216 rigid SPC/E water molecules simulated live by LAMMPS compiled to WebAssembly. The 6.4 MB engine and the starting configuration load only when you start.</p>
+            <div class="wl-poster-actions">
+              <button type="button" class="btn btn-primary wl-start-big">Start water simulation</button>
+              <button type="button" class="btn wl-demo-big">Start with a gentle pull</button>
+            </div>
+          </div>
+          <p class="wl-status" role="status" hidden></p>
+        </div>
+        <p class="wl-physics">Moving the handle applies an external force. Molecular interactions transmit the disturbance through the liquid. After release, the system relaxes while thermal motion continues.</p>
+        <ul class="wl-legend">
+          <li><i class="wl-chip wl-sw-o"></i>Oxygen</li>
+          <li><i class="wl-chip wl-sw-h"></i>Hydrogen</li>
+          <li><i class="wl-chip wl-sw-cell"></i>Periodic cell</li>
+          <li><i class="wl-chip wl-sw-sel"></i>Selected molecule</li>
+          <li><i class="wl-chip wl-sw-near"></i>Neighbours (O–O &lt; 0.35 nm)</li>
+          <li><i class="wl-chip wl-sw-handle"></i>Handle and tether</li>
+          <li><i class="wl-chip wl-sw-tether"></i>Tether force</li>
+          <li><i class="wl-chip wl-sw-int"></i>Net interaction force</li>
+        </ul>
+        <p class="wl-help">Drag empty space to rotate; scroll or pinch to zoom. Click a molecule to select it, then drag it to pull. Keys: arrows move the handle, <kbd>Esc</kbd> releases, <kbd>Space</kbd> pauses, <kbd>N</kbd> selects a central molecule, <kbd>Shift</kbd> + arrows rotate. Arrows are force vectors projected onto the screen; magnitudes are in the panel.</p>
+      </div>
+
+      <div class="wl-panel">
+        <div class="wl-transport">
+          <button type="button" class="btn btn-primary btn-small wl-start">Start</button>
+          <button type="button" class="btn btn-small wl-pause" disabled>Pause</button>
+          <button type="button" class="btn btn-small wl-reset" disabled>Reset</button>
+          <span class="wl-state-row">State: <span class="wl-state">Not started</span></span>
+        </div>
+
+        <section class="wl-quick" aria-labelledby="wl-pull-h">
+          <h2 id="wl-pull-h" class="wl-panel-h">Pull and release</h2>
+          <div class="wl-buttons">
+            <button type="button" class="btn btn-primary wl-demo">Try a gentle pull</button>
+            <button type="button" class="btn wl-release" disabled>Release</button>
+          </div>
+          <div class="wl-field">
+            <label for="wl-k">Pull stiffness <span class="wl-field-hint wl-inline-hint">(tether spring constant)</span></label>
+            <div class="wl-range"><input type="range" id="wl-k" min="0" max="4" step="1" value="2"><output id="wl-k-out" for="wl-k">1.39 N/m</output></div>
+          </div>
+          <p class="wl-small">Or click any molecule, or <button type="button" class="btn-link wl-select-central">select a central one</button>, and drag it.</p>
+          <dl class="wl-readout"></dl>
+        </section>
+
+        <details class="wl-more" id="wl-conditions">
+          <summary>Change the conditions</summary>
+          <div class="wl-more-body">
+            <dl class="wl-system-readout"></dl>
+            <div class="wl-field">
+              <label for="wl-molecules">Molecule number <span class="wl-field-hint">rebuilds the system from an equilibrated start</span></label>
+              <select id="wl-molecules"><option value="216" selected>216</option><option value="256">256</option><option value="343">343</option><option value="512">512</option></select>
+            </div>
+            <div class="wl-field wl-field-pair">
+              <div><label for="wl-T">Temperature (K)</label><input type="number" id="wl-T" min="260" max="370" step="1" value="298.15" inputmode="decimal"></div>
+              <div><label for="wl-P">Pressure (bar)</label><input type="number" id="wl-P" min="1" max="1000" step="1" value="1" inputmode="decimal"></div>
+            </div>
+            <p class="wl-small wl-range-note">Allowed: 260–370 K and 1–1000 bar (thermostat and barostat targets).</p>
+            <div class="wl-field wl-field-lj">
+              <label for="wl-lj">O–O Lennard-Jones strength</label>
+              <select id="wl-lj"><option value="0.90">0.90</option><option value="0.95">0.95</option><option value="1.00" selected>1.00</option><option value="1.05">1.05</option><option value="1.10">1.10</option></select>
+              <p class="wl-lj-label">Reference SPC/E parameters</p>
+              <p class="wl-small">Changes the oxygen–oxygen LJ interaction, including attraction and short-range repulsion. Charges and molecular geometry remain fixed. (ε<sub>OO</sub> = s × 0.650 kJ/mol.)</p>
+              <button type="button" class="btn btn-small wl-restore" disabled>Restore reference parameters</button>
+            </div>
+            <button type="button" class="btn btn-primary btn-small wl-apply" disabled>Apply conditions</button>
+            <p class="wl-small wl-cond-note" hidden>Release the pull before changing the conditions.</p>
+            <p class="wl-small">Changes take effect between simulation chunks; each is recorded and restarts the averaging window. Changing the molecule number starts a new experiment (download the current one first if you want to keep it).</p>
+          </div>
+        </details>
+
+        <details class="wl-more" id="wl-accounting">
+          <summary>Forces, work and energy</summary>
+          <div class="wl-more-body">
+            <dl class="wl-pull-readout"></dl>
+            <p class="wl-small wl-limit-note">The handle moves at most 0.5 nm/ps and is reset to within 0.3 nm of the molecule's centre of mass at every command update (every 2–10 fs); between updates the separation can exceed 0.3 nm by a few per cent, so the force can slightly exceed k × 0.3 nm. The force shown is the measured one; forces are never clipped.</p>
+            <p class="wl-small">Pulling runs at fixed volume (NVT): starting a pull from constant pressure switches the integrator, and the switch is recorded. During pulling the temperature and the model stay fixed and the pressure is a measured diagnostic. The tether adds momentum; the drift velocity is shown and is removed only if you press the button.</p>
+            <button type="button" class="btn btn-small wl-drift" disabled>Remove centre-of-mass drift</button>
+          </div>
+        </details>
+
+        <details class="wl-more" id="wl-display">
+          <summary>Display</summary>
+          <div class="wl-more-body wl-view-options">
+            <label class="wl-pace-label" for="wl-pace">Display pace</label>
+            <select id="wl-pace" class="wl-pace">
+              <option value="slow">Slow motion (2 fs per frame)</option>
+              <option value="normal" selected>Normal (10 fs per frame)</option>
+              <option value="fast">Fast (30 fs per frame)</option>
+            </select>
+            <label><input type="checkbox" id="wl-cell" checked> Periodic cell</label>
+            <label><input type="checkbox" id="wl-hb"> All hydrogen bonds</label>
+            <button type="button" class="btn btn-small wl-view-reset">Reset view</button>
+          </div>
+        </details>
+
+        <div class="wl-panel-export">
+          <button type="button" class="btn wl-download wl-download-panel" disabled>Download experiment</button>
+          <p class="wl-small wl-dl-note"></p>
+        </div>
+      </div>
+    </div>
+    <p class="visually-hidden wl-announce" aria-live="polite"></p>
+
+    <section class="wl-measure" id="measurements" aria-labelledby="wl-measure-h">
+      <h2 id="wl-measure-h">Measurements</h2>
+      <p class="section-intro">Molecules keep moving at equilibrium, so the measurements keep fluctuating; with a few hundred molecules the instantaneous pressure swings by hundreds of bar. Event markers show every change and pull.</p>
+      <div class="wl-plots wl-plots-main"></div>
+      <details class="disclosure wl-measure-more" id="wl-all-measurements">
+        <summary>All measurements and plots</summary>
+        <div class="disclosure-body">
+          <div class="wl-table-wrap">
+            <table class="wl-table" id="wl-table">
+              <thead><tr><th scope="col">Quantity</th><th scope="col">Target</th><th scope="col">Now</th><th scope="col">Mean since last change (descriptive)</th></tr></thead>
+              <tbody><tr><td colspan="4" class="wl-empty">Start the simulation to see measurements.</td></tr></tbody>
+            </table>
+          </div>
+          <p class="wl-small wl-avg-note"></p>
+          <div class="wl-plots wl-plots-more"></div>
+        </div>
+      </details>
+      <details class="disclosure wl-measure-more" id="wl-history">
+        <summary>Event history</summary>
+        <div class="disclosure-body"><ol class="wl-log" reversed></ol></div>
+      </details>
+      <div class="wl-export">
+        <div>
+          <h3>Download the experiment</h3>
+          <p>A zip with the LAMMPS input that replays every command, the starting and final configurations, the measurements every 10 fs, the event history, the model and units, and the analysis script. The input runs with native LAMMPS (packages MOLECULE, KSPACE and RIGID).</p>
+        </div>
+        <div class="wl-export-action">
+          <button type="button" class="btn btn-primary wl-download" disabled>Download experiment</button>
+          <p class="wl-small wl-dl-note" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="section section-band" id="validation">
+  <div class="container">
+    <details class="disclosure wl-model" id="model-validation">
+      <summary>Model and validation</summary>
+      <div class="wl-doc">
+        <h3>Engine</h3>
+        <p><span class="wl-engine-info">LAMMPS 22 Jul 2025 (stable, update 4)</span>, compiled to WebAssembly with Emscripten 3.1.6 as a single-threaded library with the MOLECULE, KSPACE and RIGID packages (KISS FFT). It runs in a Web Worker in chunks of 2–30 MD steps; your actions are applied between chunks. Every force, energy and pressure on this page is computed by LAMMPS; the page only draws positions and moves the tether handle. No cross-origin isolation, service worker or special server headers are needed, so the lab runs on GitHub Pages as plain files.</p>
+        <p>Engine choice: Atomify (github.com/andeplane/atomify) runs LAMMPS through the <code>lammps.js</code> package (v1.5.1), a multithreaded pthreads/Kokkos build that needs SharedArrayBuffer and a cross-origin-isolation service worker. This lab needs one small water box, so a pinned single-threaded build is the simpler deployment. A WebAssembly SIMD build was also tested and gave no speed-up (0.83–1.03×), so only the baseline build is served.</p>
+
+        <h3>Water model</h3>
+        <table class="wl-param">
+          <tbody>
+            <tr><th scope="row">Model</th><td>Rigid SPC/E (<a href="https://docs.lammps.org/Howto_spc.html">LAMMPS reference</a>), LAMMPS <code>real</code> units</td></tr>
+            <tr><th scope="row">Charges</th><td>q<sub>O</sub> = −0.8476 e, q<sub>H</sub> = +0.4238 e</td></tr>
+            <tr><th scope="row">Lennard-Jones</th><td>ε<sub>OO</sub> = 0.1553 kcal/mol (0.650 kJ/mol) × s, σ<sub>OO</sub> = 3.166 Å; all hydrogen-containing LJ pairs zero</td></tr>
+            <tr><th scope="row">Geometry</th><td>O–H = 1.0 Å, H–O–H = 109.47°, held by SHAKE on both bonds and the angle (tolerance 10<sup>−5</sup>)</td></tr>
+            <tr><th scope="row">Cutoffs</th><td>LJ and real-space Coulomb 8.5 Å, analytic LJ tail corrections to energy and pressure; intramolecular non-bonded pairs excluded</td></tr>
+            <tr><th scope="row">Long-range electrostatics</th><td>PPPM, relative RMS force accuracy 10<sup>−4</sup></td></tr>
+            <tr><th scope="row">Integration</th><td>Velocity Verlet, 1 fs; Nose–Hoover thermostat (100 fs) acting on motion relative to the centre of mass; isotropic Nose–Hoover barostat (1000 fs) in NPT</td></tr>
+            <tr><th scope="row">Starting states</th><td>216, 256, 343 and 512 molecules, equilibrated with native LAMMPS (65 ps, then 40 ps NPT at 298.15 K and 1 bar) and saved at a configuration within 0.1 % of the mean volume; velocities are part of the preset</td></tr>
+          </tbody>
+        </table>
+        <p><b>Energy convention.</b> The potential energy is that of the water model (LJ with tail correction, real-space and PPPM Coulomb, and bond and angle terms, which are near zero under SHAKE). It excludes the tether energy, which is reported separately, and no SPC/E self-polarisation correction is added.</p>
+        <p><b>Temperature.</b> LAMMPS <code>compute temp/com</code>: kinetic energy without the motion of the system's centre of mass, over 6N − 3 degrees of freedom (the SHAKE constraints are removed).</p>
+        <p><b>Pressure.</b> Virial pressure including the SHAKE constraint, PPPM and LJ tail contributions, with the kinetic part from the same temperature compute. It excludes the external tether virial. LAMMPS works in atmospheres: P<sub>atm</sub> = P<sub>bar</sub> / 1.01325.</p>
+
+        <h3>O–O Lennard-Jones strength</h3>
+        <p>ε<sub>OO</sub> = s × ε<sub>OO,reference</sub>, with the charges, σ and the rigid geometry unchanged. The change is made in LAMMPS (<code>pair_coeff</code>), so forces, energy, virial and the tail correction change together. At s = 1 the page shows "Reference SPC/E parameters"; any other value is a "Modified SPC/E educational model", not a validated water model. It is not a hydrogen-bond strength control: hydrogen bonding in SPC/E comes mainly from the charges, which stay fixed. The allowed values are 0.90, 0.95, 1.00, 1.05 and 1.10; the conditions at which each was actually run are listed under Validation.</p>
+
+        <h3>Pulling protocol</h3>
+        <p>A harmonic tether acts on the centre of mass <i>R</i> of the selected molecule: U = ½ k |R − X|², F = −k (R − X), where X is the handle. The force is shared over the molecule's atoms in proportion to their mass, F<sub>i</sub> = (m<sub>i</sub>/M) F, which pulls the molecule without a direct torque; it can still rotate through its interactions. LAMMPS evaluates the tether every step (<code>fix addforce</code> with per-atom variables and unwrapped coordinates, defined before SHAKE and the integrator). The handle starts at R, so there is no initial force jump. It moves at most 0.5 nm/ps, and at every command update (every 2–10 fs, between simulation chunks) it is reset to within 0.3 nm of R. Between updates R keeps moving, so the separation can exceed 0.3 nm by a few per cent and the tether force can slightly exceed k × 0.3 nm (largest separations measured in check S1 below). The force is computed by LAMMPS from the actual separation and is never clipped; the page shows the measured force. Pulling runs at fixed volume (NVT), at the volume the cell has when the pull starts; with a few hundred molecules this can differ from the mean volume by 1–2 %, which the recorded switch event states. Release sets k = 0.</p>
+        <p><b>Work.</b> Each handle move at fixed coordinates adds protocol work ΔW = U(R, X<sub>new</sub>) − U(R, X<sub>old</sub>); a stiffness change adds ½ (k<sub>new</sub> − k<sub>old</sub>) |R − X|², and release adds −U. The work delivered to the molecules is the protocol work minus the tether energy. Energy given to the liquid is removed by the thermostat; that exchange is tracked separately (LAMMPS <code>ecouple</code>).</p>
+        <p><b>Momentum.</b> The tether is an external force, so it changes the total momentum. The drift velocity of the centre of mass is measured and plotted; it is removed only when you press the button, and that removal is recorded with its kinetic energy.</p>
+
+        <h3>Measurements and averages</h3>
+        <p>Measurements are recorded every 10 fs. The live means restart after every change (conditions, model, start of a pull, release) and are suspended while the molecule is driven. They are descriptive: the plain mean of the samples since the last change, including the relaxation that follows it, with no correlation correction, so the page shows no uncertainty. Uncertainties come from <code>analyze_water.py</code> in the download, which discards an initial period after each change, uses block averaging and estimates the integrated autocorrelation time. Elapsed time is not taken as proof of equilibrium. Displacement includes ordinary thermal motion.</p>
+
+        <h3 id="tests">Validation</h3>
+        <!-- BEGIN:validation -->
+<div class="wl-tests-wrap"><table class="wl-tests"><thead><tr><th scope="col">#</th><th scope="col">Check</th><th scope="col">Acceptance criterion</th><th scope="col">Measured</th><th scope="col">Result</th></tr></thead><tbody>
+<tr><td>1</td><th scope="row">Browser engine vs native LAMMPS: forces, energy, pressure</th><td>Same input in both engines (4 configurations: 216 and 512 molecules, s = 0.90, 1.00, 1.10, an active tether): per-atom forces within 10⁻⁶ kcal mol⁻¹ Å⁻¹, energies within 10⁻⁶ kcal/mol, pressure within 10⁻⁴ atm</td><td>max force difference 4.69 × 10⁻¹³ kcal mol⁻¹ Å⁻¹, energy 0 kcal/mol, pressure 3.82 × 10⁻¹¹ atm over 4 configurations</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr>
+<tr><td>2</td><th scope="row">Geometry, neutrality, topology, periodic wrapping</th><td>All presets and every 10 fs of 5 ps: O–H 1.0 ± 10⁻⁴ Å, H–O–H 109.47 ± 0.01°, |Σq| ≤ 10⁻¹⁰ e, molecules whole, every oxygen drawn inside the cell</td><td>all presets whole and neutral; over 5 ps, max |O–H − 1 Å| = 2.12 × 10⁻⁶ Å and max |H–O–H − 109.47°| = 1.37 × 10⁻⁴°</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr>
+<tr><td>3</td><th scope="row">O–O LJ strength reaches the force field</th><td>LJ energy proportional to s within 10⁻¹⁰; Coulomb unchanged; forces and pressure linear in s; the page’s change between chunks equals a fresh build at that s within 10⁻⁶ kcal/mol</td><td>evdwl scales with s to 2.7 × 10⁻¹⁵ relative; Coulomb unchanged (0); forces linear in s (8.9 × 10⁻¹⁴) and change by up to 3.56 kcal mol⁻¹ Å⁻¹ for s 1.00 to 1.10. Amended procedure: the first evaluation compared the page path with a fresh build at slightly different coordinates (before and after SHAKE’s setup-time correction; difference 2.4 × 10⁻⁶ kcal/mol, above the 10⁻⁶ criterion); both are now evaluated at identical coordinates, criterion unchanged, as recorded in TOLERANCES.md</td><td><span class="wl-verdict wl-verdict-pass">PASS (amended)</span></td></tr>
+<tr><td>4</td><th scope="row">Tether force and torque</th><td>Added force per atom (mᵢ/M)(−k(R − X)) within 10⁻¹⁰; torque about R ≤ 10⁻⁹ kcal/mol; isolated molecule oscillates within 1 % of 2π(M/k)^½ and is not set rotating</td><td>tether force exact per atom (3.5 × 10⁻¹⁴), torque 5.7 × 10⁻¹⁵ kcal/mol; isolated molecule period 583.1 fs vs 583.1 fs, angular momentum 6.6 × 10⁻¹⁷ g mol⁻¹ Å² fs⁻¹</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr>
+<tr><td>5</td><th scope="row">Tether force vs finite differences</th><td>Central differences of the tether energy reported by LAMMPS equal −k(R − X) within 10⁻⁶</td><td>max relative difference 5.5 × 10⁻¹³ (h = 0.001 Å); per-atom energies sum to ½k|R − X|² within 5.5 × 10⁻¹⁴</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr>
+<tr><td>6</td><th scope="row">Zero stiffness = unperturbed control</th><td>With k = 0 (and a molecule selected) the coordinates after 1000 steps equal a run without the tether within 10⁻¹⁰ Å</td><td>after 1000 steps the coordinates differ by exactly 0 from the run without the tether</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr>
+<tr><td>7</td><th scope="row">Pulling, release and periodic crossing</th><td>Constraints held while a molecule is pulled across a cell face; R continuous; a repeat gives an identical journal and identical coordinates; native replay of the export matches the potential energy within 10⁻⁶ for 0.5 ps; energy balance within 2 % + 0.5 kJ/mol</td><td>pulled across the cell face (1 crossing), constraints within 3.4 × 10⁻⁶ Å; repeat identical; native replay matches PE to 3.0 × 10⁻⁸ (first 0.5 ps), 3.1 × 10⁻² by 3.7 ps; energy balance 0.50 of 123.0 kJ/mol</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr>
+<tr><td>8</td><th scope="row">Unforced NVE energy drift</th><td>At 1 fs, |drift| ≤ 0.25 kJ mol⁻¹ ns⁻¹ per molecule over 20 ps, native and browser engine (browser run revised from 5 ps); 0.5 and 2 fs reported</td><td>drift at 1 fs: native 0.200, browser 0.022 kJ mol⁻¹ ns⁻¹ per molecule; native at 0.5 / 2 fs: 0.227 / 0.550. The first stated version, with a 5 ps browser run, gave −1.15 and FAILED: 5 ps cannot resolve this tolerance (native 5 ps windows scatter from −1.43 to 0.75); the browser run was extended to 20 ps, as recorded in TOLERANCES.md</td><td><span class="wl-verdict wl-verdict-pass">PASS (amended)</span></td></tr>
+<tr><td>9</td><th scope="row">NVT and NPT statistics vs native</th><td>Four independent 40 ps runs per engine and ensemble (revised from one): browser and native means of T, PE and P (NVT) and density and PE (NPT) agree at 99 % per comparison (Welch, Bonferroni over five); mean T consistent with 298.15 K</td><td>four 40 ps runs per engine: NPT density 1000.8 ± 1.7 (browser) vs 999.2 ± 1.1 kg/m³ (native); PE per molecule −46.751 vs −46.828 kJ/mol; NVT T 298.32 vs 297.86 K. The first stated version, with one run per engine, FAILED on one of five comparisons (NPT potential energy per molecule, z ≈ 2.6); it was revised to four independent runs per engine with a Bonferroni-corrected 99 % level per comparison, as recorded in TOLERANCES.md</td><td><span class="wl-verdict wl-verdict-pass">PASS (amended)</span></td></tr>
+<tr><td>10</td><th scope="row">Interface behaviour</th><td>Molecule-count change, pause/resume, stale messages, engine failure and Reset, hidden tab, touch at 360/390 px, keyboard, reduced motion, download, no engine download before Start; for release 2026.5.1 also the essential readout, expandable panels from the keyboard, descriptive means, plots drawn on opening, one-click gentle pull before Start, and the demonstration handle within 0.25 nm of its start</td><td>25 of 25 interface checks passed. Amended for release 2026.5.1: items added for the new panel layout, including a check that the demonstration handle stays within 0.25 nm of its start, added after a defect in release 2026.5 was found and fixed; the first run against the new layout failed at the 390 px touch step through a harness scrolling artefact, since corrected, as recorded in TOLERANCES.md</td><td><span class="wl-verdict wl-verdict-pass">PASS (amended)</span></td></tr>
+</tbody></table></div>
+<p class="wl-small">Ten implementation checks, with protocols, results and amendments documented. The protocols and acceptance criteria were written in <a href="../../tools/water-lab/tests/TOLERANCES.md">TOLERANCES.md</a> before the first evaluation. Checks 3, 8 and 9 were amended after their first runs, and check 10 was extended for the release 2026.5.1 interface; each amendment is recorded there with its reason, and the original results are kept and reported. The checks show that the browser engine reproduces native LAMMPS forces at the tested configurations; longer-run behaviour was assessed separately (checks 8 and 9). Scripts and full results: <code>tools/water-lab/tests/</code> and <code>tools/water-lab/results/</code>; each script exits with a failure status when its check fails. The browser-engine checks run the same <code>.wasm</code> file and adapter code as this page (in Node); check 10 drives this page in Chromium.</p>
+<h4 class="wl-subhead" id="ranges">Allowed ranges and conditions actually run</h4>
+<div class="wl-tests-wrap"><table class="wl-tests"><thead><tr><th scope="col">Setting</th><th scope="col">Allowed in the interface</th><th scope="col">Run in checks 1–10</th><th scope="col">Run in check S1</th></tr></thead><tbody><tr><th scope="row">Molecules</th><td>216, 256, 343, 512</td><td>all four (checks 2 and 10, throughput); forces at 216 and 512 (check 1)</td><td>216</td></tr><tr><th scope="row">Temperature target</th><td>260–370 K</td><td>298.15 K; 320 K briefly in check 10</td><td>260 and 370 K</td></tr><tr><th scope="row">Pressure target</th><td>1–1000 bar</td><td>1 bar; 500 bar briefly in check 10</td><td>1 and 1000 bar</td></tr><tr><th scope="row">O–O LJ strength s</th><td>0.90, 0.95, 1.00, 1.05, 1.10</td><td>0.90, 1.00, 1.10 (checks 1 and 3); 1.05 briefly in check 10</td><td>0.90, 0.95, 1.05, 1.10 (298.15 K, 1 bar)</td></tr><tr><th scope="row">Pull stiffness k</th><td>0.347, 0.695, 1.39, 3.47, 6.95 N/m</td><td>3.47 N/m (checks 1, 4, 5, 7); 0.695 and 1.39 N/m (check 10); 0 (check 6)</td><td>0.347 and 6.95 N/m</td></tr></tbody></table></div>
+<p class="wl-small">Values between the points listed (for example 340 K or 200 bar) are allowed but were not run individually. Check S1 was specified in TOLERANCES.md before it was run.</p>
+<div class="wl-tests-wrap"><table class="wl-tests"><thead><tr><th scope="col">Check S1 condition (216 molecules)</th><th scope="col">Native, 20 ps NPT: mean T, 10–20 ps (K)</th><th scope="col">Density range (kg/m³)</th><th scope="col">Mean density, 5–10 → 10–20 ps (kg/m³)</th><th scope="col">Browser engine, 5 ps: mean T, 2.5–5 ps (K)</th><th scope="col">Result</th></tr></thead><tbody><tr><th scope="row">260 K, 1 bar</th><td>258.5</td><td>978–1041</td><td>1010 → 1008</td><td>260.3</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">260 K, 1000 bar</th><td>260.1</td><td>998–1097</td><td>1055 → 1066</td><td>259.7</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">370 K, 1 bar</th><td>370.4</td><td>913–998</td><td>958 → 942</td><td>368.3</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">370 K, 1000 bar</th><td>370.5</td><td>955–1026</td><td>994 → 999</td><td>372.4</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">s = 0.90</th><td>298.1</td><td>957–1058</td><td>1017 → 1010</td><td>296.1</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">s = 0.95</th><td>299.2</td><td>953–1049</td><td>993 → 1004</td><td>297.7</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">s = 1.05</th><td>299.2</td><td>940–1047</td><td>998 → 1001</td><td>297.8</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">s = 1.10</th><td>297.2</td><td>941–1028</td><td>995 → 986</td><td>298.7</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr></tbody></table></div>
+<div class="wl-tests-wrap"><table class="wl-tests"><thead><tr><th scope="col">Check S1 pull (handle requested 0.8 nm away for 2 ps, release, 1 ps)</th><th scope="col">Largest handle–molecule separation (end of each 10 fs chunk)</th><th scope="col">Max |O–H − 1 Å|</th><th scope="col">Energy balance at release</th><th scope="col">Result</th></tr></thead><tbody><tr><th scope="row">0.347 N/m</th><td>0.3060 nm</td><td>1.9 × 10⁻⁶ Å</td><td>0.34 of 0.68 kJ/mol allowed</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr><tr><th scope="row">6.95 N/m</th><td>0.1025 nm</td><td>2.4 × 10⁻⁶ Å</td><td>0.18 of 3.38 kJ/mol allowed</td><td><span class="wl-verdict wl-verdict-pass">PASS</span></td></tr></tbody></table></div>
+<p class="wl-small">Check S1 overall: <span class="wl-verdict wl-verdict-pass">PASS</span>. Criteria: the run completes with all 648 atoms; |O–H − 1 Å| ≤ 10⁻⁴ Å; mean temperature within 5 K of the target (native) or 10 K (browser engine, 5 ps); density within 850–1150 kg/m³ throughout and the mean density over 10–20 ps within 4 % of that over 5–10 ps; energy balance at release within 2 % of the delivered work + 0.5 kJ/mol. Results: <code>results/s1.json</code>.</p>
+<h4 class="wl-subhead">Throughput</h4>
+<div class="wl-tests-wrap"><table class="wl-tests"><thead><tr><th scope="col">Molecules</th><th scope="col">Native LAMMPS (steps/s)</th><th scope="col">Browser engine in Node (steps/s)</th><th scope="col">This page in Chromium, worker (steps/s)</th><th scope="col">Display (frames/s)</th></tr></thead><tbody><tr><td>216</td><td>319</td><td>251</td><td>247 (0.247 ps/s)</td><td>60</td></tr><tr><td>256</td><td>273</td><td>220</td><td>189 (0.189 ps/s)</td><td>60</td></tr><tr><td>343</td><td>225</td><td>170</td><td>159 (0.159 ps/s)</td><td>60</td></tr><tr><td>512</td><td>152</td><td>128</td><td>112 (0.112 ps/s)</td><td>60</td></tr></tbody></table></div>
+<p class="wl-small">Measured on Intel(R) Xeon(R) Processor @ 2.10GHz (2 cores) with Chromium 141.0.7390.37 (headless shell), pace “Fast”, 20 s per size after a 3 s warm-up; native and Node: 1000 steps in 10-step chunks. Simulation throughput is measured in the worker, separately from the page’s display frame rate. Your device will differ.</p>        <!-- END:validation -->
+
+        <h3>Reproduce an experiment</h3>
+        <p>"Download experiment" saves the LAMMPS input with every command issued in this browser, in order, plus the starting configuration with velocities, the final configuration, the measurements, the event history, the model and units, and <code>analyze_water.py</code>. Run <code>lmp -in in.water_lab.lmp</code> with any LAMMPS that has the MOLECULE, KSPACE and RIGID packages (RIGID provides <code>fix shake</code>). Molecular dynamics is chaotic, so a native replay follows the browser closely for the first picoseconds and agrees statistically afterwards.</p>
+        <p>Sampling defaults of the analysis script (discard 20 ps after each change, 5 ps blocks, at least 8 blocks, 95 % intervals) were checked against the reference runs of check 9 (216 molecules, 298.15 K): the integrated autocorrelation times are about 0.04 ps for temperature, 0.04–0.14 ps for pressure, 0.2–0.4 ps for potential energy and 0.8–1.0 ps for the NPT density, so 5 ps blocks span at least five correlation times. The defaults remain provisional for other conditions.</p>
+
+        <h3>Limitations</h3>
+        <ul>
+          <li>A few hundred molecules over a few picoseconds show molecular mechanisms and live thermodynamics, not converged bulk transport properties.</li>
+          <li>Small boxes give large pressure fluctuations; finite-size effects are not corrected.</li>
+          <li>The tether is a teaching perturbation, not a free-energy (steered MD) protocol.</li>
+          <li>Values of s other than 1 define an educational model, not real water.</li>
+        </ul>
+
+        <h3>Credits and licences</h3>
+        <p>Simulation engine: <a href="https://www.lammps.org">LAMMPS</a> (Sandia National Laboratories and Temple University; GPL-2.0), compiled with <a href="https://emscripten.org">Emscripten</a> (runtime under the MIT licence). The engine files in <code>engine/</code> are distributed under GPL-2.0; the corresponding source is the LAMMPS stable_22Jul2025_update4 release plus the bridge file and build scripts in <code>tools/water-lab/engine/</code> of this website's repository. Experiment design, interface, diagnostics and reproducibility workflow: Kazi Ehsanul Karim. Code drafted with AI assistance and checked by the tests above; scientific decisions and validation design are the author's.</p>
+      </div>
+    </details>
+    <p class="wl-back"><a href="../../index.html#lab">Back to the Simulation Lab</a> · <a href="../cnt/">CNT trajectory inspector</a></p>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Simulation Lab, Live Water Lab. Website version 2026.5.1.</p></div>
+    <div><p>Page code: MIT. Engine (LAMMPS, WebAssembly): GPL-2.0; see engine/README.md.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics. The 6.4 MB engine and the starting configuration load only after you press Start.</p></div>
+  </div>
+</footer>
+<script src="zip.js"></script>
+<script src="engine/water-model.js"></script>
+<script src="engine/water-adapter.js"></script>
+<script src="engine/water-export.js"></script>
+<script src="water.js"></script>
+<script src="../../js/nav.js" defer></script>
+</body>
+</html>
