@@ -1,0 +1,38 @@
+{
+ "id": 4,
+ "name": "Tether force and torque",
+ "verdict": "PASS",
+ "tolerances": {
+  "relative_force": 1e-10,
+  "torque_kcal_mol": 1e-9,
+  "net_interaction_force": 1e-9,
+  "period_rel": 0.01,
+  "angular_momentum": 0.000001
+ },
+ "a": {
+  "molecule": 188,
+  "k_kcal_mol_A2": 5,
+  "handle_offset_A": [
+   1,
+   -0.5,
+   0.7
+  ],
+  "sum_rel_err": 3.918788118768998e-14,
+  "per_atom_rel_err": 3.487830349636596e-14,
+  "other_atoms_max_change": 0,
+  "torque_kcal_mol": 5.685304711592558e-15,
+  "net_interaction_force_vs_sum": 0,
+  "tether_energy_rel_err": 6.043696832902367e-14,
+  "pass": true
+ },
+ "b": {
+  "model": "one SPC/E molecule in a 40 A cell with no pair or Coulomb interactions (the tether is the only external force), SHAKE, NVE, zero initial velocities",
+  "period_fs": 583.0678144330894,
+  "expected_period_fs": 583.0703841935522,
+  "period_rel_err": -0.000004407290324470736,
+  "max_angular_momentum": 6.613599755632258e-17,
+  "half_periods_measured": 6,
+  "pass": true
+ },
+ "summary": "tether force exact per atom (3.5e-14), torque 5.7e-15 kcal/mol; isolated molecule period 583.1 fs vs 583.1 fs, angular momentum 6.6e-17"
+}

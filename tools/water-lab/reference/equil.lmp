@@ -1,0 +1,29 @@
+# Native LAMMPS equilibration of the Live Water Lab presets (run with -var N <molecules> -var seed <int>).
+# 5 ps NVT at 0.5 fs from the grid start, then 60 ps NPT at 298.15 K and 1 bar (0.986923 atm) at 1 fs.
+# Fix order (LAMMPS rule): force-adding fixes, then fix shake, then the integrator (shake must precede
+# any box-changing fix such as npt). The last configuration, with velocities, becomes the preset starting state served by the website.
+variable        ljs equal 1.0
+include         model_spce.lmp
+read_data       raw_water${N}.data
+include         coeffs_spce.lmp
+compute         tcom all temp/com
+velocity        all create 298.15 ${seed} mom yes rot no dist gaussian temp tcom
+thermo_style    custom step temp press pe ke etotal vol density
+thermo_modify   temp tcom norm no
+thermo          5000
+timestep        0.5
+fix             rigid all shake 1.0e-4 50 0 b 1 a 1
+fix             integ all nvt temp 298.15 298.15 50.0
+fix_modify      integ temp tcom
+run             10000
+unfix           rigid
+unfix           integ
+timestep        1.0
+fix             rigid all shake 1.0e-4 50 0 b 1 a 1
+fix             integ all npt temp 298.15 298.15 100.0 iso 0.986923 0.986923 1000.0
+fix_modify      integ temp tcom
+variable        rho equal density
+fix             avg all ave/time 10 100 1000 v_rho ave running start 35000
+run             60000
+print           "EQUIL_RESULT N=${N} mean_density_last30ps=$(f_avg:%.5f) final_L=$(lx:%.5f)"
+write_data      preset_water${N}.data

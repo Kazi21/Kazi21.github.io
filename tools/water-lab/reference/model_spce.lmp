@@ -1,0 +1,14 @@
+# Rigid SPC/E water model shared by the browser engine and native LAMMPS (LAMMPS real units).
+# Reference: https://docs.lammps.org/Howto_spc.html. qO = -0.8476 e, qH = +0.4238 e, epsOO = 0.1553 kcal/mol,
+# sigmaOO = 3.166 Å, O-H = 1.0 Å, H-O-H = 109.47°, all hydrogen-containing LJ interactions zero.
+# Electrostatics: real-space cutoff 8.5 Å + PPPM (relative force accuracy 1e-4). LJ cut at 8.5 Å with
+# analytic tail corrections to energy and pressure. Intramolecular non-bonded interactions excluded.
+units           real
+atom_style      full
+boundary        p p p
+pair_style      lj/cut/coul/long 8.5
+pair_modify     tail yes
+kspace_style    pppm 1.0e-4
+bond_style      harmonic
+angle_style     harmonic
+special_bonds   lj/coul 0.0 0.0 0.0

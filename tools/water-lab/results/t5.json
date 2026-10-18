@@ -1,0 +1,41 @@
+{
+ "id": 5,
+ "name": "Tether force vs finite differences",
+ "verdict": "PASS",
+ "tolerances": {
+  "fd_rel": 0.000001,
+  "energy_sum_rel": 1e-10
+ },
+ "molecule": 188,
+ "k_kcal_mol_A2": 5,
+ "handle_offset_A": [
+  0.9,
+  0.7,
+  -0.6
+ ],
+ "h_A": 0.001,
+ "components": [
+  {
+   "axis": "x",
+   "finite_difference": 4.500000000002391,
+   "analytical": 4.500000000000002,
+   "rel_err": 5.30933321998519e-13
+  },
+  {
+   "axis": "y",
+   "finite_difference": 3.4999999999985043,
+   "analytical": 3.4999999999999964,
+   "rel_err": 4.2632564145606057e-13
+  },
+  {
+   "axis": "z",
+   "finite_difference": -2.9999999999983373,
+   "analytical": -2.9999999999999982,
+   "rel_err": 5.536312149464117e-13
+  }
+ ],
+ "tether_energy_kcal_mol": 4.149999999999774,
+ "analytical_energy_kcal_mol": 4.15,
+ "energy_sum_rel_err": 5.457481855988721e-14,
+ "summary": "max relative difference 5.5e-13 (h = 0.001 A); per-atom energies sum to 0.5 k|R-X|^2 within 5.5e-14"
+}

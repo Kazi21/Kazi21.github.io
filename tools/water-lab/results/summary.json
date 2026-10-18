@@ -1,0 +1,199 @@
+{
+ "checks": [
+  {
+   "id": 1,
+   "name": "Browser engine vs native LAMMPS: forces, energy, pressure",
+   "verdict": "PASS",
+   "summary": "max force difference 4.69e-13 kcal/mol/A, energy 0.00e+00 kcal/mol, pressure 3.82e-11 atm over 4 configurations"
+  },
+  {
+   "id": 2,
+   "name": "Geometry, neutrality, topology, periodic wrapping",
+   "verdict": "PASS",
+   "summary": "all presets whole and neutral; over 5 ps, max |O-H - 1 A| = 2.12e-6 A and max |angle - 109.47| = 1.37e-4 deg"
+  },
+  {
+   "id": 3,
+   "name": "O\u2013O LJ strength reaches the force field",
+   "verdict": "PASS (amended)",
+   "summary": "evdwl scales with s to 2.7e-15 relative; Coulomb unchanged (0.0e+0); forces linear in s (8.9e-14) and change by up to 3.56 kcal/mol/A for s 1.00 to 1.10"
+  },
+  {
+   "id": 4,
+   "name": "Tether force and torque",
+   "verdict": "PASS",
+   "summary": "tether force exact per atom (3.5e-14), torque 5.7e-15 kcal/mol; isolated molecule period 583.1 fs vs 583.1 fs, angular momentum 6.6e-17"
+  },
+  {
+   "id": 5,
+   "name": "Tether force vs finite differences",
+   "verdict": "PASS",
+   "summary": "max relative difference 5.5e-13 (h = 0.001 A); per-atom energies sum to 0.5 k|R-X|^2 within 5.5e-14"
+  },
+  {
+   "id": 6,
+   "name": "Zero stiffness = unperturbed control",
+   "verdict": "PASS",
+   "summary": "after 1000 steps the coordinates differ by exactly 0 from the run without the tether"
+  },
+  {
+   "id": 7,
+   "name": "Pulling, release and periodic crossing",
+   "verdict": "PASS",
+   "summary": "pulled across the cell face (1 crossings), constraints within 3.4e-06 A; repeat identical; native replay matches PE to 3.0e-08 (first 0.5 ps), 3.1e-02 by 3.7 ps; energy balance 0.50 of 123.0 kJ/mol"
+  },
+  {
+   "id": 8,
+   "name": "Unforced NVE energy drift",
+   "verdict": "PASS (amended)",
+   "summary": "drift at 1 fs: native 0.200, browser 0.022 kJ/mol/ns per molecule; native at 0.5 / 2 fs: 0.227 / 0.550"
+  },
+  {
+   "id": 9,
+   "name": "NVT and NPT statistics vs native",
+   "verdict": "PASS (amended)",
+   "summary": "four 40 ps runs per engine: NPT density 1000.8 \u00b1 1.7 (browser) vs 999.2 \u00b1 1.1 kg/m^3 (native); PE per molecule -46.751 vs -46.828 kJ/mol; NVT T 298.32 vs 297.86 K"
+  },
+  {
+   "id": 10,
+   "name": "Interface behaviour",
+   "verdict": "PASS (amended)",
+   "summary": "25 of 25 interface checks passed"
+  }
+ ],
+ "engine_sha256": "68359cf05c3b6f74770041533d93f5e920a99e084617a085e396a0f123389f86",
+ "engine_bytes": 6393155,
+ "benchmarks": {
+  "native": {
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "results": [
+    {
+     "molecules": 216,
+     "steps": 1000,
+     "wall_s": 3.1390217549997033,
+     "ms_per_step": 3.1390217549997033,
+     "steps_per_s": 318.57058601369727,
+     "ps_per_s": 0.3185705860136973
+    },
+    {
+     "molecules": 256,
+     "steps": 1000,
+     "wall_s": 3.65957133000029,
+     "ms_per_step": 3.65957133000029,
+     "steps_per_s": 273.25604827052814,
+     "ps_per_s": 0.27325604827052813
+    },
+    {
+     "molecules": 343,
+     "steps": 1000,
+     "wall_s": 4.4350589259993285,
+     "ms_per_step": 4.4350589259993285,
+     "steps_per_s": 225.47614737152006,
+     "ps_per_s": 0.22547614737152005
+    },
+    {
+     "molecules": 512,
+     "steps": 1000,
+     "wall_s": 6.58333376399969,
+     "ms_per_step": 6.58333376399969,
+     "steps_per_s": 151.8987242403539,
+     "ps_per_s": 0.15189872424035392
+    }
+   ],
+   "engine": "native LAMMPS 20250722"
+  },
+  "node": {
+   "engine": "LAMMPS 20250722 WebAssembly",
+   "node": "v22.22.2",
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "cores": 2,
+   "results": [
+    {
+     "molecules": 216,
+     "steps": 1000,
+     "wall_s": 3.983914384,
+     "ms_per_step": 3.983914384,
+     "steps_per_s": 251.00941024640252,
+     "ps_per_s": 0.2510094102464025
+    },
+    {
+     "molecules": 256,
+     "steps": 1000,
+     "wall_s": 4.552694773,
+     "ms_per_step": 4.552694773,
+     "steps_per_s": 219.6501302768096,
+     "ps_per_s": 0.21965013027680957
+    },
+    {
+     "molecules": 343,
+     "steps": 1000,
+     "wall_s": 5.871973553,
+     "ms_per_step": 5.871973553,
+     "steps_per_s": 170.30049453971034,
+     "ps_per_s": 0.17030049453971033
+    },
+    {
+     "molecules": 512,
+     "steps": 1000,
+     "wall_s": 7.828888060000001,
+     "ms_per_step": 7.828888060000001,
+     "steps_per_s": 127.7320600749527,
+     "ps_per_s": 0.1277320600749527
+    }
+   ]
+  },
+  "browser": {
+   "browser": "Chromium 141.0.7390.37 (headless shell)",
+   "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "cores": 2,
+   "viewport": "1440x1000, DPR 1",
+   "pace": "fast",
+   "results": [
+    {
+     "molecules": 216,
+     "atoms": 648,
+     "duration_s": 20.000200000000188,
+     "steps": 4950,
+     "steps_per_s": 247.49752502474743,
+     "ps_per_s": 0.24749752502474742,
+     "display_fps": 59.849401505984375
+    },
+    {
+     "molecules": 256,
+     "atoms": 768,
+     "duration_s": 20.000200000000188,
+     "steps": 3780,
+     "steps_per_s": 188.99811001889805,
+     "ps_per_s": 0.18899811001889805,
+     "display_fps": 59.949400505994376
+    },
+    {
+     "molecules": 343,
+     "atoms": 1029,
+     "duration_s": 20.000299999999815,
+     "steps": 3180,
+     "steps_per_s": 158.99761503577594,
+     "ps_per_s": 0.15899761503577595,
+     "display_fps": 59.949100763489106
+    },
+    {
+     "molecules": 512,
+     "atoms": 1536,
+     "duration_s": 20.000200000000188,
+     "steps": 2250,
+     "steps_per_s": 112.49887501124883,
+     "ps_per_s": 0.11249887501124883,
+     "display_fps": 59.899401005989375
+    }
+   ]
+  }
+ },
+ "supplementary": [
+  {
+   "id": "S1",
+   "name": "Allowed-range stability sweep",
+   "verdict": "PASS",
+   "summary": "eight corner conditions stable for 20 ps (native) and 5 ps (browser engine); mean density over 10\u201320 ps (kg/m^3): 260K_1bar 1008, 260K_1000bar 1066, 370K_1bar 942, 370K_1000bar 999, s0.90 1010, s0.95 1004, s1.05 1001, s1.10 986; soft and stiff tether pulls kept the constraints, largest handle separation 3.060 A at k = 0.347 N/m"
+  }
+ ]
+}

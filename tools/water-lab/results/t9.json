@@ -1,0 +1,258 @@
+{
+ "id": 9,
+ "name": "NVT and NPT statistics vs native",
+ "verdict": "PASS",
+ "revised": true,
+ "settings": {
+  "molecules": 216,
+  "runs_per_engine_and_ensemble": 4,
+  "duration_ps": 40,
+  "discard_ps": 5.0,
+  "seeds": {
+   "browser": [
+    4101,
+    4103,
+    4105,
+    4107
+   ],
+   "native": [
+    4102,
+    4104,
+    4106,
+    4108
+   ]
+  },
+  "comparison": "Welch's t on replica means, 99 % per comparison (Bonferroni over five, family-wise 95 %)"
+ },
+ "results": {
+  "nvt": {
+   "T": {
+    "unit": "K",
+    "browser_replicas": [
+     298.7340667717058,
+     298.5831569217179,
+     297.66008947752715,
+     298.2920070711337
+    ],
+    "native_replicas": [
+     297.85982086177063,
+     297.574721547551,
+     297.93186671822485,
+     298.05872832742415
+    ],
+    "browser_mean": 298.3173300605211,
+    "browser_se": 0.23751137592202867,
+    "native_mean": 297.8562843637427,
+    "native_se": 0.1024639680652911,
+    "difference": 0.4610456967783989,
+    "limit_99": 1.175285303049846,
+    "welch_df": 4.079285963782125,
+    "agree": true,
+    "criterion": true,
+    "tau_int_ps_browser": 0.03933162552412743,
+    "tau_int_ps_native": 0.0404854910200873
+   },
+   "pe": {
+    "unit": "kJ/mol per molecule",
+    "browser_replicas": [
+     -46.85873192436146,
+     -46.826552543877575,
+     -46.665054904229855,
+     -46.79073336288806
+    ],
+    "native_replicas": [
+     -46.727852515444766,
+     -46.77532682258801,
+     -46.74452533182543,
+     -46.84908321413641
+    ],
+    "browser_mean": -46.785268183839236,
+    "browser_se": 0.04240913849216388,
+    "native_mean": -46.77419697099865,
+    "native_se": 0.026828841302649346,
+    "difference": -0.011071212840583655,
+    "limit_99": 0.20091955825195826,
+    "welch_df": 5.06974152685977,
+    "agree": true,
+    "criterion": true,
+    "tau_int_ps_browser": 0.32660024973447677,
+    "tau_int_ps_native": 0.26078201743180307
+   },
+   "P": {
+    "unit": "bar",
+    "browser_replicas": [
+     -115.205736911104,
+     66.54596438040019,
+     -202.41074486206443,
+     -70.91388403948966
+    ],
+    "native_replicas": [
+     -50.57316591959783,
+     -51.802839862182836,
+     -42.66855351167974,
+     82.59905550528651
+    ],
+    "browser_mean": -80.49610035806447,
+    "browser_se": 56.11084794576088,
+    "native_mean": -15.61137594704347,
+    "native_se": 32.79929943639917,
+    "difference": -64.884724411021,
+    "limit_99": 266.70428413169157,
+    "welch_df": 4.835816596222378,
+    "agree": true,
+    "criterion": true,
+    "tau_int_ps_browser": 0.07890040784975473,
+    "tau_int_ps_native": 0.09930773231221945
+   },
+   "T_target_check": {
+    "browser_mean_K": 298.3173300605211,
+    "interval_95_K": 0.7558672007659092,
+    "pass": true
+   }
+  },
+  "npt": {
+   "rho": {
+    "unit": "kg/m^3",
+    "browser_replicas": [
+     1005.1424864770337,
+     996.7435927976333,
+     999.8438375794364,
+     1001.3388918472733
+    ],
+    "native_replicas": [
+     1001.9665066726639,
+     999.7030328797144,
+     998.6048933214739,
+     996.7060519995489
+    ],
+    "browser_mean": 1000.7672021753441,
+    "browser_se": 1.7443235652390774,
+    "native_mean": 999.2451212183503,
+    "native_se": 1.0981949636549895,
+    "difference": 1.5220809569938183,
+    "limit_99": 8.264586239974559,
+    "welch_df": 5.055325542368111,
+    "agree": true,
+    "criterion": true,
+    "tau_int_ps_browser": 0.6187434403060421,
+    "tau_int_ps_native": 0.6862869284758752
+   },
+   "pe": {
+    "unit": "kJ/mol per molecule",
+    "browser_replicas": [
+     -46.68988466465962,
+     -46.83821409636132,
+     -46.78925939233014,
+     -46.68782475307929
+    ],
+    "native_replicas": [
+     -46.873584444634254,
+     -46.822765560060695,
+     -46.78440750923663,
+     -46.83217968606349
+    ],
+    "browser_mean": -46.751295726607594,
+    "browser_se": 0.037412036750608516,
+    "native_mean": -46.82823429999876,
+    "native_se": 0.018309597653229433,
+    "difference": 0.07693857339116761,
+    "limit_99": 0.18139937786601815,
+    "welch_df": 4.359126812531376,
+    "agree": true,
+    "criterion": true,
+    "tau_int_ps_browser": 0.2626948276212974,
+    "tau_int_ps_native": 0.2581803564968137
+   },
+   "T": {
+    "unit": "K",
+    "browser_replicas": [
+     298.166915855868,
+     298.4067021149412,
+     298.1374008398255,
+     298.52345974273203
+    ],
+    "native_replicas": [
+     298.06555782635985,
+     298.032154793764,
+     297.4048017458422,
+     297.8730634982707
+    ],
+    "browser_mean": 298.30861963834167,
+    "browser_se": 0.09361814354200781,
+    "native_mean": 297.84389446605917,
+    "native_se": 0.15226890842492868,
+    "difference": 0.464725172282499,
+    "limit_99": 0.7218867376039702,
+    "welch_df": 4.984473175560616,
+    "agree": true,
+    "criterion": false,
+    "tau_int_ps_browser": 0.03835646947836485,
+    "tau_int_ps_native": 0.03801688644137119
+   },
+   "P": {
+    "unit": "bar",
+    "browser_replicas": [
+     -2.454795520640551,
+     10.687622540364963,
+     10.599165895382754,
+     5.956125431854598
+    ],
+    "native_replicas": [
+     2.9924516739415936,
+     5.053701283686341,
+     0.42021605717877747,
+     20.041158446242786
+    ],
+    "browser_mean": 6.197029586740441,
+    "browser_se": 3.088369872812605,
+    "native_mean": 7.126881865262375,
+    "native_se": 4.407848082323405,
+    "difference": -0.9298522785219339,
+    "limit_99": 20.94548730361171,
+    "welch_df": 5.373482685968277,
+    "agree": true,
+    "criterion": false,
+    "tau_int_ps_browser": 0.03808513915631033,
+    "tau_int_ps_native": 0.040410546665626323
+   },
+   "T_target_check": {
+    "browser_mean_K": 298.30861963834167,
+    "interval_95_K": 0.2979347150227823,
+    "pass": true
+   }
+  }
+ },
+ "reference_pilot": {
+  "nvt": {
+   "T": {
+    "tau_int_ps": 0.03990855827210736
+   },
+   "pe": {
+    "tau_int_ps": 0.2936911335831399
+   },
+   "P": {
+    "tau_int_ps": 0.08910407008098709
+   }
+  },
+  "npt": {
+   "rho": {
+    "tau_int_ps": 0.6525151843909587
+   },
+   "pe": {
+    "tau_int_ps": 0.2604375920590556
+   },
+   "T": {
+    "tau_int_ps": 0.03818667795986802
+   },
+   "P": {
+    "tau_int_ps": 0.03924784291096833
+   }
+  }
+ },
+ "original_stated_version": {
+  "verdict": "FAIL",
+  "summary": "NPT density browser 1005.1 \u00b1 2.9 vs native 1002.0 \u00b1 3.4 kg/m^3; PE per molecule -46.690 vs -46.874 kJ/mol; NVT T 298.73 vs 297.86 K",
+  "note": "one run per engine; failed on NPT potential energy per molecule (difference 0.184 vs limit 0.141 kJ/mol)"
+ },
+ "summary": "four 40 ps runs per engine: NPT density 1000.8 \u00b1 1.7 (browser) vs 999.2 \u00b1 1.1 kg/m^3 (native); PE per molecule -46.751 vs -46.828 kJ/mol; NVT T 298.32 vs 297.86 K"
+}

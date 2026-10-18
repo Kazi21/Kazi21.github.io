@@ -1,0 +1,26 @@
+{
+ "0.5": {
+  "dt_fs": 0.5,
+  "duration_ps": 20.0,
+  "drift_kJ_mol_ns_per_molecule": 0.2273799349822062,
+  "rms_fluct_kJ_mol_per_molecule": 0.002625915762790308,
+  "start_kJ_mol_per_molecule": -39.102835781012566,
+  "wall_s": 117.576007604599
+ },
+ "1.0": {
+  "dt_fs": 1.0,
+  "duration_ps": 20.0,
+  "drift_kJ_mol_ns_per_molecule": 0.2002605219438503,
+  "rms_fluct_kJ_mol_per_molecule": 0.003768026912774863,
+  "start_kJ_mol_per_molecule": -39.102835781012566,
+  "wall_s": 60.8777973651886
+ },
+ "2.0": {
+  "dt_fs": 2.0,
+  "duration_ps": 20.0,
+  "drift_kJ_mol_ns_per_molecule": 0.5503912341354822,
+  "rms_fluct_kJ_mol_per_molecule": 0.0035707951526494724,
+  "start_kJ_mol_per_molecule": -39.102835781012566,
+  "wall_s": 32.87177515029907
+ }
+}

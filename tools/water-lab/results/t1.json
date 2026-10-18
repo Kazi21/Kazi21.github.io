@@ -1,0 +1,60 @@
+{
+ "id": 1,
+ "name": "Browser vs native forces, energy and pressure",
+ "verdict": "PASS",
+ "tolerances": {
+  "force": 1e-06,
+  "energy": 1e-06,
+  "pressure": 0.0001,
+  "tether": 1e-09
+ },
+ "browser_engine": "LAMMPS 20250722 WebAssembly (Node v22.22.2)",
+ "native_engine": "native LAMMPS 20250722 (PyPI lammps)",
+ "cases": [
+  {
+   "case": "preset216_s1.00",
+   "max_force_diff_kcal_mol_A": 4.689582056016661e-13,
+   "max_energy_diff_kcal_mol": 0.0,
+   "max_pressure_diff_atm": 2.4101609596982598e-11,
+   "max_tether_diff": 3.552713678800501e-15,
+   "pe_kcal_mol": -2403.694726862515,
+   "press_atm": 471.9697785410237,
+   "max_force_kcal_mol_A": 25.451121856995176,
+   "pass": true
+  },
+  {
+   "case": "preset216_s1.10",
+   "max_force_diff_kcal_mol_A": 4.689582056016661e-13,
+   "max_energy_diff_kcal_mol": 0.0,
+   "max_pressure_diff_atm": 3.8198777474462986e-11,
+   "max_tether_diff": 3.552713678800501e-15,
+   "pe_kcal_mol": -2357.155813977457,
+   "press_atm": 4165.02707303781,
+   "max_force_kcal_mol_A": 25.423412526564995,
+   "pass": true
+  },
+  {
+   "case": "preset512_s0.90",
+   "max_force_diff_kcal_mol_A": 1.4210854715202004e-14,
+   "max_energy_diff_kcal_mol": 0.0,
+   "max_pressure_diff_atm": 9.322320693172514e-12,
+   "max_tether_diff": 0.0,
+   "pe_kcal_mol": -5858.148615428423,
+   "press_atm": -4309.113949787148,
+   "max_force_kcal_mol_A": 22.964970841047588,
+   "pass": true
+  },
+  {
+   "case": "preset216_tether_k5",
+   "max_force_diff_kcal_mol_A": 4.689582056016661e-13,
+   "max_energy_diff_kcal_mol": 0.0,
+   "max_pressure_diff_atm": 2.432898327242583e-11,
+   "max_tether_diff": 1.7763568394002505e-15,
+   "pe_kcal_mol": -2403.694726862515,
+   "press_atm": 471.9697785409691,
+   "max_force_kcal_mol_A": 25.451121856995176,
+   "pass": true
+  }
+ ],
+ "summary": "max force difference 4.69e-13 kcal/mol/A, energy 0.00e+00 kcal/mol, pressure 3.82e-11 atm over 4 configurations"
+}

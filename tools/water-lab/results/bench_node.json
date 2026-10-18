@@ -1,0 +1,40 @@
+{
+ "engine": "LAMMPS 20250722 WebAssembly",
+ "node": "v22.22.2",
+ "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+ "cores": 2,
+ "results": [
+  {
+   "molecules": 216,
+   "steps": 1000,
+   "wall_s": 3.983914384,
+   "ms_per_step": 3.983914384,
+   "steps_per_s": 251.00941024640252,
+   "ps_per_s": 0.2510094102464025
+  },
+  {
+   "molecules": 256,
+   "steps": 1000,
+   "wall_s": 4.552694773,
+   "ms_per_step": 4.552694773,
+   "steps_per_s": 219.6501302768096,
+   "ps_per_s": 0.21965013027680957
+  },
+  {
+   "molecules": 343,
+   "steps": 1000,
+   "wall_s": 5.871973553,
+   "ms_per_step": 5.871973553,
+   "steps_per_s": 170.30049453971034,
+   "ps_per_s": 0.17030049453971033
+  },
+  {
+   "molecules": 512,
+   "steps": 1000,
+   "wall_s": 7.828888060000001,
+   "ms_per_step": 7.828888060000001,
+   "steps_per_s": 127.7320600749527,
+   "ps_per_s": 0.1277320600749527
+  }
+ ]
+}

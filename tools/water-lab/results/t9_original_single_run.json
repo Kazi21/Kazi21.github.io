@@ -1,0 +1,143 @@
+{
+ "id": 9,
+ "name": "NVT and NPT statistics vs native",
+ "verdict": "FAIL",
+ "settings": {
+  "molecules": 216,
+  "duration_ps": 40,
+  "discard_ps": 5.0,
+  "block_ps": 2.5,
+  "seeds": {
+   "browser": 4101,
+   "native": 4102
+  }
+ },
+ "results": {
+  "nvt": {
+   "T": {
+    "unit": "K",
+    "browser_mean": 298.7340667717058,
+    "browser_se": 0.5662481832085128,
+    "native_mean": 297.85982086177063,
+    "native_se": 0.5050116193990244,
+    "difference": 0.8742459099351549,
+    "combined_95_limit": 1.5595952751194566,
+    "agree": true,
+    "criterion": true,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.03963948812223726,
+    "tau_int_ps_native": 0.04285079849878122
+   },
+   "pe": {
+    "unit": "kJ/mol per molecule",
+    "browser_mean": -46.858731924361464,
+    "browser_se": 0.05733708645724324,
+    "native_mean": -46.72785251544476,
+    "native_se": 0.03764656003549505,
+    "difference": -0.13087940891670513,
+    "combined_95_limit": 0.14099201371633016,
+    "agree": true,
+    "criterion": true,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.3842519591463946,
+    "tau_int_ps_native": 0.192454419447979
+   },
+   "P": {
+    "unit": "bar",
+    "browser_mean": -115.20573691110401,
+    "browser_se": 43.491005832073924,
+    "native_mean": -50.57316591959784,
+    "native_se": 79.998673154165,
+    "difference": -64.63257099150617,
+    "combined_95_limit": 187.1689675855584,
+    "agree": true,
+    "criterion": true,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.06375003655467851,
+    "tau_int_ps_native": 0.14053513934487835
+   },
+   "T_target_check": {
+    "browser_mean_K": 298.7340667717058,
+    "interval_K": 1.2233048267826725,
+    "pass": true
+   }
+  },
+  "npt": {
+   "rho": {
+    "unit": "kg/m^3",
+    "browser_mean": 1005.1424864770335,
+    "browser_se": 2.9477221964118505,
+    "native_mean": 1001.9665066726639,
+    "native_se": 3.4332483573381896,
+    "difference": 3.1759798043696037,
+    "combined_95_limit": 9.301415034248837,
+    "agree": true,
+    "criterion": true,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.7714231502056853,
+    "tau_int_ps_native": 0.9712436303495455
+   },
+   "pe": {
+    "unit": "kJ/mol per molecule",
+    "browser_mean": -46.68988466465962,
+    "browser_se": 0.05189860001615494,
+    "native_mean": -46.873584444634254,
+    "native_se": 0.04452866544760149,
+    "difference": 0.18369977997463138,
+    "combined_95_limit": 0.14056375116595854,
+    "agree": false,
+    "criterion": true,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.2422589132126652,
+    "tau_int_ps_native": 0.22367556228057137
+   },
+   "T": {
+    "unit": "K",
+    "browser_mean": 298.16691585586796,
+    "browser_se": 0.34464417691382826,
+    "native_mean": 298.0655578263599,
+    "native_se": 0.48868423388414595,
+    "difference": 0.10135802950804873,
+    "combined_95_limit": 1.2291857895378397,
+    "agree": true,
+    "criterion": false,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.03421805427560342,
+    "tau_int_ps_native": 0.03751766447606134
+   },
+   "P": {
+    "unit": "bar",
+    "browser_mean": -2.4547955206405425,
+    "browser_se": 14.099802606644225,
+    "native_mean": 2.9924516739415945,
+    "native_se": 13.35467382829234,
+    "difference": -5.447247194582137,
+    "combined_95_limit": 39.91919387868003,
+    "agree": true,
+    "criterion": false,
+    "blocks": 14,
+    "tau_int_ps_browser": 0.03783686071303599,
+    "tau_int_ps_native": 0.039712946665258285
+   },
+   "T_target_check": {
+    "browser_mean_K": 298.16691585586796,
+    "interval_K": 0.7445584774370525,
+    "pass": true
+   }
+  }
+ },
+ "reference_pilot": {
+  "nvt": {
+   "T": 0.04285079849878122,
+   "pe": 0.192454419447979,
+   "P": 0.14053513934487835
+  },
+  "npt": {
+   "rho": 0.9712436303495455,
+   "pe": 0.22367556228057137,
+   "T": 0.03751766447606134,
+   "P": 0.039712946665258285
+  }
+ },
+ "summary": "NPT density browser 1005.1 \u00b1 2.9 vs native 1002.0 \u00b1 3.4 kg/m^3; PE per molecule -46.690 vs -46.874 kJ/mol; NVT T 298.73 vs 297.86 K"
+}

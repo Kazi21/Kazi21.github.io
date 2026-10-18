@@ -1,0 +1,45 @@
+{
+ "browser": "Chromium 141.0.7390.37 (headless shell)",
+ "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+ "cores": 2,
+ "viewport": "1440x1000, DPR 1",
+ "pace": "fast",
+ "results": [
+  {
+   "molecules": 216,
+   "atoms": 648,
+   "duration_s": 20.000200000000188,
+   "steps": 4950,
+   "steps_per_s": 247.49752502474743,
+   "ps_per_s": 0.24749752502474742,
+   "display_fps": 59.849401505984375
+  },
+  {
+   "molecules": 256,
+   "atoms": 768,
+   "duration_s": 20.000200000000188,
+   "steps": 3780,
+   "steps_per_s": 188.99811001889805,
+   "ps_per_s": 0.18899811001889805,
+   "display_fps": 59.949400505994376
+  },
+  {
+   "molecules": 343,
+   "atoms": 1029,
+   "duration_s": 20.000299999999815,
+   "steps": 3180,
+   "steps_per_s": 158.99761503577594,
+   "ps_per_s": 0.15899761503577595,
+   "display_fps": 59.949100763489106
+  },
+  {
+   "molecules": 512,
+   "atoms": 1536,
+   "duration_s": 20.000200000000188,
+   "steps": 2250,
+   "steps_per_s": 112.49887501124883,
+   "ps_per_s": 0.11249887501124883,
+   "display_fps": 59.899401005989375
+  }
+ ]
+}

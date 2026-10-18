@@ -1,0 +1,58 @@
+{
+ "id": 2,
+ "name": "Geometry, neutrality, topology and periodic wrapping",
+ "verdict": "PASS",
+ "tolerances": {
+  "OH_A": 0.0001,
+  "angle_deg": 0.01,
+  "charge_e": 1e-10
+ },
+ "presets": [
+  {
+   "molecules": 216,
+   "topology_ok": true,
+   "angles": 216,
+   "total_charge_e": 0,
+   "max_OH_dev_A": 5.721534357405744e-11,
+   "max_angle_dev_deg": 1.8172841009800322e-10,
+   "pass": true
+  },
+  {
+   "molecules": 256,
+   "topology_ok": true,
+   "angles": 256,
+   "total_charge_e": 0,
+   "max_OH_dev_A": 1.2434497875801753e-14,
+   "max_angle_dev_deg": 3.552713678800501e-13,
+   "pass": true
+  },
+  {
+   "molecules": 343,
+   "topology_ok": true,
+   "angles": 343,
+   "total_charge_e": 0,
+   "max_OH_dev_A": 7.914779942552741e-12,
+   "max_angle_dev_deg": 5.1031179282290395e-11,
+   "pass": true
+  },
+  {
+   "molecules": 512,
+   "topology_ok": true,
+   "angles": 512,
+   "total_charge_e": 0,
+   "max_OH_dev_A": 4.373879036734252e-11,
+   "max_angle_dev_deg": 2.5995916530519025e-10,
+   "pass": true
+  }
+ ],
+ "nvt_run": {
+  "molecules": 216,
+  "duration_ps": 5,
+  "snapshots": 500,
+  "max_OH_dev_A": 0.000002119012826762301,
+  "max_angle_dev_deg": 0.00013728371554577734,
+  "oxygen_wrapped_inside_cell": true,
+  "pass": true
+ },
+ "summary": "all presets whole and neutral; over 5 ps, max |O-H - 1 A| = 2.12e-6 A and max |angle - 109.47| = 1.37e-4 deg"
+}

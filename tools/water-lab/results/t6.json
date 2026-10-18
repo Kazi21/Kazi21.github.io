@@ -1,0 +1,12 @@
+{
+ "id": 6,
+ "name": "Zero stiffness reproduces the unperturbed control",
+ "verdict": "PASS",
+ "tolerances": {
+  "max_coordinate_diff_A": 1e-10
+ },
+ "steps": 1000,
+ "control_commands_removed": 35,
+ "max_coordinate_diff_A": 0,
+ "summary": "after 1000 steps the coordinates differ by exactly 0 from the run without the tether"
+}

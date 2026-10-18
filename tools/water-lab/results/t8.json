@@ -1,0 +1,54 @@
+{
+ "id": 8,
+ "name": "Unforced NVE energy drift and timestep sensitivity",
+ "verdict": "PASS",
+ "revised": true,
+ "tolerances": {
+  "drift_at_1fs_kJ_mol_ns_per_molecule": 0.25
+ },
+ "native": {
+  "0.5": {
+   "dt_fs": 0.5,
+   "duration_ps": 20,
+   "drift_kJ_mol_ns_per_molecule": 0.2273799349822062,
+   "rms_fluct_kJ_mol_per_molecule": 0.002625915762790308,
+   "start_kJ_mol_per_molecule": -39.102835781012566,
+   "wall_s": 117.576007604599
+  },
+  "1.0": {
+   "dt_fs": 1,
+   "duration_ps": 20,
+   "drift_kJ_mol_ns_per_molecule": 0.2002605219438503,
+   "rms_fluct_kJ_mol_per_molecule": 0.003768026912774863,
+   "start_kJ_mol_per_molecule": -39.102835781012566,
+   "wall_s": 60.8777973651886
+  },
+  "2.0": {
+   "dt_fs": 2,
+   "duration_ps": 20,
+   "drift_kJ_mol_ns_per_molecule": 0.5503912341354822,
+   "rms_fluct_kJ_mol_per_molecule": 0.0035707951526494724,
+   "start_kJ_mol_per_molecule": -39.102835781012566,
+   "wall_s": 32.87177515029907
+  }
+ },
+ "browser": {
+  "dt_fs": 1,
+  "duration_ps": 20,
+  "drift_kJ_mol_ns_per_molecule": 0.02177817610225435,
+  "rms_fluct_kJ_mol_per_molecule": 0.003192607523932183,
+  "wall_s": 75.661
+ },
+ "original_stated_version": {
+  "verdict": "FAIL",
+  "browser_5ps": {
+   "dt_fs": 1,
+   "duration_ps": 5,
+   "drift_kJ_mol_ns_per_molecule": -1.1505856605905964,
+   "rms_fluct_kJ_mol_per_molecule": 0.0023914193658645055,
+   "wall_s": 20.901
+  },
+  "note": "FAILED: a 5 ps window cannot resolve the tolerance (native 5 ps windows: -1.43, 0.08, 0.75, -0.43 kJ/mol/ns per molecule)"
+ },
+ "summary": "drift at 1 fs: native 0.200, browser 0.022 kJ/mol/ns per molecule; native at 0.5 / 2 fs: 0.227 / 0.550"
+}

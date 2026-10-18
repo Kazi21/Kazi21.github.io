@@ -1,0 +1,65 @@
+{
+ "id": 7,
+ "name": "Pulling, release and periodic crossing",
+ "verdict": "PASS",
+ "tolerances": {
+  "OH_A": 0.0001,
+  "angle_deg": 0.01,
+  "com_step_A": 0.5,
+  "replay_pe_rel_first_0.5ps": 1e-06,
+  "energy_balance": "0.02|W| + 0.5 kJ/mol"
+ },
+ "browser": {
+  "molecule": 5,
+  "k_kcal_mol_A2": 5,
+  "constraints": {
+   "max_OH_dev_A": 3.3724293349024492e-06,
+   "max_angle_dev_deg": 0.000220825976668948
+  },
+  "face_crossings": 1,
+  "max_com_step_A": 0.1632664435660272,
+  "journal_commands": 986,
+  "events": 210,
+  "repeat_identical_journal": true,
+  "repeat_identical_events": true,
+  "repeat_max_coordinate_diff_A": 0,
+  "release": {
+   "step": 2700,
+   "time_ps": 2.7,
+   "type": "release",
+   "molecule": 5,
+   "duration_ps": 2.5,
+   "work_increment_kJ_mol": -1.026933076720121,
+   "protocol_work_kJ_mol": 122.99956711152653,
+   "delivered_work_kJ_mol": 122.99956711152653,
+   "energy_change_kJ_mol": 123.49691966687386
+  },
+  "energy_balance_error_kJ_mol": 0.4973525553473337,
+  "energy_balance_tolerance_kJ_mol": 2.9599913422305306,
+  "steps": 3700,
+  "export_files": [
+   "in.water_lab.lmp",
+   "start.data",
+   "final.data",
+   "thermo.csv",
+   "events.json",
+   "model.json",
+   "README.md"
+  ],
+  "browser_pass": true
+ },
+ "native_replay": {
+  "engine": "native LAMMPS 20250722",
+  "commands_executed": 1032,
+  "final_step": 3700,
+  "max_pe_rel_diff_by_time": {
+   "0.5 ps": 2.987138180022838e-08,
+   "1 ps": 1.5895356078066683e-06,
+   "2 ps": 0.013379779269578587,
+   "3 ps": 0.03092506792715644,
+   "3.7 ps": 0.03092506792715644
+  },
+  "pass": true
+ },
+ "summary": "pulled across the cell face (1 crossings), constraints within 3.4e-06 A; repeat identical; native replay matches PE to 3.0e-08 (first 0.5 ps), 3.1e-02 by 3.7 ps; energy balance 0.50 of 123.0 kJ/mol"
+}

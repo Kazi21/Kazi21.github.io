@@ -1,0 +1,39 @@
+{
+ "molecule": 5,
+ "k_kcal_mol_A2": 5,
+ "constraints": {
+  "max_OH_dev_A": 0.0000033724293349024492,
+  "max_angle_dev_deg": 0.000220825976668948
+ },
+ "face_crossings": 1,
+ "max_com_step_A": 0.1632664435660272,
+ "journal_commands": 986,
+ "events": 210,
+ "repeat_identical_journal": true,
+ "repeat_identical_events": true,
+ "repeat_max_coordinate_diff_A": 0,
+ "release": {
+  "step": 2700,
+  "time_ps": 2.7,
+  "type": "release",
+  "molecule": 5,
+  "duration_ps": 2.5,
+  "work_increment_kJ_mol": -1.026933076720121,
+  "protocol_work_kJ_mol": 122.99956711152653,
+  "delivered_work_kJ_mol": 122.99956711152653,
+  "energy_change_kJ_mol": 123.49691966687386
+ },
+ "energy_balance_error_kJ_mol": 0.4973525553473337,
+ "energy_balance_tolerance_kJ_mol": 2.9599913422305306,
+ "steps": 3700,
+ "export_files": [
+  "in.water_lab.lmp",
+  "start.data",
+  "final.data",
+  "thermo.csv",
+  "events.json",
+  "model.json",
+  "README.md"
+ ],
+ "browser_pass": true
+}

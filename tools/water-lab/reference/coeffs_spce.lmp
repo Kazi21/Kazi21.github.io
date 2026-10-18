@@ -1,0 +1,8 @@
+# Force-field coefficients (after read_data). v_ljs scales epsOO: 1.0 = reference SPC/E.
+pair_coeff      1 1 $(0.1553*v_ljs) 3.166
+pair_coeff      1 2 0.0 1.0
+pair_coeff      2 2 0.0 1.0
+bond_coeff      1 1000.0 1.0
+angle_coeff     1 100.0 109.47
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes

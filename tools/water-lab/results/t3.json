@@ -1,0 +1,40 @@
+{
+ "id": 3,
+ "name": "O-O LJ multiplier reaches the force field",
+ "verdict": "PASS",
+ "tolerances": {
+  "ratio_rel": 1e-10,
+  "coul_kcal": 1e-9,
+  "force_lin": 1e-8,
+  "force_change_min": 0.001,
+  "press_lin_atm": 0.000001,
+  "page_path_kcal": 0.000001
+ },
+ "measured": {
+  "evdwl_kcal_mol": {
+   "s0.90": 418.8504244243545,
+   "s1.00": 465.3893604715037,
+   "s1.10": 511.92829651865503
+  },
+  "etail_kcal_mol": {
+   "s0.90": -13.81973950288296,
+   "s1.00": -15.355266114314402,
+   "s1.10": -16.890792725745843
+  },
+  "press_atm": {
+   "s0.90": 25729.70999338537,
+   "s1.00": 29415.018839020617,
+   "s1.10": 33100.327684655924
+  },
+  "ratio_rel_err_0_90": 2.6645352591003757e-15,
+  "ratio_rel_err_1_10": 1.7763568394002505e-15,
+  "max_coulomb_change_kcal_mol": 0,
+  "force_nonlinearity": 8.881784197001252e-14,
+  "max_force_change_kcal_mol_A": 3.5615258816688407,
+  "pressure_nonlinearity_atm": 6.184563972055912e-11,
+  "page_path_evdwl_kcal_mol": 499.2443866815375,
+  "fresh_build_evdwl_kcal_mol": 499.24438668153624,
+  "page_path_diff": 1.2505552149377763e-12
+ },
+ "summary": "evdwl scales with s to 2.7e-15 relative; Coulomb unchanged (0.0e+0); forces linear in s (8.9e-14) and change by up to 3.56 kcal/mol/A for s 1.00 to 1.10"
+}

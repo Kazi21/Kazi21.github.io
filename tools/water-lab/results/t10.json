@@ -1,0 +1,134 @@
+{
+ "id": 10,
+ "name": "Interface behaviour",
+ "verdict": "PASS",
+ "browser": "Chromium 141.0.7390.37 (headless shell, Playwright)",
+ "items": [
+  {
+   "name": "No engine or data download before Start",
+   "pass": true,
+   "detail": "no engine, worker or preset requests after page load + 2 s"
+  },
+  {
+   "name": "Start builds and runs the system",
+   "pass": true,
+   "detail": "step 530 after 2.5 s; 648 atoms"
+  },
+  {
+   "name": "Pause stops and Resume continues the dynamics",
+   "pass": true,
+   "detail": "paused at step 560, still 560 after 2 s; resumed to 990"
+  },
+  {
+   "name": "Message with an old run ID is rejected without effect",
+   "pass": true,
+   "detail": "reply: rejected: stale; selection 0 -> 0"
+  },
+  {
+   "name": "Keyboard: N selects, arrows pull, Escape releases",
+   "pass": true,
+   "detail": "molecule 188, pulling true in nvt; after Escape pulling false, phase relaxation"
+  },
+  {
+   "name": "\"Try a gentle pull\" runs the stated protocol (handle 0.25 nm from its start, 2 ps) and releases",
+   "pass": true,
+   "detail": "pull held for 2.05 ps of simulated time, then released; largest handle displacement from its start 0.2500 nm"
+  },
+  {
+   "name": "Essential readout: simulated time, temperature, selected molecule, applied force",
+   "pass": true,
+   "detail": "Simulated time | Temperature | Selected molecule | Applied force"
+  },
+  {
+   "name": "Download experiment produces the reproducible bundle",
+   "pass": true,
+   "detail": "8 files, 170 kB zip, 900-line LAMMPS input"
+  },
+  {
+   "name": "\"Change the conditions\" panel opens from the keyboard",
+   "pass": true,
+   "detail": "open true; Apply button visible true"
+  },
+  {
+   "name": "Molecule-count change rebuilds with a new run ID",
+   "pass": true,
+   "detail": "run IDs 1 -> 2 (768 atoms) -> 3 (648 atoms); event history restarted"
+  },
+  {
+   "name": "Apply conditions sets T, P and s at a safe boundary",
+   "pass": true,
+   "detail": "targets 320 K, 500 bar, s = 1.05 (npt); label \"Modified SPC/E educational model (εOO = 0.682 kJ/mol)\""
+  },
+  {
+   "name": "Restore reference parameters returns to s = 1",
+   "pass": true,
+   "detail": "s = 1, \"Reference SPC/E parameters\""
+  },
+  {
+   "name": "Live means are descriptive (no intervals)",
+   "pass": true,
+   "detail": "table header \"QuantityTargetNowMean since last change (descriptive)\"; no ± or interval in the body"
+  },
+  {
+   "name": "\"All measurements and plots\" draws the remaining plots when opened",
+   "pass": true,
+   "detail": "352 px/4208, 352 px/2725, 352 px/4225, 352 px/1905, 352 px/2230, 352 px/2230"
+  },
+  {
+   "name": "Computation pauses while the tab is hidden",
+   "pass": true,
+   "detail": "hidden: step 1900 -> 1900; visible again: 2260"
+  },
+  {
+   "name": "Engine failure is reported and Reset recovers",
+   "pass": true,
+   "detail": "message: \"The simulation stopped (Unknown command: deliberately_invalid_command_for_testing). Press …\"; after Reset step 290"
+  },
+  {
+   "name": "No uncaught page errors (desktop)",
+   "pass": true,
+   "detail": "none"
+  },
+  {
+   "name": "360 px: no horizontal overflow",
+   "pass": true,
+   "detail": "scrollWidth - clientWidth = 0 before, 0 after Start"
+  },
+  {
+   "name": "No uncaught page errors (360 px)",
+   "pass": true,
+   "detail": "none"
+  },
+  {
+   "name": "390 px: no horizontal overflow",
+   "pass": true,
+   "detail": "scrollWidth - clientWidth = 0 before, 0 after Start"
+  },
+  {
+   "name": "390 px touch: tap selects, drag pulls",
+   "pass": true,
+   "detail": "tapped molecule 11 -> selected 11; after drag pulling true, requested handle 4.22 Å from the centre of mass"
+  },
+  {
+   "name": "390 px touch: Release button",
+   "pass": true,
+   "detail": "pulling false after tapping Release"
+  },
+  {
+   "name": "No uncaught page errors (390 px)",
+   "pass": true,
+   "detail": "none"
+  },
+  {
+   "name": "\"Try a gentle pull\" before Start loads the engine, pulls and releases",
+   "pass": true,
+   "detail": "button enabled before Start true; events start → select → ensemble → pull_begin → release"
+  },
+  {
+   "name": "Reduced motion: slow display pace by default, nothing starts automatically",
+   "pass": true,
+   "detail": "pace \"slow\", engine not started"
+  }
+ ],
+ "summary": "25 of 25 interface checks passed"
+}

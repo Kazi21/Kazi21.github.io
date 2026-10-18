@@ -1,0 +1,35 @@
+# Native LAMMPS: final preparation of a Live Water Lab preset (run with -var N <molecules>).
+# Starts from the 65 ps equilibrated configuration (equil.lmp), runs 40 ps NPT at 298.15 K and 1 bar with the
+# Live Water Lab settings (SHAKE 1e-5), measures the mean volume, then continues NPT and saves the first
+# configuration whose volume is within 0.1 % of that mean and whose temperature is within 2 K of 298.15 K.
+# The saved state (positions, image flags, velocities) is an unmodified NPT configuration at the mean density.
+variable        ljs equal 1.0
+include         model_spce.lmp
+read_data       preset_water${N}.data
+include         coeffs_spce.lmp
+compute         tcom all temp/com
+thermo_style    custom step temp press pe ke etotal vol density
+thermo_modify   temp tcom norm no
+thermo          5000
+timestep        1.0
+fix             rigid all shake 1.0e-5 100 0 b 1 a 1
+fix             integ all npt temp 298.15 298.15 100.0 iso 0.986923 0.986923 1000.0
+fix_modify      integ temp tcom
+variable        vv equal vol
+variable        rr equal density
+fix             avg all ave/time 10 100 1000 v_vv v_rr ave running
+run             40000
+variable        vmean equal $(f_avg[1])
+variable        rmean equal $(f_avg[2])
+variable        dv equal abs(vol-v_vmean)/v_vmean
+variable        dt equal abs(c_tcom-298.15)
+run             0 post no
+variable        i loop 4000
+label           seek
+run             20 pre no post no
+if              "${dv} < 0.001 && ${dt} < 2.0" then "jump SELF found"
+next            i
+jump            SELF seek
+label           found
+print           "PRESET_RESULT N=${N} mean_density=${rmean} mean_volume=${vmean} saved_volume=$(vol:%.4f) saved_T=$(c_tcom:%.3f) saved_step=$(step)"
+write_data      presets_v2/preset_water${N}.data
