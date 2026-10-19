@@ -1,0 +1,123 @@
+{
+  "format": "continuum-manifest-1",
+  "release": "2026.6",
+  "contracts": "tools/continuum/CONTRACTS.md",
+  "fluid": {
+    "id": "water",
+    "T_K": 300.0,
+    "rho_kg_m3": 996.557,
+    "mu_Pa_s": 0.000853742,
+    "source": "NIST Chemistry WebBook, water at 300 K and 0.101325 MPa (IAPWS-95, Wagner and Pruss 2002; viscosity Huber et al. 2009)",
+    "rho_at_10_1013MPa_kg_m3": 1001.0
+  },
+  "geometries": [
+    {
+      "geometryId": "cnt66-L2.4595",
+      "label": "(6,6) carbon nanotube, 2.46 nm long",
+      "chirality": [
+        6,
+        6
+      ],
+      "carbonCentreDiameter_m": 8.138e-10,
+      "diameterConvention": "carbon-centre diameter a*sqrt(n^2+nm+m^2)/pi, a = sqrt(3) * 0.1420 nm",
+      "accessibleDiameter_m": 4.74e-10,
+      "accessibleConvention": "carbon-centre diameter minus 0.340 nm (carbon van der Waals diameter); label only",
+      "tubeLength_m": 2.4595e-09,
+      "lengthConvention": "ten armchair unit cells (recorded segment length 24.5951 Å)",
+      "pitch_m": 1e-08,
+      "lattice": "square, centres at ((i+1/2)s, (j+1/2)s), far-edge strips without pores",
+      "recordedTrajectory": {
+        "file": "../cnt/data/cnt_6_6.bin",
+        "manifest": "../cnt/data/manifest.json",
+        "id": "cnt_6_6",
+        "sha256": "b7f50624bf8a65bd90ba8a945c0813ab6f817bbaa5a66f11a658856fa8b805b2",
+        "label": "Recorded CP2K ab initio MD (PBE-D3(BJ), NVT 300 K, 0.75 ps): periodic (6,6) segment with 6 water molecules, one Na+ and one Cl-. Structure only; it does not respond to pressure and is not the pure-water system of the pore law."
+      }
+    }
+  ],
+  "laws": [
+    {
+      "lawId": "illustrative-cnt66-v1",
+      "label": "Illustrative pore law (declared scenario)",
+      "sourceKind": "declared_scenario",
+      "assessmentStatus": "unassessed",
+      "form": "linear-constant",
+      "G_m3_Pa_s": 1e-27,
+      "domain": {
+        "fluid": "water",
+        "T_K": 300.0,
+        "geometryId": "cnt66-L2.4595",
+        "pitch_m": 1e-08,
+        "lengths_m": [
+          2.4595e-09
+        ],
+        "referencePlanes": "membrane-faces-normal-traction",
+        "dPiMin_Pa": 0,
+        "dPiMax_Pa": 10000000.0
+      },
+      "uncertainty": null,
+      "provenance": {
+        "statement": "Declared input scenario. G = 1.0e-27 m^3 Pa^-1 s^-1 corresponds to 3.33 water molecules per ns at a driving potential of 100 MPa. It is not a measured property of water in a (6,6) carbon nanotube and carries no uncertainty.",
+        "pitchDependence": "assumed absent (not established)",
+        "lengthDependence": "unsupported; only the declared tube length is accepted",
+        "includes": "entrance, interior, exit and access resistance of one pore, lumped",
+        "calibrationStatus": "INSUFFICIENT_EVIDENCE: no pure-water pressure-flow measurement for this geometry yet (tools/continuum/md-calibration/README.md)"
+      }
+    }
+  ],
+  "device": {
+    "allowedSizes_um": [
+      1,
+      2,
+      5,
+      10,
+      20,
+      50,
+      100,
+      200,
+      500,
+      1000
+    ],
+    "chamberHeight": "0.5 * min(W, B) per chamber",
+    "portSide": "0.2 * min(W, B), centred on the outer faces (one patch wide)",
+    "meshLevels": [
+      10,
+      20,
+      40,
+      50
+    ],
+    "defaultMeshLevel": 20,
+    "pressure": {
+      "convention": "outlet-referenced: permeate port face at 0.101325 MPa, feed port face at 0.101325 MPa + dP",
+      "dPmin_Pa": 0,
+      "dPmax_Pa": 10000000.0,
+      "default_dP_Pa": 1000000.0
+    },
+    "gates": {
+      "ReMax": 0.1,
+      "compressibilityMax": 0.01
+    },
+    "allowedAspects": [
+      1,
+      2,
+      4
+    ],
+    "patchSide": "0.2 * min(W, B): 5 patches across the shorter side",
+    "patchesPerShortSide": 5,
+    "verificationMeshLevels": [
+      10,
+      20,
+      40
+    ],
+    "fineMeshRule": "Fine mesh: 40 cells across the shorter side when min(W, B)/(10 nm) is divisible by 40, otherwise 50, so that every continuum face holds whole lattice rows",
+    "resolutionCheck": "every result is compared with the same configuration at a second mesh level (10 cells across the shorter side for the standard mesh, 20 for a fine mesh); the total-flow resolution passes when |dQ|/Q <= 0.02; level 10 is used only for this comparison"
+  },
+  "defaultScenario": {
+    "W_um": 2,
+    "B_um": 2,
+    "dP_Pa": 1000000.0,
+    "lawId": "illustrative-cnt66-v1",
+    "geometryId": "cnt66-L2.4595",
+    "meshLevel": 20
+  }
+}

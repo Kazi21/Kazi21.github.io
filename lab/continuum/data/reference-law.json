@@ -1,0 +1,17 @@
+{
+  "format": "continuum-law-1",
+  "purpose": "Analytic verification fixture for the pore-law code (units, length composition). Not a carbon-nanotube law and not offered in the interface.",
+  "lawId": "hpw-reference-v1",
+  "label": "Hagen–Poiseuille with Navier slip plus Sampson entrance and exit (analytic reference)",
+  "sourceKind": "analytic_reference",
+  "assessmentStatus": "checked",
+  "form": "hpw",
+  "params": { "radius_m": 2.5e-9, "slip_m": 0.0, "mu_Pa_s": 853.742e-6 },
+  "domain": { "fluid": "water", "T_K": 300.0, "geometryId": "hpw-circular-a2.5nm", "referencePlanes": "membrane-faces-normal-traction" },
+  "testLengths_m": [10e-9, 100e-9, 1e-6],
+  "provenance": {
+    "interior": "r_interior = 8 mu / (pi a^4 (1 + 4 b / a)) in Pa s/m^4 (Hagen–Poiseuille with Navier slip length b)",
+    "entranceExit": "R_entry = R_exit = 3 mu / (2 a^3) in Pa s/m^3 (Sampson's orifice resistance 3 mu / a^3 split equally)",
+    "validity": "continuum hydrodynamics; not valid at sub-1-nm diameters"
+  }
+}

@@ -1,0 +1,57 @@
+{
+ "format": "continuum-calibration-manifest-1",
+ "label": "(6,6) CNT membrane, pure SPC/E water, 300 K: pore-flow calibration",
+ "synthetic": false,
+ "lawId": "transport-cnt66-v1",
+ "sourceKind": "owner_measurement",
+ "source": {
+  "owner": "Kazi Ehsanul Karim",
+  "releaseBasis": "to be stated before use (for example CC BY 4.0 for the crossing data)",
+  "engine": "LAMMPS stable 22 Jul 2025 (update 4) with MOLECULE, KSPACE, RIGID",
+  "inputs": {"in.calibrate.lmp": "sha256 to fill", "membrane.data": "sha256 to fill", "build_membrane.py": "sha256 to fill"}
+ },
+ "model": {
+  "water": "rigid SPC/E (q_O = -0.8476 e, eps_OO = 0.15535 kcal/mol, sigma_OO = 3.166 A, O-H 1.0 A, H-O-H 109.47 deg, SHAKE 1e-5)",
+  "carbon": "fixed positions, carbon-carbon pairs excluded, uncharged",
+  "waterCarbon": "Lennard-Jones on oxygen only, eps_CO = 0.09352 kcal/mol, sigma_CO = 3.190 A (Werder et al. 2003)",
+  "cutoffs": "10 A real space, analytic tails off, PPPM 1e-5",
+  "timestep_fs": 1.0
+ },
+ "geometry": {
+  "geometryId": "cnt66-L2.4595",
+  "chirality": [6, 6],
+  "carbonCentreDiameter_m": 8.136e-10,
+  "tubeLength_m": 2.4595e-9,
+  "membrane": "two graphene sheets sealing the tube ends; hole radius R + 1.4 A",
+  "lateralCell_m": [2.9514e-9, 2.982e-9],
+  "equivalentPitch_m": 2.967e-9,
+  "note": "the lab's domain pitch is 10 nm; access resistance of a sub-nanometre pore is expected to be small at both pitches, but the pitch dependence is unverified and must be stated or tested (one run at a larger lateral cell)"
+ },
+ "state": {"temperature_K": 300.0, "meanPressure_Pa": "measured: bulk-reservoir diagnostic in thermo.<tag>.txt", "fluid": "pure water"},
+ "referenceDensity_kg_m3": 996.557,
+ "temperature_K": 300.0,
+ "drive": {
+  "method": "force slab: fz on every water oxygen inside a 10 A slab in the reservoir middle",
+  "mapping": "dP = <N_slab> fz / (Lx Ly), 1 kcal mol^-1 A^-1 = 6.9477e-11 N",
+  "thermostat": "Nose-Hoover on x and y velocity components only (temp/partial 1 1 0), 100 fs"
+ },
+ "referencePlanes": "the two membrane faces (graphene sheet planes); the slab is far from both, so dP is the reservoir-to-reservoir pressure difference across the membrane",
+ "includedResistance": "entrance + interior + exit of one pore, and the access region within the MD cell; the chamber flow is resolved by the continuum solver and must not be added again",
+ "planes": [{"id": "mid", "z_A": 12.30}, {"id": "entrance", "z_A": 3.00}],
+ "protocol": {
+  "equilibration": "2 ps limited NVE, then NVT 300 K until the number of molecules in the tube has a stable plateau (at least 200 ps); restart file written",
+  "production": "20 ns per replica after 100 ps of drive switch-on (discarded)",
+  "replicas": "at least 4 per condition, independent velocities (seeds) from the equilibrated restart, or independent equilibrations"
+ },
+ "conditions": [
+  {"condition_id": "zero", "fz_kcal_mol_A": 0.0, "role": "zero"},
+  {"condition_id": "m100", "target_dP_Pa": -1.0e8, "role": "fit"},
+  {"condition_id": "p050", "target_dP_Pa": 5.0e7, "role": "fit"},
+  {"condition_id": "p100", "target_dP_Pa": 1.0e8, "role": "fit"},
+  {"condition_id": "p150", "target_dP_Pa": 1.5e8, "role": "fit"},
+  {"condition_id": "p200", "target_dP_Pa": 2.0e8, "role": "heldout"}
+ ],
+ "analysis": {"discard_ps": 100, "block_ps": 20, "min_blocks": 20, "bootstrap": 2000, "confidence": 0.95, "seed": 20261018},
+ "interpolationPolicy": "linear law accepted only inside the tested drive interval; the 0-10 MPa operating range of the lab is covered only if the zero-drive equilibrium estimate agrees with the driven slope and the linearity test passes",
+ "unsupported": ["other chiralities, lengths, temperatures or salt", "drives outside the tested interval", "pitches other than the stated one without a pitch test"]
+}

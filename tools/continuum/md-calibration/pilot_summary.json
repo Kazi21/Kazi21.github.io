@@ -1,0 +1,76 @@
+{
+ "id": "md-calibration-pilot",
+ "kind": "functionality test, not a measurement",
+ "lammps": "LAMMPS (22 Jul 2025 - Update 4)",
+ "cores": 1,
+ "machine": "build container (2 shared cores; the other core ran OpenFOAM during these runs)",
+ "builder": {
+  "sha256": "59315c32bcd1ad9183f6090ca2cc92f644ab052580ae85514ee29a3e2d02cae0",
+  "reproduces_first_build": true,
+  "atoms": 4661,
+  "carbons": 842,
+  "waters": 1273,
+  "cell_nm": [
+   2.9514,
+   2.982,
+   7.0995
+  ],
+  "tubeLength_nm": 2.4595
+ },
+ "speed_ns_per_day": {
+  "min": 2.732,
+  "max": 3.065,
+  "values": [
+   3.065,
+   2.935,
+   2.732,
+   2.879
+  ]
+ },
+ "pilot_from_empty_tube": {
+  "length_ps": 36.0,
+  "stage": "equil (old input, before the density column was added)",
+  "tube_region": "oxygens with r < 3.0 A from the axis and 0 <= z <= 24.6 A",
+  "window_ps": [
+   10.0,
+   36.0
+  ],
+  "mean_occupancy": 0.41923076923076924,
+  "max_1ps_mean": 1.0,
+  "fraction_of_1ps_windows_empty": 0.3076923076923077,
+  "mean_T_K": 299.83188461538464
+ },
+ "functionality_test": {
+  "equil": {
+   "steps_after_start": 3000,
+   "exit": 0,
+   "rows": 3,
+   "rhobulk_g_cm3_last": 1.01418
+  },
+  "drive": {
+   "fz_kcal_mol_A": 0.01,
+   "steps": 3000,
+   "restart_from": "eqtest.final.restart",
+   "exit": 0,
+   "rows": 3,
+   "mean_nslab": 288.9
+  },
+  "crossings_csv_rows": 62,
+  "crossings_csv_columns": [
+   "run_id",
+   "replica_id",
+   "time_ps",
+   "condition_id",
+   "drive_Pa",
+   "mean_pressure_Pa",
+   "temperature_K",
+   "cumulative_crossings",
+   "sampling_plane_id"
+  ]
+ },
+ "campaign_cost_single_core_days": [
+  157.0,
+  176.0
+ ],
+ "summary": "Functionality only; no number here enters the lab. LAMMPS (22 Jul 2025 - Update 4) on one core. The builder reproduces the same data file (SHA-256 59315c32…) from the default seed: 4661 atoms (842 fixed carbons, 1273 SPC/E waters), cell 2.95 nm × 2.98 nm × 7.10 nm. The equilibration stage (minimisation, 2 ps limited-displacement start, NVT) and a driven stage restarted from it (fz = 0.010 kcal mol⁻¹ Å⁻¹, 3 ps) ran to completion, and crossings_from_dump.py wrote the crossing CSV read by analyze_pore_flux.py (62 rows). Speed 2.73–3.06 ns/day on one core of a shared machine, so the campaign (480 ns of production) needs about 157–176 single-core days; its 24 runs are independent. Filling was not reached: in 36 ps from the empty tube, the number of oxygens inside the tube averaged 0.42 between 10 and 36 ps (largest 1 ps mean 1.0; none in 31 % of the 1 ps windows), whereas a hydrogen-bonded single file (O–O ≈ 0.28 nm) would hold about nine."
+}

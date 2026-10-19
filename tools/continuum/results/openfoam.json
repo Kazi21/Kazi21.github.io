@@ -1,0 +1,206 @@
+{
+ "id": "openfoam",
+ "name": "Native comparison F1-F4",
+ "verdict": "FAIL",
+ "foamVersion": "OpenFOAM v1912 (OpenCFD), simpleFoam laminar",
+ "convergence": {
+  "levels": [
+   {
+    "N": 20,
+    "Q_browser": 5.689037532374979e-18,
+    "Q_openfoam": 5.803158557727331e-18,
+    "Q_rel_diff": 0.019665329529966222,
+    "velocity_L2": 0.08444749193453932,
+    "openfoam_iterations": 198,
+    "openfoam_final_initial_residuals": {
+     "Ux": 5.3740720292757e-14,
+     "Uy": 9.0014505882521e-14,
+     "Uz": 3.7851272766206e-14,
+     "p": 9.0044344993556e-14
+    },
+    "browser_iterations": 283,
+    "browser_relResidual": 9.085402190705877e-13
+   },
+   {
+    "N": 40,
+    "Q_browser": 4.967321572386402e-18,
+    "Q_openfoam": 5.112319552069118e-18,
+    "Q_rel_diff": 0.028362464084239588,
+    "velocity_L2": 0.05007347971938906,
+    "openfoam_iterations": 690,
+    "openfoam_final_initial_residuals": {
+     "Ux": 6.7870496381359e-14,
+     "Uy": 1.0571632864725e-13,
+     "Uz": 4.8666064553304e-14,
+     "p": 9.8798990959099e-14
+    },
+    "browser_iterations": 608,
+    "browser_relResidual": 6.979800064804309e-13
+   },
+   {
+    "N": 80,
+    "Q_browser": 4.595108926116516e-18,
+    "Q_openfoam": 4.6944007631082184e-18,
+    "Q_rel_diff": 0.021151120665283803,
+    "velocity_L2": 0.028990813387832094,
+    "openfoam_iterations": 1764,
+    "openfoam_final_initial_residuals": {
+     "Ux": 1.0627760081912e-10,
+     "Uy": 1.8198739229938e-10,
+     "Uz": 9.3670813708999e-11,
+     "p": 9.9887211629618e-11
+    },
+    "browser_iterations": 1414,
+    "browser_relResidual": 6.860929710560548e-13
+   }
+  ],
+  "analysis": {
+   "browser": {
+    "observed_order": 0.9553040856663365,
+    "Q_extrapolated_m3_s": 4.198711385363179e-18,
+    "gci_fine": 0.10783137764710901
+   },
+   "openfoam": {
+    "observed_order": 0.7251269202008856,
+    "Q_extrapolated_m3_s": 4.054447753103646e-18,
+    "gci_fine": 0.1704032746399062
+   },
+   "extrapolated_rel_diff": 0.03558157387750285,
+   "statement": "inconclusive at these resolutions \u2014 the codes differ by 2.12 % on the 80-cell grid, within their estimated discretisation uncertainties (grid convergence index 10.8 % browser, 17.0 % OpenFOAM), but these are far larger than the 2 % the comparison needs; the velocity-field difference between the codes decreases with refinement (8.44 %, 5.01 %, 2.90 %)"
+  },
+  "note": "reported only, not a gate (added after F2-F4 were evaluated): closed-strip case at 20, 40 and 80 cells across W; observed order, Richardson extrapolation and grid convergence index (Roache, safety factor 1.25) from the three levels"
+ },
+ "environment": "OpenFOAM v1912 (OpenCFD, Ubuntu package 1912.200626) simpleFoam, laminar; same grids as the browser solver; interpolation none.",
+ "items": [
+  {
+   "id": "F1",
+   "name": "Developed duct",
+   "verdict": "PASS",
+   "detail": "Q browser 8.287973e-14 vs OpenFOAM 8.287973e-14 m^3/s (difference 0.000 %); velocity normalised L2 0.000 % (mid-length layer); OpenFOAM 596 SIMPLE iterations, final initial residual p 1.0e-13",
+   "data": {
+    "name": "F1_duct",
+    "Q_browser_m3_s": 8.287972729924974e-14,
+    "Q_openfoam_m3_s": 8.287972729587749e-14,
+    "Q_rel_diff": 4.068845242635694e-11,
+    "velocity_L2": 4.298236944051929e-11,
+    "cells_compared": 576,
+    "openfoam": {
+     "iterations": 596,
+     "initialResiduals": {
+      "Ux": 3.8913919711356e-05,
+      "Uy": 3.891988532513e-05,
+      "Uz": 9.431303066306e-13,
+      "p": 9.965176488711e-14
+     }
+    },
+    "browser": {
+     "iterations": 245,
+     "relResidual": 8.409241320347257e-13,
+     "unknowns": 27648,
+     "closure": "zero-tangential"
+    },
+    "time": "596",
+    "interpolation": "none (identical grids, cells matched by centre)"
+   }
+  },
+  {
+   "id": "F2",
+   "name": "Uniform resistance interface (porousBafflePressure)",
+   "verdict": "FAIL",
+   "detail": "Q browser 5.881060e-18 vs OpenFOAM 6.008692e-18 m^3/s (difference 2.124 %); velocity normalised L2 8.434 % (all cells); membrane flow 5.881060e-18 vs 6.008692e-18 m^3/s; OpenFOAM 211 SIMPLE iterations, final initial residual p 9.2e-14",
+   "data": {
+    "name": "F2_uniform",
+    "Q_browser_m3_s": 5.881060196951129e-18,
+    "Q_openfoam_m3_s": 6.0086918726229604e-18,
+    "Q_rel_diff": 0.021241175014041283,
+    "velocity_L2": 0.08433679081561397,
+    "cells_compared": 8000,
+    "openfoam": {
+     "iterations": 211,
+     "initialResiduals": {
+      "Ux": 5.3981471856484e-14,
+      "Uy": 5.4349252437823e-14,
+      "Uz": 3.08493496815e-14,
+      "p": 9.1908379725515e-14
+     }
+    },
+    "browser": {
+     "iterations": 251,
+     "relResidual": 7.766427318530528e-13,
+     "unknowns": 30832,
+     "closure": "continuous-tangential"
+    },
+    "time": "211",
+    "interpolation": "none (identical grids, cells matched by centre)",
+    "membrane_flow_openfoam_m3_s": 6.008691872622941e-18,
+    "membrane_flow_browser_m3_s": 5.881060196950892e-18
+   }
+  },
+  {
+   "id": "F3",
+   "name": "Closed strip",
+   "verdict": "FAIL",
+   "detail": "Q browser 5.689038e-18 vs OpenFOAM 5.803159e-18 m^3/s (difference 1.967 %); velocity normalised L2 8.445 % (all cells); membrane flow 5.689038e-18 vs 5.803159e-18 m^3/s; OpenFOAM 198 SIMPLE iterations, final initial residual p 9.0e-14",
+   "data": {
+    "name": "F3_strip",
+    "Q_browser_m3_s": 5.689037532374979e-18,
+    "Q_openfoam_m3_s": 5.803158557727331e-18,
+    "Q_rel_diff": 0.019665329529966222,
+    "velocity_L2": 0.08444749193453932,
+    "cells_compared": 8000,
+    "openfoam": {
+     "iterations": 198,
+     "initialResiduals": {
+      "Ux": 5.3740720292757e-14,
+      "Uy": 9.0014505882521e-14,
+      "Uz": 3.7851272766206e-14,
+      "p": 9.0044344993556e-14
+     }
+    },
+    "browser": {
+     "iterations": 283,
+     "relResidual": 9.085402190705877e-13,
+     "unknowns": 30752,
+     "closure": "continuous-tangential"
+    },
+    "time": "198",
+    "interpolation": "none (identical grids, cells matched by centre)",
+    "membrane_flow_openfoam_m3_s": 5.803158557727332e-18,
+    "membrane_flow_browser_m3_s": 5.689037532376379e-18
+   }
+  },
+  {
+   "id": "F4",
+   "name": "Refined mesh",
+   "verdict": "FAIL",
+   "detail": "Q browser 4.967322e-18 vs OpenFOAM 5.112320e-18 m^3/s (difference 2.836 %); velocity normalised L2 5.007 % (all cells); membrane flow 4.967322e-18 vs 5.112320e-18 m^3/s; OpenFOAM 690 SIMPLE iterations, final initial residual p 9.9e-14; mesh change 20 to 40 cells: browser Q 12.686 %, OpenFOAM Q 11.905 %; velocity L2 5.007 % (reported)",
+   "data": {
+    "name": "F4_strip_fine",
+    "Q_browser_m3_s": 4.967321572386402e-18,
+    "Q_openfoam_m3_s": 5.112319552069118e-18,
+    "Q_rel_diff": 0.028362464084239588,
+    "velocity_L2": 0.05007347971938906,
+    "cells_compared": 64000,
+    "openfoam": {
+     "iterations": 690,
+     "initialResiduals": {
+      "Ux": 6.7870496381359e-14,
+      "Uy": 1.0571632864725e-13,
+      "Uz": 4.8666064553304e-14,
+      "p": 9.8798990959099e-14
+     }
+    },
+    "browser": {
+     "iterations": 608,
+     "relResidual": 6.979800064804309e-13,
+     "unknowns": 251008,
+     "closure": "continuous-tangential"
+    },
+    "time": "690",
+    "interpolation": "none (identical grids, cells matched by centre)",
+    "membrane_flow_openfoam_m3_s": 5.112319552069107e-18,
+    "membrane_flow_browser_m3_s": 4.9673215723165455e-18
+   }
+  }
+ ]
+}

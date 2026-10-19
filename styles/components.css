@@ -543,3 +543,12 @@
   .runtable { display: block; overflow-x: auto; }
 }
 
+/* release 2026.6: the featured lab card (the Continuum Lab) above the two viewer cards, image and text of equal width */
+.lab-card-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-bottom: var(--space-4); }
+.lab-card-feature .lab-card-body { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
+.lab-card-feature .lab-card-body h3 { font-size: var(--step-2); }
+.lab-card-feature .lab-lead { font-size: var(--step-0); line-height: 1.6; }
+.lab-points { margin: 0.2rem 0 0; padding-left: 1.15rem; font-size: var(--step--1); line-height: 1.55; color: var(--text); }
+.lab-points li { margin: 0.25rem 0; }
+.lab-more { margin-left: 0.9rem; font-size: var(--step--1); }
+@media (max-width: 900px) { .lab-card-feature { grid-template-columns: 1fr; } .lab-card-feature .lab-card-body { padding: var(--space-3); } .lab-card-feature .lab-card-media img { width: 100%; max-width: 30rem; } }

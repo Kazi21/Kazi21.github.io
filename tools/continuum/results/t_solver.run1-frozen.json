@@ -1,0 +1,159 @@
+{
+ "id": "solver",
+ "name": "Continuum solver S1–S14",
+ "verdict": "FAIL",
+ "quick": false,
+ "node": "v22.22.2",
+ "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+ "solverVersion": "continuum-mac-stokes-1.0.0",
+ "items": [
+  {
+   "id": "S1",
+   "name": "Developed duct",
+   "verdict": "PASS",
+   "detail": "24 × 24 cells: Q error 0.668 %, mid-length velocity normalised L2 0.399 % (212 iterations, residual 9.33e-13)",
+   "data": {
+    "N": 24,
+    "Q": 8.287972729925065e-14,
+    "Qa": 8.232991638936279e-14,
+    "errQ": 0.00667814245416746,
+    "l2": 0.003989133561610622,
+    "it": 212,
+    "res": 9.327383111385332e-13,
+    "ms": 549,
+    "Nunk": 27648
+   }
+  },
+  {
+   "id": "S2",
+   "name": "Duct refinement",
+   "verdict": "PASS",
+   "detail": "Q error 12: 2.6466 %, 24: 0.6678 %, 48: 0.1674 %; observed order 1.99, 2.00",
+   "data": [
+    {
+     "N": 12,
+     "Q": 8.450882174682641e-14,
+     "Qa": 8.232991638936279e-14,
+     "errQ": 0.026465535895347277,
+     "l2": 0.015733927562818852,
+     "it": 101,
+     "res": 9.521593152818844e-13,
+     "ms": 44,
+     "Nunk": 3456
+    },
+    {
+     "N": 24,
+     "Q": 8.287972729925065e-14,
+     "Qa": 8.232991638936279e-14,
+     "errQ": 0.00667814245416746,
+     "l2": 0.003989133561610622,
+     "it": 212,
+     "res": 9.327383111385332e-13,
+     "ms": 549,
+     "Nunk": 27648
+    },
+    {
+     "N": 48,
+     "Q": 8.246776024533574e-14,
+     "Qa": 8.232991638936279e-14,
+     "errQ": 0.0016742863592991957,
+     "l2": 0.0010018462720426558,
+     "it": 493,
+     "res": 9.39819181246344e-13,
+     "ms": 10834,
+     "Nunk": 221184
+    }
+   ]
+  },
+  {
+   "id": "S3",
+   "name": "Exact membrane",
+   "verdict": "PASS",
+   "detail": "ratio 1e+0: J error 5.35e-13, chamber pressure deviation 1.40e-12; ratio 1e-4: J error 1.62e-13, chamber pressure deviation 8.64e-14; ratio 1e-8: J error 8.68e-16, chamber pressure deviation 9.10e-19; ratio 1e-12: J error 3.53e-16, chamber pressure deviation 7.37e-21"
+  },
+  {
+   "id": "S4",
+   "name": "Steady mass balance",
+   "verdict": "PASS",
+   "detail": "uniform: |Qin − Qout|/Qin and |Qin − Qmembrane|/Qin ≤ 9.55e-13; closed patch: 7.33e-13 (Q = 3.999973e-17 and 3.839975e-17 m³/s)"
+  },
+  {
+   "id": "S5",
+   "name": "Interface conservation",
+   "verdict": "PASS",
+   "detail": "feed rows: net outflow 2.033e-29 vs membrane − port 2.034e-29 (difference 7.19e-17 of Q); permeate rows: 1.45e-16; one shared unknown per open membrane face"
+  },
+  {
+   "id": "S6",
+   "name": "Closed regions",
+   "verdict": "PASS",
+   "detail": "16 closed faces with max |J| = 0; chamber velocity change against the intact membrane 5.464e-2 (relative L2); residual 2.10e-12"
+  },
+  {
+   "id": "S7",
+   "name": "Reversal",
+   "verdict": "PASS",
+   "detail": "closed-patch device with reversed drive: max |J_rev + J_fwd| / max |J| = 0.00e+0; Q -3.839975e-17 vs 3.839975e-17"
+  },
+  {
+   "id": "S8",
+   "name": "Passive dissipation",
+   "verdict": "PASS",
+   "detail": "Σ A J ΔΠ = 3.9999e-11 W, viscous 2.689e-16 W; Σ A J ΔΠ = 3.8400e-11 W, viscous 2.488e-16 W"
+  },
+  {
+   "id": "S9",
+   "name": "Pressure bookkeeping",
+   "verdict": "PASS",
+   "detail": "exact case: max |ΔΠ − ΔP|/ΔP = 5.82e-16; default device: |ΔP·Q − Φ_visc − Φ_m|/(ΔP·Q) = 2.21e-14 (membrane share 0.999993277)"
+  },
+  {
+   "id": "S10",
+   "name": "Mesh refinement",
+   "verdict": "PASS",
+   "detail": "Q at 10/20/40 cells: 3.83998023e-17, 3.83997512e-17, 3.83997077e-17; finest two differ by 1.13e-4 %; feed mid-plane speed profile difference between levels 4.97 %, 2.13 %",
+   "data": {
+    "Q": [
+     3.8399802256247457e-17,
+     3.839975116418009e-17,
+     3.839970770530075e-17
+    ],
+    "profileNorms": [
+     0.049703147385572535,
+     0.021329485044998545
+    ]
+   }
+  },
+  {
+   "id": "S11",
+   "name": "Zero drive and disconnection",
+   "verdict": "PASS",
+   "detail": "ΔP = 0: max |velocity| = 0; all faces closed at 1 MPa: Q = 0, port flow 0, chamber pressure deviation 0.00e+0, solved in 0 iterations"
+  },
+  {
+   "id": "S14",
+   "name": "Single tube in the CFD",
+   "verdict": "FAIL",
+   "detail": "closing tube (57, 121) in face 245: ΔQ = -9.99986977e-22 m³/s, −G ΔΠ_local = -9.99993485e-22 m³/s, relative difference 6.51e-6 (chamber share of resistance 6.72e-6)",
+   "data": {
+    "expected": -9.999934851957124e-22,
+    "got": -9.999869769466828e-22,
+    "relDeviation": -0.000006508291429894316,
+    "chamberShare": 0.000006722661809455133
+   }
+  },
+  {
+   "id": "S12",
+   "name": "Algebraic residual",
+   "verdict": "PASS",
+   "detail": "16 solutions; worst ‖b − Kx‖/‖b‖ = 1.04e-10; default device momentum block 1.20e-11, continuity block 8.99e-8 (scaled units)"
+  },
+  {
+   "id": "S13",
+   "name": "Independent algebraic reference",
+   "verdict": "PASS",
+   "detail": "uniform: Q difference 6.16e-16, max velocity difference 1.84e-13 of max; closed patch: Q difference 6.42e-16, max velocity difference 4.18e-13 of max; modified tube: Q difference 6.16e-16, max velocity difference 5.56e-13 of max"
+  }
+ ],
+ "summary": "13 of 14 passed"
+}

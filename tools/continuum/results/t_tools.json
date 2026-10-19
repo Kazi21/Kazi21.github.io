@@ -1,0 +1,26 @@
+{
+ "id": "tools",
+ "name": "Calibration and analysis tools A1-A3",
+ "verdict": "PASS",
+ "items": [
+  {
+   "id": "A1",
+   "name": "analyze_pore_flux.py",
+   "verdict": "PASS",
+   "detail": "--help exit 0; SYNTHETIC fixture with declared G = 1.00e-27: estimate 9.684e-28 m^3 Pa^-1 s^-1, 95 % interval [9.013e-28, 1.036e-27] (contains G), exit 0, no law produced from synthetic data; equilibrium (zero-drive) estimate 1.021e-27; too-short series: exit 2, status insufficient_data; fixture with a drive-independent offset: exit 1, status failed (zero-drive flux differs from zero)"
+  },
+  {
+   "id": "A2",
+   "name": "check_conservation.py",
+   "verdict": "PASS",
+   "detail": "exported closed-patch experiment: exit 0 (conservation: PASS); copy with one face flux changed by 1 %: exit 1 (|Q_in - Q_membrane| / Q_in, |Q_membrane - Q(results.json)| / Q, J in membrane.csv equals the raw MAC flux)"
+  },
+  {
+   "id": "A3",
+   "name": "compare_openfoam.py",
+   "verdict": "PASS",
+   "detail": "gates of 1e-12: exit 1; missing case folder (NOT_RUN): exit 1; --help exit 0"
+  }
+ ],
+ "environment": "Python 3.11.15; synthetic fixtures generated with seed 20261018 and deleted after the run"
+}

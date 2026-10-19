@@ -1,0 +1,60 @@
+{
+ "id": "benchmark",
+ "chromium": "141.0.7390.37",
+ "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+ "cores": 2,
+ "date": "2026-10-18T21:28:31.011Z",
+ "rows": [
+  {
+   "case": "2 µm × 2 µm, standard mesh (first solve)",
+   "cells": "20 × 20 × 10",
+   "unknowns": 30832,
+   "iterations": 234,
+   "mode": "full",
+   "worker_s": 0.75,
+   "roundTrip_s": 0.9506000000000931,
+   "Q": 3.999973109352472e-17
+  },
+  {
+   "case": "same device, one patch closed (change solve)",
+   "cells": "20 × 20 × 10",
+   "unknowns": 30816,
+   "iterations": 230,
+   "mode": "change",
+   "worker_s": 0.792,
+   "roundTrip_s": 0.9846000000000932,
+   "Q": 3.839975051248649e-17
+  },
+  {
+   "case": "2 µm × 2 µm, fine mesh",
+   "cells": "40 × 40 × 20",
+   "unknowns": 251328,
+   "iterations": 478,
+   "mode": "full",
+   "worker_s": 12.738,
+   "roundTrip_s": 13.398300000000047,
+   "Q": 3.9999684244844173e-17
+  },
+  {
+   "case": "1 mm × 1 mm (10¹⁰ pores), standard mesh",
+   "cells": "20 × 20 × 10",
+   "unknowns": 30832,
+   "iterations": 244,
+   "mode": "full",
+   "worker_s": 0.769,
+   "roundTrip_s": 0.9913999999999069,
+   "Q": 9.999999865545857e-12
+  },
+  {
+   "case": "20 µm × 5 µm (aspect 4), standard mesh",
+   "cells": "80 × 20 × 10",
+   "unknowns": 124432,
+   "iterations": 483,
+   "mode": "full",
+   "worker_s": 5.976,
+   "roundTrip_s": 6.345299999999813,
+   "Q": 9.999889558129489e-16
+  }
+ ],
+ "note": "Wall times measured in the page worker of headless Chromium on the build machine; your device will differ."
+}

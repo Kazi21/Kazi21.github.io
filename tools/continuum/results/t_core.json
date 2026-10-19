@@ -1,0 +1,62 @@
+{
+ "id": "core",
+ "name": "Core modules N1–N9",
+ "verdict": "PASS",
+ "items": [
+  {
+   "id": "N1",
+   "name": "Unit conversions",
+   "verdict": "PASS",
+   "detail": "worst round-trip relative error 2.46e-16 (moleculesPerNs); 1 LMH = 2.777778e-7 m/s; m_w = 2.991506e-26 kg"
+  },
+  {
+   "id": "N2",
+   "name": "Counting",
+   "verdict": "PASS",
+   "detail": "1 µm × 1 µm at 10 nm pitch: 10000; 1 mm × 1 mm: 10000000000; per-face sums equal the total in 78 size/mesh cases: true; equal face counts on levels 20 and fine: true"
+  },
+  {
+   "id": "N3",
+   "name": "Zero drive",
+   "verdict": "PASS",
+   "detail": "Q = 0, max |J| = 0, q = 0; diagnostics finite: true"
+  },
+  {
+   "id": "N4",
+   "name": "Parallel law",
+   "verdict": "PASS",
+   "detail": "40000 pores, 1000 with random G_i: relative error of Q against Σ G_i ΔΠ = 1.21e-16"
+  },
+  {
+   "id": "N5",
+   "name": "Single-tube scope",
+   "verdict": "PASS",
+   "detail": "N = 10000: change error 2.45e-15 (original face-sum difference 5.45e-15, Q difference 2.23e-13), affected pores 1; N = 10000000000: change error 2.82e-15 (original face-sum difference 3.17e-9, Q difference 3.17e-8), affected pores 1"
+  },
+  {
+   "id": "N6",
+   "name": "Area scaling",
+   "verdict": "PASS",
+   "detail": "Q ratio error 5.85e-15, J change 6.44e-15 (J = 1.0000e-5 m/s)"
+  },
+  {
+   "id": "N7",
+   "name": "Length treatment",
+   "verdict": "PASS",
+   "detail": "illustrative law at 5 nm: rejected; at 2.4595 nm: accepted; HPW composition worst relative error 1.60e-16"
+  },
+  {
+   "id": "N8",
+   "name": "Data scope",
+   "verdict": "PASS",
+   "detail": "default device: accepted; wrong diameter preset: rejected; wrong temperature: rejected; wrong fluid: rejected; drive above interval: rejected; negative drive: rejected; reference planes: rejected; W outside the list: rejected; aspect ratio 5: rejected; tube length: rejected"
+  },
+  {
+   "id": "N9",
+   "name": "Shared uncertainty",
+   "verdict": "PASS",
+   "detail": "N = 100: relative half-width 0.200000000000000; N = 10000: relative half-width 0.200000000000000; N = 10000000000: relative half-width 0.200000000000000"
+  }
+ ],
+ "summary": "9 of 9 passed"
+}

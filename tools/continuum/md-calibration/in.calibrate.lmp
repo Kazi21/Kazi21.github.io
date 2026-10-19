@@ -1,0 +1,105 @@
+# Continuum Lab — (6,6) CNT membrane calibration: equilibration and force-slab driven production.
+# LAMMPS (stable 22 Jul 2025 or later) with MOLECULE, KSPACE and RIGID. Units: real (A, fs, kcal/mol, atm).
+#
+#   equilibration:  lmp -in in.calibrate.lmp -var stage equil -var seed 11 -var tag rep1
+#   production:     lmp -in in.calibrate.lmp -var stage drive -var fz 0.010 -var seed 11 -var tag rep1_f010 -var steps 20000000
+#
+# Model: rigid SPC/E water (SHAKE), fixed carbon atoms (not integrated; carbon-carbon pairs excluded), water-carbon
+# Lennard-Jones on oxygen only (Werder et al. 2003: eps_CO = 0.09352 kcal/mol, sigma_CO = 3.190 A), real-space cutoff
+# 10 A, PPPM 1e-5. Drive: a force fz (kcal mol^-1 A^-1) on every water oxygen inside a 10 A slab in the middle of the
+# reservoir (whole-molecule force through the rigid constraints). The pressure difference across the membrane is
+# dP = <N_slab> fz / A (N_slab: mean number of molecules in the slab, A = Lx Ly); with 1 kcal mol^-1 A^-1 =
+# 6.9477e-11 N it is evaluated by crossings_from_dump.py from the ave/time file. The thermostat acts on x and y velocity
+# components only (temp/partial), so the streaming motion along z is not damped. Equilibration has no drive. Each
+# production run draws new velocities from its seed (replicas); the first 100 ps after the switch are discarded.
+# Outputs: log, thermo.<tag>.txt (slab count, molecules in the tube, bulk-reservoir pressure diagnostic, temperatures,
+# bulk-reservoir density in g/cm^3; the per-atom-virial pressure of a thin slab is noisy and biased by the long-range
+# electrostatics, so the state is set by the bulk density: adjust the water count until it is 0.997 g/cm^3), cross.<tag>.dump (oxygens
+# within 5 A of the tube axis and 4 A of its ends, every 100 fs), restart files.
+
+variable        stage index equil
+variable        seed index 20261018
+variable        tag index run
+variable        fz index 0.0
+variable        steps index 200000
+variable        restart_in index equil.restart
+
+units           real
+atom_style      full
+boundary        p p p
+
+if "${stage} == equil" then "read_data membrane.data" else "read_restart ${restart_in}"
+
+pair_style      lj/cut/coul/long 10.0
+pair_coeff      1 1 0.15535 3.166
+pair_coeff      1 2 0.0 1.0
+pair_coeff      2 2 0.0 1.0
+pair_coeff      1 3 0.09352 3.190
+pair_coeff      2 3 0.0 1.0
+pair_coeff      3 3 0.0 1.0
+bond_style      harmonic
+bond_coeff      1 1000.0 1.0
+angle_style     harmonic
+angle_coeff     1 100.0 109.47
+kspace_style    pppm 1.0e-5
+neighbor        2.0 bin
+neigh_modify    delay 0 every 1 check yes exclude type 3 3
+
+group           water type 1 2
+group           ox type 1
+group           carbon type 3
+# geometry (A): tube from z = 0 to 24.5951 along the box centre axis; reservoir mid-plane for the force slab
+variable        zt0 equal 0.0
+variable        zt1 equal 24.5951
+variable        zslab0 equal 42.6
+variable        zslab1 equal 52.6
+region          tube cylinder z 0 0 3.0 ${zt0} ${zt1} side in units box
+region          window cylinder z 0 0 5.0 -4.0 28.6 side in units box
+region          slab block INF INF INF INF ${zslab0} ${zslab1} units box
+region          bulk block INF INF INF INF 32.0 40.0 units box
+group           inTube dynamic ox region tube every 100
+group           win dynamic ox region window every 100
+group           slabO dynamic ox region slab every 10
+group           bulkW dynamic water region bulk every 100
+group           bulkO dynamic ox region bulk every 100
+
+fix             hold carbon setforce 0.0 0.0 0.0
+velocity        carbon set 0.0 0.0 0.0
+
+timestep        1.0
+if "${stage} == equil" then &
+  "minimize 1.0e-4 1.0e-6 500 5000" &
+  "reset_timestep 0"
+
+fix             rigidwater water shake 1.0e-5 50 0 b 1 a 1
+compute         tw water temp
+compute         txy water temp/partial 1 1 0
+compute         st bulkW stress/atom NULL
+compute         stsum bulkW reduce sum c_st[1] c_st[2] c_st[3]
+variable        pbulk equal -(c_stsum[1]+c_stsum[2]+c_stsum[3])/(3.0*lx*ly*8.0)
+variable        nslab equal count(slabO)
+variable        ntube equal count(inTube)
+variable        rhobulk equal count(bulkO)*18.015268/6.02214076e23/(lx*ly*8.0*1.0e-24)
+
+if "${stage} == equil" then &
+  "velocity water create 300.0 ${seed} mom yes rot yes dist gaussian temp tw" &
+  "fix limit water nve/limit 0.05" &
+  "run 2000" &
+  "unfix limit" &
+  "fix tstat water nvt temp 300.0 300.0 100.0" &
+  "fix_modify tstat temp tw"
+if "${stage} == drive" then &
+  "velocity water create 300.0 ${seed} mom yes rot yes dist gaussian temp tw" &
+  "fix tstat water nvt temp 300.0 300.0 100.0" &
+  "fix_modify tstat temp txy" &
+  "fix drive slabO addforce 0.0 0.0 ${fz}"
+
+thermo_style    custom step time c_tw c_txy pe ke press v_nslab v_ntube v_pbulk v_rhobulk
+thermo_modify   temp tw flush yes
+thermo          1000
+fix             series all ave/time 100 10 1000 v_nslab v_ntube v_pbulk c_tw c_txy v_rhobulk file thermo.${tag}.txt
+dump            cross win custom 100 cross.${tag}.dump id mol x y z
+dump_modify     cross sort id
+restart         500000 ${tag}.a.restart ${tag}.b.restart
+run             ${steps}
+write_restart   ${tag}.final.restart

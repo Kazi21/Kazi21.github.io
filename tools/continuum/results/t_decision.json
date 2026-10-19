@@ -1,0 +1,27 @@
+{
+ "id": "decision",
+ "name": "Decision rules D1–D3",
+ "verdict": "PASS",
+ "items": [
+  {
+   "id": "D1",
+   "name": "State-matched resolution status",
+   "verdict": "PASS",
+   "detail": "default device: levels 10 vs 20, Q 3.999979e-17 vs 3.999973e-17 m³/s, |ΔQ|/Q = 1.38e-6, same configuration true, status PASS; centre patch closed: levels 10 vs 20, Q 3.839980e-17 vs 3.839975e-17 m³/s, |ΔQ|/Q = 1.33e-6, same configuration true, status PASS; 20 µm × 5 µm: levels 10 vs 20, Q 9.999911e-16 vs 9.999890e-16 m³/s, |ΔQ|/Q = 2.17e-6, same configuration true, status PASS; comparison level: standard → 10, fine (40) → 20; level 10 valid and aligned for 26 allowed sizes: true"
+  },
+  {
+   "id": "D2",
+   "name": "No certification by proxy",
+   "verdict": "PASS",
+   "detail": "modified membrane with only the intact-membrane table entry (|ΔQ|/Q = 1.17e-6): NOT_CHECKED; fine mesh without a comparison: NOT_CHECKED; a PASS of a different configuration: NOT_CHECKED; |ΔQ|/Q = 0.030: FAIL; 0.010: PASS; a failing manual fine-mesh check overrides an automatic PASS: FAIL"
+  },
+  {
+   "id": "D3",
+   "name": "Zero flow",
+   "verdict": "PASS",
+   "detail": "ΔP = 0: Q = 0 and 0 m³/s on levels 20 and 10; status NOT_APPLICABLE; numbers finite true; all faces closed at 1 MPa: Q = 0 and 0 m³/s on levels 20 and 10; status NOT_APPLICABLE; numbers finite true"
+  }
+ ],
+ "summary": "3 of 3 passed",
+ "environment": "Node v22.22.2; same core/*.js files as the page and its worker"
+}

@@ -72,7 +72,7 @@
       <p class="hero-evidence"><strong>Three first-author articles in PRE and PCCP: two published, one accepted.</strong><br><a href="https://doi.org/10.1103/PhysRevE.103.053115">PRE, 2021</a> · <a href="https://doi.org/10.1039/D4CP01068J">PCCP, 2024</a> · <a href="#paper-pccp-2026">PCCP, accepted 2026</a></p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#research">Explore research</a>
-        <a class="btn" href="lab/water/">Try Live Water Lab</a>
+        <a class="btn" href="lab/continuum/">Try the multiscale experiment</a>
       </div>
       <p class="hero-links"><a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>CV (PDF)</a> · <a href="#contact">Contact</a></p>
     </div>
@@ -128,8 +128,8 @@
       <li class="rmap-step">
         <span class="rmap-n" aria-hidden="true">5</span>
         <h3>Continuum prediction</h3>
-        <p>OpenFOAM simulations that receive the closures, with molecular checks where they are uncertain.</p>
-        <p class="rmap-meta"><span class="status status-proposed">Planned</span> <a href="#outlook">Outlook</a></p>
+        <p>Chamber flow that takes a pore law or wall closure as input: live in the browser now, OpenFOAM with calibrated closures next.</p>
+        <p class="rmap-meta"><span class="status status-live">Live demonstration</span> <a href="lab/continuum/">Continuum Lab</a></p>
       </li>
     </ol>
     <p class="rmap-loop"><span class="status status-proposed">Developing direction</span> Error-aware adaptive simulation closes the loop: model errors and uncertainty decide where the next molecular calculation is needed. <a href="#vision">How the decision is made</a></p>
@@ -270,22 +270,27 @@
   </div>
 </section>
 
-<!-- D. Simulation Lab: two viewers, each opened on its own page -------------------------------------------- -->
+<!-- D. Simulation Lab: the multiscale experiment first, then the two molecular viewers; each opens on its own page -->
 <section class="section section-band" id="lab">
   <div class="container">
     <h2>Simulation Lab</h2>
-    <p class="section-intro">Two ways to look at molecules directly. Each viewer opens on its own page and loads its data only when you start it.</p>
+    <p class="section-intro">Three experiments, each on its own page, loading its solver or data only when you start it: a multiscale membrane-flow experiment, live molecular dynamics and recorded ab initio trajectories.</p>
+    <article class="lab-card lab-card-feature">
+      <a class="lab-card-media" href="lab/continuum/" tabindex="-1" aria-hidden="true"><img src="assets/figures/continuum-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
+      <div class="lab-card-body">
+        <p class="project-kicker">Multiscale experiment · browser CFD solver</p>
+        <h3>The Continuum Lab</h3>
+        <p><span class="status">Live 3D continuum solver · illustrative pore conductance</span></p>
+        <p class="lab-lead">Explore how pore conductance, pressure and local blockage shape membrane throughput: 40 000 (6,6) carbon nanotubes counted exactly, steady 3D Stokes flow in the feed and permeate chambers, solved in your browser in about a second.</p>
+        <ul class="lab-points">
+          <li>Change the pressure, one tube, one patch or the whole membrane, and compare with a fixed baseline.</li>
+          <li>See where the resistance sits, chambers or pores, from the solved dissipation.</li>
+          <li>Solver checked against analytic solutions, an independent SciPy implementation and OpenFOAM v1912: duct flow agrees within 10⁻¹⁰ (relative); the chamber-dominated interface cases differ by 1.97–⁠2.84 % in Q and are reported as measured. The pore conductance is an input until the molecular calibration has been run.</li>
+        </ul>
+        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/">Open the Continuum Lab</a> <a class="lab-more" href="lab/continuum/#validation">Validation</a></p>
+      </div>
+    </article>
     <div class="lab-cards">
-      <article class="lab-card">
-        <a class="lab-card-media" href="lab/cnt/" tabindex="-1" aria-hidden="true"><img src="assets/figures/inspector-four-tubes-axial.png" width="1082" height="1082" loading="lazy" decoding="async" alt=""></a>
-        <div class="lab-card-body">
-          <p class="project-kicker">Recorded trajectories · ab initio MD</p>
-          <h3>CNT trajectory inspector</h3>
-          <p><span class="status status-live">Available</span></p>
-          <p>Rotate, play and inspect the four CP2K trajectories of NaCl–water in the (6,6) to (11,11) nanotubes of <a href="#project-2">Project 2</a>. Click an atom for its distance from the tube axis, its hydrogen bonds or its hydration count, and follow guided observations of how confinement reshapes water.</p>
-          <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/cnt/">Open the trajectory inspector</a></p>
-        </div>
-      </article>
       <article class="lab-card">
         <a class="lab-card-media" href="lab/water/" tabindex="-1" aria-hidden="true"><img src="assets/figures/water-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
         <div class="lab-card-body">
@@ -296,9 +301,20 @@
           <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/water/">Open the Live Water Lab</a></p>
         </div>
       </article>
+      <article class="lab-card">
+        <a class="lab-card-media" href="lab/cnt/" tabindex="-1" aria-hidden="true"><img src="assets/figures/inspector-four-tubes-axial.png" width="1082" height="1082" loading="lazy" decoding="async" alt=""></a>
+        <div class="lab-card-body">
+          <p class="project-kicker">Recorded trajectories · ab initio MD</p>
+          <h3>CNT trajectory inspector</h3>
+          <p><span class="status status-live">Available</span></p>
+          <p>Rotate, play and inspect the four CP2K trajectories of NaCl–water in the (6,6) to (11,11) nanotubes of <a href="#project-2">Project 2</a>. Click an atom for its distance from the tube axis, its hydrogen bonds or its hydration count, and follow guided observations of how confinement reshapes water.</p>
+          <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/cnt/">Open the trajectory inspector</a></p>
+        </div>
+      </article>
     </div>
     <h3 class="lab-next-title">Next stages</h3>
     <ol class="lab-steps">
+      <li><b>Calibrated pore law for the Continuum Lab <span class="status status-proposed">Planned</span></b> net water crossings through the (6,6) membrane from molecular dynamics at zero and finite drive, analysed with the published calibration package, replacing the illustrative law with a qualified one and its uncertainty.</li>
       <li><b>Molecular interaction in a nanotube <span class="status status-proposed">Planned</span></b> the pulling experiment of the Water Lab, carried into one CNT electrolyte, with an influence view of which neighbours' forces change.</li>
       <li><b>Reference-guided learning <span class="status status-proposed">Planned</span></b> a learned model checked against reference calculations, with errors resolved by species and environment and each next calculation chosen for a stated reason.</li>
     </ol>
@@ -698,7 +714,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.5.1. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, and the complete methods-and-software package for Project 2.</p>
+      <p class="version">Version 2026.6. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>

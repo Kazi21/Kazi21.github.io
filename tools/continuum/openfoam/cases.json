@@ -1,0 +1,59 @@
+{
+ "F1_duct": {
+  "kind": "duct",
+  "W": 1e-06,
+  "N": 24,
+  "nzc": 12,
+  "dP": 1000.0
+ },
+ "F2_uniform": {
+  "kind": "device",
+  "W": 2e-06,
+  "B": 2e-06,
+  "N": 20,
+  "dP": 1.0,
+  "Rs": 25000.0,
+  "closedCols": null
+ },
+ "F3_strip": {
+  "kind": "device",
+  "W": 2e-06,
+  "B": 2e-06,
+  "N": 20,
+  "dP": 1.0,
+  "Rs": 25000.0,
+  "closedCols": [
+   8,
+   12
+  ]
+ },
+ "F4_strip_fine": {
+  "kind": "device",
+  "W": 2e-06,
+  "B": 2e-06,
+  "N": 40,
+  "dP": 1.0,
+  "Rs": 25000.0,
+  "closedCols": [
+   16,
+   24
+  ]
+ },
+ "F5_strip_80": {
+  "kind": "device",
+  "W": 2e-06,
+  "B": 2e-06,
+  "N": 80,
+  "dP": 1.0,
+  "Rs": 25000.0,
+  "closedCols": [
+   32,
+   48
+  ],
+  "pResidual": 1e-10,
+  "pTol": 1e-13,
+  "pRelTol": 0.01,
+  "pMaxIter": 100,
+  "writeInterval": 250
+ }
+}
