@@ -12,11 +12,13 @@ cd "$(dirname "$0")"
 [ -f membrane.data ] || python3 build_membrane.py --out membrane.data
 # 1. equilibration (writes equil.final.restart); check the tube occupancy plateau in thermo.equil.txt before going on
 [ -f equil.final.restart ] || mpirun -np $NPROC $LMP -in in.calibrate.lmp -var stage equil -var tag equil -var steps 300000 -log log.equil
-# 2. production: condition id, force per molecule (kcal mol^-1 A^-1; fill from the mapping above), 4 replicas each
+# 2. production: condition id, force per molecule (kcal mol^-1 A^-1; fill from the mapping above); 4 replicas per drive,
+#    8 at zero drive (the equilibrium gate of analyze_pore_flux.py needs G_eq to 10 %; see README)
 for spec in "zero 0.0" "m100 FZ_M100" "p050 FZ_P050" "p100 FZ_P100" "p150 FZ_P150" "p200 FZ_P200"; do
   set -- $spec; cid=$1; fz=$2
   case $fz in FZ_*) echo "set the force for $cid in run_campaign.sh first"; exit 1;; esac
-  for rep in 1 2 3 4; do
+  reps="1 2 3 4"; [ "$cid" = zero ] && reps="1 2 3 4 5 6 7 8"
+  for rep in $reps; do
     tag=${cid}_r${rep}
     [ -f $tag.csv ] && continue
     mpirun -np $NPROC $LMP -in in.calibrate.lmp -var stage drive -var fz $fz -var seed $((1000 + rep)) -var tag $tag -var steps $STEPS -var restart_in equil.final.restart -log log.$tag

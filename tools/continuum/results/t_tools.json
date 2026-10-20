@@ -1,13 +1,13 @@
 {
  "id": "tools",
- "name": "Calibration and analysis tools A1-A3",
+ "name": "Calibration and analysis tools A1-A5",
  "verdict": "PASS",
  "items": [
   {
    "id": "A1",
    "name": "analyze_pore_flux.py",
    "verdict": "PASS",
-   "detail": "--help exit 0; SYNTHETIC fixture with declared G = 1.00e-27: estimate 9.684e-28 m^3 Pa^-1 s^-1, 95 % interval [9.013e-28, 1.036e-27] (contains G), exit 0, no law produced from synthetic data; equilibrium (zero-drive) estimate 1.021e-27; too-short series: exit 2, status insufficient_data; fixture with a drive-independent offset: exit 1, status failed (zero-drive flux differs from zero)"
+   "detail": "--help exit 0; SYNTHETIC fixture with declared G = 1.00e-27: estimate 9.684e-28 m^3 Pa^-1 s^-1, 95 % interval [9.013e-28, 1.036e-27] (contains G), exit 0, no law produced from synthetic data; equilibrium (zero-drive) estimate 1.064e-27; too-short series: exit 2, status insufficient_data; fixture with a drive-independent offset: exit 1, status failed (zero-drive flux differs from zero)"
   },
   {
    "id": "A2",
@@ -20,7 +20,19 @@
    "name": "compare_openfoam.py",
    "verdict": "PASS",
    "detail": "gates of 1e-12: exit 1; missing case folder (NOT_RUN): exit 1; --help exit 0"
+  },
+  {
+   "id": "A4",
+   "name": "equilibrium gate (analyze_pore_flux.py)",
+   "verdict": "PASS",
+   "detail": "good: granted (G_eq 1.064e-27, relative SE 0.044, z 1.86 against G 9.684e-28), interval starts at -1e+08 Pa; no zero-drive fluctuations: refused, starts at 5e+07 Pa (no crossing fluctuations in zero-drive runs zero_r1, zero_r2, zero_r3, zero_r4: the equilibrium exchange through the pore is not sampled); zero-drive fluctuations x4: refused, starts at 5e+07 Pa (z 15.81); one zero-drive replica: refused, starts at 5e+07 Pa (fewer than two independent zero-drive replicas (1)); informative, not gated (see TOLERANCES): recrossing fixture refused (G_eq 1.153e-27, z 2.36, offset C 0.496; single-block estimate 3.834e-27)"
+  },
+  {
+   "id": "A5",
+   "name": "equilibrium estimator, Monte Carlo (analyze_pore_flux.py)",
+   "verdict": "PASS",
+   "detail": "40 synthetic zero-drive data sets (4 x 20 ns, seeds 2000-2039): without recrossings mean G_eq/G = 0.9950 +/- 0.0096 (scatter 0.0606, mean reported relative SE 0.0570); with recrossings 1.0125 +/- 0.0154 (scatter 0.0974, reported 0.0829), mean single-block estimate 3.725 G; gate would grant the extension in 88 % / 75 % of the data sets (not gated)"
   }
  ],
- "environment": "Python 3.11.15; synthetic fixtures generated with seed 20261018 and deleted after the run"
+ "environment": "Python 3.11.15; synthetic fixtures generated with seed 20261018 (A5: seeds 2000-2039) and deleted after the run"
 }

@@ -46,10 +46,10 @@
       <div class="cl-guide" id="cl-guide">
         <p class="cl-guide-h">Guided experiment · about one minute</p>
         <ol class="cl-guide-steps">
-          <li>Run</li><li>Raise the pressure</li><li>Block a patch</li><li>Compare</li><li>Tube, patch or membrane</li>
+          <li>Run</li><li>Raise the pressure</li><li>Block a patch</li><li>Compare</li><li>Tube, patch or membrane</li><li>Pores in 3D</li>
         </ol>
         <div class="cl-guide-now">
-          <p id="cl-guide-text" aria-live="polite">Five steps through the experiment.</p>
+          <p id="cl-guide-text" aria-live="polite">Six steps through the experiment.</p>
           <div class="cl-guide-actions"><button type="button" class="btn btn-primary btn-small cl-guide-do">Start the guided experiment</button> <button type="button" class="btn-link cl-guide-skip">Skip</button></div>
         </div>
       </div>
@@ -57,6 +57,7 @@
       <div class="cl-tabs" hidden>
         <button type="button" id="cl-tab-flow" data-tab="flow">Flow</button>
         <button type="button" id="cl-tab-membrane" data-tab="membrane">Membrane</button>
+        <button type="button" id="cl-tab-pores" data-tab="pores">Pores 3D</button>
         <button type="button" id="cl-tab-molecule" data-tab="molecule">Molecule</button>
       </div>
       <div class="cl-stage">
@@ -65,6 +66,7 @@
             <div class="cl-seg" role="group" aria-label="Main view">
               <button type="button" data-view="flow" aria-pressed="true">Device flow</button>
               <button type="button" data-view="membrane" aria-pressed="false">Membrane map</button>
+              <button type="button" data-view="pores" aria-pressed="false">Pores in 3D</button>
             </div>
             <p class="cl-viewbar-note">Selection and results are shared by all views.</p>
           </div>
@@ -78,6 +80,7 @@
                 <button type="button" class="btn btn-primary cl-poster-run">Run experiment</button>
               </div>
               <p class="cl-vstatus" role="status" hidden></p>
+              <p class="cl-vbadge">Live continuum calculation</p>
             </div>
             <div class="cl-legend" id="cl-flow-legend"></div>
             <div class="cl-view-opts">
@@ -105,11 +108,29 @@
             <p class="cl-small cl-mem-info"></p>
             <details class="cl-more cl-help-more"><summary>How to use the map</summary><p class="cl-help">Click a patch to select it; in the zoom, click a tube to select it. Keys: arrows move the selection, <kbd>Enter</kbd> zooms in, <kbd>Esc</kbd> zooms out. A selected-tube change alters only that tube’s term in its face’s conductance sum.</p></details>
           </div>
+
+          <div class="cl-pane cl-pane-pores" id="cl-pane-pores" role="region" aria-label="Pores in 3D" hidden>
+            <div class="cl-viewport cl-viewport-pores">
+              <div class="cl-p3-host"></div>
+              <div class="cl-poster cl-p3-poster"><p class="cl-poster-title">Water through the pores, at the computed flow</p><p class="cl-poster-note cl-p3-msg">Run the experiment first: this view then shows the tubes around the selected one at true size, with their water moving at the solved single-pore flow.</p><button type="button" class="btn btn-primary cl-p3-run">Run experiment</button></div>
+              <p class="cl-vbadge">Continuum-driven schematic</p>
+            </div>
+            <div class="cl-view-opts cl-p3-opts">
+              <div class="cl-seg" role="group" aria-label="Camera">
+                <button type="button" class="cl-p3-focus" aria-pressed="true" disabled>Focus pore</button>
+                <button type="button" class="cl-p3-array" aria-pressed="false" disabled>Array context</button>
+              </div>
+              <button type="button" class="btn btn-small cl-p3-play" aria-pressed="true" disabled>Pause</button>
+              <button type="button" class="btn btn-small cl-p3-reset" disabled>Reset view</button>
+            </div>
+            <div class="cl-legend cl-p3-legend" id="cl-p3-legend"></div>
+            <details class="cl-more cl-help-more"><summary>How this illustration works</summary><div class="cl-help cl-p3-how"><p>Run the experiment to see how the drawing follows the computed flow.</p></div></details>
+          </div>
         </div>
 
         <div class="cl-side">
           <div class="cl-pane cl-pane-molecule" id="cl-pane-molecule" role="region" aria-label="Molecule">
-            <div class="cl-mol-head"><h2 class="cl-side-h">One nanotube</h2><span class="cl-source-tag">Recorded</span></div>
+            <div class="cl-mol-head"><h2 class="cl-side-h">One nanotube</h2><span class="cl-source-tag">Recorded CP2K AIMD</span></div>
             <div class="cl-viewport cl-mol-viewport">
               <canvas class="cl-canvas cl-mol-canvas" role="img" aria-label="Recorded ab initio trajectory of a (6,6) carbon nanotube segment with a single-file chain of six water molecules, one sodium and one chloride ion. The near half of the carbon wall is cut away."></canvas>
               <div class="cl-mol-poster"><p>The recorded (6,6) trajectory (0.6 MB) loads when you start or ask for it.</p><button type="button" class="btn btn-small cl-mol-show">Show the recorded tube</button></div>
@@ -262,7 +283,7 @@
           <tr><td>Hagen–Poiseuille–Weissberg relation 1/G = R_entry + r_interior L + R_exit (Navier slip, Sampson orifice)</td><td>Analytic verification fixture only (<code>reference-law.json</code>, a = 2.5 nm)</td><td>A sub-1-nm prediction: continuum viscosity and slip are not valid in a single-file channel</td></tr>
         </tbody></table></div>
         <h3>The smallest measurement that would replace the illustrative law</h3>
-        <p>Net water crossings through the declared (6,6) membrane geometry with reservoirs on both sides (pure SPC/E water, 300 K, fixed mean pressure), at three or more drives of both signs plus zero, with at least four independent replicas per drive and crossing counts at two planes. The input templates, the manifest and the analysis program (<code>analyze_pore_flux.py</code>, with block averaging, bootstrap intervals, intercept and symmetry tests and held-out drives) are in <code>tools/continuum/md-calibration/</code>. A qualified law would carry its own uncertainty; one shared conductance sample then applies to every equivalent pore, so the relative uncertainty of Q does not shrink with the number of pores.</p>
+        <p>Net water crossings through the declared (6,6) membrane geometry with reservoirs on both sides (pure SPC/E water, 300 K, fixed mean pressure), at three or more drives of both signs plus zero, with at least four independent replicas per drive (eight at zero drive) and crossing counts at two planes. The input templates, the manifest and the analysis program (<code>analyze_pore_flux.py</code>, with block averaging, bootstrap intervals, intercept and symmetry tests and held-out drives) are in <code>tools/continuum/md-calibration/</code>. Molecular dynamics resolves the flow only at 50–200 MPa, so the program lets a law cover this lab’s 0–10 MPa only if the equilibrium fluctuations of the zero-drive runs give the same conductance as the driven slope (fluctuation–dissipation check); otherwise the law is limited to the tested drives. A qualified law would carry its own uncertainty; one shared conductance sample then applies to every equivalent pore, so the relative uncertainty of Q does not shrink with the number of pores.</p>
       </div>
     </details>
 
@@ -298,6 +319,7 @@
           <li>The standard mesh resolves the device-level flow (mesh checks in the decision panel); it does not resolve the flow near individual pores, which the pore law represents.</li>
           {{LIMIT_PORTS}}
           <li>Pore-to-pore variability and conductance uncertainty are not modelled; a scoped change is a deterministic what-if.</li>
+          <li>Neighbouring tubes interact only hydraulically, through the chamber water. Molecular interactions between tubes (for example carbon polarization or the influence of adjacent tubes on the confined water) are not modelled; they would enter through each tube’s conductance G_i.</li>
         </ul>
       </div>
     </details>
@@ -305,7 +327,7 @@
     <details class="disclosure" id="credits">
       <summary>Credits and licences</summary>
       <div class="disclosure-body cl-doc">
-        <p>Browser CFD solver, membrane map, coupling, diagnostics, decision rules, interface and reproducibility workflow: Kazi Ehsanul Karim (page code MIT). The recorded trajectory comes from the author’s CP2K calculations (CP2K, GPL-2.0). Native comparisons use OpenFOAM v1912 (OpenCFD Ltd, GPL-3.0), run outside the browser; no OpenFOAM code is part of this page. Code drafted with AI assistance and checked by the tests above; scientific decisions and validation design are the author’s.</p>
+        <p>Browser CFD solver, membrane map, coupling, diagnostics, decision rules, interface and reproducibility workflow: Kazi Ehsanul Karim (page code MIT). The recorded trajectory comes from the author’s CP2K calculations (CP2K, GPL-2.0). Native comparisons use OpenFOAM v1912 (OpenCFD Ltd, GPL-3.0), run outside the browser; no OpenFOAM code is part of this page. The 3D pore view uses three.js 0.160.0 (three.js authors, MIT; <code>vendor/three.module.min.js</code>), loaded only when that view is opened. Code drafted with AI assistance and checked by the tests above; scientific decisions and validation design are the author’s.</p>
       </div>
     </details>
     <p class="cl-back"><a href="../../index.html#lab">Back to the Simulation Lab</a> · <a href="../water/">Live Water Lab</a> · <a href="../cnt/">CNT trajectory inspector</a></p>

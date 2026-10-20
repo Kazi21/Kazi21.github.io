@@ -41,7 +41,7 @@
  "protocol": {
   "equilibration": "2 ps limited NVE, then NVT 300 K until the number of molecules in the tube has a stable plateau (at least 200 ps); restart file written",
   "production": "20 ns per replica after 100 ps of drive switch-on (discarded)",
-  "replicas": "at least 4 per condition, independent velocities (seeds) from the equilibrated restart, or independent equilibrations"
+  "replicas": "at least 4 per driven condition and 8 at zero drive (equilibrium gate: G_eq to 10 %), independent velocities (seeds) from the equilibrated restart, or independent equilibrations"
  },
  "conditions": [
   {"condition_id": "zero", "fz_kcal_mol_A": 0.0, "role": "zero"},

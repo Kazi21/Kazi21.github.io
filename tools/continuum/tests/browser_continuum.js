@@ -1,5 +1,5 @@
-// Browser and regression tests B1-B13 and R1 for /lab/continuum/ (criteria: tools/continuum/TOLERANCES.md; B11-B13
-// added 19 Oct 2026 before they were run).
+// Browser and regression tests B1-B16 and R1 for /lab/continuum/ (criteria: tools/continuum/TOLERANCES.md; B11-B13
+// added 19 Oct 2026, B14-B15 and B16 on 20 Oct 2026, each before it was run). WebGL runs on SwiftShader in headless Chromium.
 // Usage: node browser_continuum.js [base URL]   (serve the repository root first, e.g. python3 -m http.server 8765)
 // Writes tools/continuum/results/browser.json; exits 1 if any test fails. Reads the page state through the read-only
 // hook window.__continuumState. Numbers are compared with the Node solver run on the same scenario (core/*.js).
@@ -25,7 +25,8 @@ const st = (p) => p.evaluate(() => { const S = window.__continuumState; return {
 async function setDp(p, mpa) { await p.evaluate((v) => { const r = document.getElementById('cl-dp'); r.value = String(v); r.dispatchEvent(new Event('input', { bubbles: true })); }, mpa); }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EXE, headless: true });
+  const GL_ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];     // software WebGL for the 3D pore view
+  const browser = await chromium.launch({ executablePath: EXE, headless: true, args: GL_ARGS });
   const version = browser.version();
   const allErrors = [];
   // ======================================================== desktop session: B1-B7, B9
@@ -136,7 +137,10 @@ async function setDp(p, mpa) { await p.evaluate((v) => { const r = document.getE
   ks = await st(k); kres.push('arrow key in the scope group: ' + ks.sel.scope);
   await k.focus('.cl-apply'); await k.keyboard.press('Enter'); await converged(k);
   const closedK = await k.evaluate(() => Object.keys(window.__continuumState.sc.mods.patchFactors).length); kres.push('Enter on Apply: ' + closedK + ' patch blocked');
-  await k.focus('.cl-viewbar [data-view="membrane"]'); await k.keyboard.press('Enter'); await k.waitForTimeout(900);
+  await k.focus('.cl-viewbar [data-view="membrane"]'); await k.keyboard.press('Enter');
+  // wait for the map to appear (it follows a 650 ms camera animation) instead of a fixed delay: one loaded run in
+  // 2026.7 pressed the keys before the map was visible
+  await k.waitForFunction(() => { const e = document.getElementById('cl-pane-membrane'); return e && !e.hidden && e.offsetParent !== null; }, null, { timeout: 15000 }); await k.waitForTimeout(200);
   const before = (await st(k)).sel.patch; await k.focus('.cl-mem-canvas'); await k.keyboard.press('ArrowLeft'); await k.waitForTimeout(100);
   const afterP = (await st(k)).sel.patch; kres.push('ArrowLeft on the map: patch (' + before.pi + ', ' + before.pj + ') → (' + afterP.pi + ', ' + afterP.pj + ')');
   await k.keyboard.press('Enter'); await k.waitForTimeout(200); const mm = await k.evaluate(() => window.__continuumState.memMode); kres.push('Enter on the map: ' + mm);
@@ -268,6 +272,160 @@ async function setDp(p, mpa) { await p.evaluate((v) => { const r = document.getE
   rec('B13', 'Resolution status in the page', b13,
     `default device: ${r1.state} (levels ${r1.levels.join(' vs ')}, |ΔQ|/Q = ${r1.rel.toExponential(2)}, same configuration ${r1.same}); closed patch: ${r2.state} (|ΔQ|/Q = ${r2.rel.toExponential(2)}, same configuration ${r2.same}); ΔP = 0: ${r0.state}; panel note: “${r1.note.trim()}”`);
 
+  // ======================================================== B14 3D pore view
+  async function poresCheck(page, opts) {
+    const reqs3 = []; page.on('request', (r) => { if (/vendor\/three\.module\.min\.js|pores3d\.js/.test(r.url())) reqs3.push(r.url()); });
+    await page.goto(URL0, { waitUntil: 'networkidle' });
+    if (opts.touch) await page.tap('.cl-poster-run'); else await page.click('.cl-poster-run');
+    await converged(page);
+    const beforeOpen = reqs3.length;
+    if (opts.touch) await page.tap('#cl-tab-pores'); else await page.click('.cl-viewbar [data-view="pores"]');
+    await page.waitForFunction(() => ['ready', 'failed'].includes(window.__continuumState.poresState), null, { timeout: 60000 });
+    await page.waitForTimeout(1200);
+    const look = () => page.evaluate(() => {
+      const S = window.__continuumState, v = S.pores, c = document.querySelector('.cl-p3-canvas');
+      let px = null;
+      if (c) {                                                       // non-blank frame: count distinct colours of the drawn image
+        const t = document.createElement('canvas'); t.width = 160; t.height = Math.round(160 * c.height / c.width);
+        const g = t.getContext('2d'); g.drawImage(c, 0, 0, t.width, t.height);
+        const d = g.getImageData(0, 0, t.width, t.height).data, set = new Set(); let nonBg = 0;
+        for (let i = 0; i < d.length; i += 4) { set.add((d[i] >> 3) + ',' + (d[i + 1] >> 3) + ',' + (d[i + 2] >> 3)); if (Math.abs(d[i] - 13) + Math.abs(d[i + 1] - 27) + Math.abs(d[i + 2] - 42) > 24) nonBg++; }
+        px = { colours: set.size, nonBgFrac: nonBg / (d.length / 4) };
+      }
+      return { state: S.poresState, stats: v ? v.stats() : null, d3: S.display3d, px, sel: S.sel.tube, rev: S.result.revision };
+    });
+    const a = await look();
+    return { reqs3, beforeOpen, a, look };
+  }
+  function speedCheck(a) {
+    const d3 = a.d3, st3 = a.stats; let worst = 0, ok = true;
+    d3.tubes.forEach((t, i) => {
+      const expect = t.blocked ? 0 : t.q * d3.factor;
+      const e = expect === 0 ? Math.abs(t.speed) : rel(t.speed, expect); worst = Math.max(worst, e);
+      if (e > 1e-12 || Math.abs(st3.speeds[i] - (t.blocked ? 0 : t.speed)) > 0) ok = false;
+    });
+    return { ok, worst };
+  }
+  function geomCheck(a) {
+    const g = a.stats.geometry, sel = a.sel;
+    const posOk = a.stats.positions.every((p) => Math.abs(p[2] - (p[0] - sel.ti) * 10) < 1e-9 && Math.abs(p[3] + (p[1] - sel.tj) * 10) < 1e-9);
+    return posOk && Math.abs(g.pitch_nm - 10) < 1e-9 && Math.abs(g.L_nm - 2.4595) < 1e-9 && Math.abs(g.R_nm - 0.4069) < 1e-9;
+  }
+  const g3 = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const p3 = await g3.newPage(); const e3 = []; p3.on('pageerror', (e) => e3.push('3D desktop: ' + e.message));
+  const r3 = await poresCheck(p3, {});
+  const s1 = speedCheck(r3.a), geo1 = geomCheck(r3.a);
+  await setDp(p3, 4); await converged(p3); await p3.waitForTimeout(400);
+  const a4 = await r3.look();
+  const s4 = speedCheck(a4);
+  const ratio = a4.d3.tubes.map((t, i) => t.speed / r3.a.d3.tubes[i].speed);
+  const ratioOk = ratio.every((x) => rel(x, 4) <= 1e-9) && rel(a4.d3.factor, r3.a.d3.factor) <= 1e-12 && a4.d3.fixed;
+  await p3.click('.cl-block'); await converged(p3); await p3.waitForTimeout(400);
+  const ab = await r3.look();
+  const blockedOk = ab.d3.tubes.every((t) => t.blocked && t.speed === 0) && ab.stats.speeds.every((x) => x === 0) && ab.stats.markers.blocked === ab.stats.tubes;
+  await g3.close();
+  // reduced motion: molecules wait for Play
+  const g3r = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  const p3r = await g3r.newPage(); p3r.on('pageerror', (e) => e3.push('3D reduced motion: ' + e.message));
+  const rr = await poresCheck(p3r, {});
+  const ph0 = rr.a.stats.phase.slice(); await p3r.waitForTimeout(1000); const ph1 = (await rr.look()).stats.phase;
+  const stillBefore = rr.a.stats.playing === false && ph0.every((x, i) => x === ph1[i]);
+  await p3r.click('.cl-p3-play'); await p3r.waitForTimeout(1200); const ph2 = (await rr.look()).stats.phase;
+  const movesAfter = ph2.some((x, i) => x !== ph1[i]);
+  await g3r.close();
+  // phone, touch
+  const g3m = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
+  const p3m = await g3m.newPage(); p3m.on('pageerror', (e) => e3.push('3D phone: ' + e.message));
+  const rm3 = await poresCheck(p3m, { touch: true });
+  const sm = speedCheck(rm3.a);
+  await g3m.close();
+  allErrors.push(...e3);
+  const lazyOk = r3.beforeOpen === 0 && r3.reqs3.length >= 2 && rm3.beforeOpen === 0;
+  const frameOk = (x) => x.a.px && x.a.px.colours > 40 && x.a.px.nonBgFrac > 0.15;
+  const countOk = (x) => x.a.stats.renderedTubes === x.a.stats.tubes && x.a.stats.tubes === x.a.d3.tubes.length && x.a.stats.tubes === 25;
+  const b14 = lazyOk && r3.a.state === 'ready' && rm3.a.state === 'ready' && frameOk(r3) && frameOk(rm3) && countOk(r3) && countOk(rm3) && geo1 && s1.ok && s4.ok && sm.ok && ratioOk && blockedOk && stillBefore && movesAfter && e3.length === 0;
+  rec('B14', '3D pore view', b14,
+    `3D library requested before the view was opened: ${r3.beforeOpen} (after: ${r3.reqs3.map((u) => u.replace(BASE, '')).join(', ')}); frame: ${r3.a.px.colours} colour classes, ${(100 * r3.a.px.nonBgFrac).toFixed(1)} % non-background (phone ${rm3.a.px.colours}, ${(100 * rm3.a.px.nonBgFrac).toFixed(1)} %); tubes reported ${r3.a.d3.tubes.length}, rendered ${r3.a.stats.renderedTubes}; true geometry and lattice positions ${geo1} (pitch ${r3.a.stats.geometry.pitch_nm.toPrecision(4)} nm, length ${r3.a.stats.geometry.L_nm.toPrecision(5)} nm, carbon-centre radius ${r3.a.stats.geometry.R_nm.toPrecision(4)} nm); speed = q_i × factor, worst relative deviation ${s1.worst.toExponential(2)} (factor ${r3.a.d3.factor.toExponential(6)} nm s⁻¹ per m³ s⁻¹, 1 s shown = ${r3.a.d3.T_ns.toFixed(3)} ns); at 4 MPa factor unchanged ${rel(a4.d3.factor, r3.a.d3.factor) <= 1e-12}, speed ratios ${Math.min(...ratio).toPrecision(12)}–${Math.max(...ratio).toPrecision(12)}; patch closed: ${ab.stats.markers.blocked} blocked markers on ${ab.stats.tubes} tubes, all speeds 0 ${blockedOk}; reduced motion: still before Play ${stillBefore}, moving after Play ${movesAfter}; page errors: ${e3.length ? e3.join(' | ') : 'none'}`);
+
+  // ======================================================== B15 WebGL fallback
+  const nogl = await chromium.launch({ executablePath: EXE, headless: true, args: ['--disable-webgl', '--disable-webgl2', '--disable-3d-apis'] });
+  const g5 = await nogl.newContext({ viewport: { width: 1280, height: 900 } });
+  const p5 = await g5.newPage(); const e5 = []; p5.on('pageerror', (e) => e5.push(e.message));
+  await p5.goto(URL0, { waitUntil: 'networkidle' });
+  await p5.click('.cl-poster-run'); await converged(p5);
+  await p5.click('.cl-viewbar [data-view="pores"]');
+  await p5.waitForFunction(() => ['ready', 'failed'].includes(window.__continuumState.poresState), null, { timeout: 60000 });
+  const f5 = await p5.evaluate(() => ({ state: window.__continuumState.poresState, msg: document.querySelector('.cl-p3-msg').textContent, posterShown: !document.querySelector('.cl-p3-poster').hidden, status: window.__continuumState.status }));
+  await nogl.close();
+  const b15 = f5.state === 'failed' && /WebGL/.test(f5.msg) && f5.posterShown && f5.status === 'converged' && e5.length === 0;
+  rec('B15', 'WebGL fallback', b15, `WebGL disabled: view state ${f5.state}; message shown ${f5.posterShown}: “${f5.msg}”; experiment status ${f5.status}; page errors: ${e5.length ? e5.join(' | ') : 'none'}`);
+
+  // ======================================================== B16 3D view: presets, openings, provenance, caption (2026.8)
+  const e16 = [];
+  const settle = (page) => page.waitForFunction(() => { const v = window.__continuumState.pores; return v && !v.stats().animating; }, null, { timeout: 20000 }).then(() => page.waitForTimeout(250));
+  const view16 = (page) => page.evaluate(() => {
+    const S = window.__continuumState, U = window.ContinuumUnits, v = S.pores, s = v.stats(), d3 = S.display3d;
+    const tiles = Array.from(document.querySelectorAll('#cl-p3-legend .cl-p3-tile')).map((t) => ({ k: t.querySelector('.cl-tile-k').textContent, v: t.querySelector('.cl-p3-v').textContent }));
+    const sel = d3.tubes.find((t) => t.selected);
+    const legend = document.getElementById('cl-p3-legend');
+    const before = (q) => { const n = document.querySelector(q); return !!n && !!(n.compareDocumentPosition(legend) & Node.DOCUMENT_POSITION_FOLLOWING); };
+    const clone = document.body.cloneNode(true); const vsec = clone.querySelector('#validation'); if (vsec) vsec.remove();   // the Validation section quotes criteria and records verbatim
+    return { s, factor: d3.factor, speeds: d3.tubes.map((t) => t.speed), q: d3.tubes.map((t) => t.q), blockedSel: sel.blocked, tiles,
+      expSel: sel.blocked ? 'Blocked: no net flow' : U.fmt3(sel.q * U.C.rhoRef / U.C.mWater * 1e-9) + ' molecules/ns', expQ: U.fmt3(S.result.diag.Q_m3_s) + ' m³/s',
+      expOpen: U.fmtInt(d3.openPores) + ' of ' + U.fmtInt(d3.poresTotal), openPores: d3.openPores, poresTotal: d3.poresTotal,
+      badge: (document.querySelector('.cl-viewport-pores .cl-vbadge') || {}).textContent, tag: (document.querySelector('.cl-pane-molecule .cl-source-tag') || {}).textContent,
+      order: ['.cl-p3-focus', '.cl-p3-array', '.cl-p3-play', '.cl-p3-reset'].every(before), standsStill: /stands still/.test(clone.textContent),
+      pressed: { focus: document.querySelector('.cl-p3-focus').getAttribute('aria-pressed'), array: document.querySelector('.cl-p3-array').getAttribute('aria-pressed') } };
+  });
+  const g16 = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const p16 = await g16.newPage(); p16.on('pageerror', (e) => e16.push('B16 desktop: ' + e.message));
+  await p16.goto(URL0, { waitUntil: 'networkidle' });
+  await p16.click('.cl-poster-run'); await converged(p16);
+  await p16.click('.cl-viewbar [data-view="pores"]');
+  await p16.waitForFunction(() => window.__continuumState.poresState === 'ready', null, { timeout: 60000 }); await settle(p16);
+  const f16 = await view16(p16);
+  await p16.click('.cl-p3-array'); await settle(p16);
+  const a16 = await view16(p16);
+  await p16.selectOption('#cl-factor', '0'); await p16.click('.cl-apply'); await converged(p16); await p16.waitForTimeout(400);
+  const c16 = await view16(p16);
+  await g16.close();
+  // guided path to its sixth step
+  const g16g = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const p16g = await g16g.newPage(); p16g.on('pageerror', (e) => e16.push('B16 guided: ' + e.message));
+  await p16g.goto(URL0, { waitUntil: 'networkidle' });
+  for (let k = 0; k < 6; k++) {
+    await p16g.waitForFunction(() => !document.querySelector('.cl-guide-do').disabled, null, { timeout: 120000 });
+    await p16g.click('.cl-guide-do'); await p16g.waitForTimeout(150); await converged(p16g);
+  }
+  await p16g.waitForFunction(() => window.__continuumState.poresState === 'ready', null, { timeout: 60000 }); await settle(p16g);
+  const gg16 = await p16g.evaluate(() => ({ preset: window.__continuumState.pores.stats().preset, pressed: document.querySelector('.cl-p3-array').getAttribute('aria-pressed'), visible: !document.getElementById('cl-pane-pores').hidden, text: document.getElementById('cl-guide-text').textContent }));
+  await g16g.close();
+  // phone, touch
+  const g16m = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
+  const p16m = await g16m.newPage(); p16m.on('pageerror', (e) => e16.push('B16 phone: ' + e.message));
+  await p16m.goto(URL0, { waitUntil: 'networkidle' });
+  await p16m.tap('.cl-poster-run'); await converged(p16m);
+  await p16m.tap('#cl-tab-pores');
+  await p16m.waitForFunction(() => window.__continuumState.poresState === 'ready', null, { timeout: 60000 }); await settle(p16m);
+  const m16 = await view16(p16m);
+  await p16m.tap('.cl-p3-array'); await settle(p16m);
+  const ma16 = await view16(p16m);
+  await g16m.close();
+  allErrors.push(...e16);
+  const focusOk = (x) => x.s.preset === 'focus' && x.s.targetToSelected_nm < 2 && x.s.orbit.dist < 10 && x.s.scaleBar === '1 nm';
+  const arrayOk = (x) => x.s.preset === 'array' && x.s.orbit.dist > 15 && x.s.scaleBar === '5 nm';
+  const same = (x, y) => x.s.tubes === y.s.tubes && JSON.stringify(x.s.positions) === JSON.stringify(y.s.positions) && rel(x.factor, y.factor) <= 1e-12 && x.speeds.every((v, i) => (v === 0 ? y.speeds[i] === 0 : rel(v, y.speeds[i]) <= 1e-12));
+  const openOk = (x) => x.s.openings && x.s.openings.holes === 20 && x.s.openings.notches === 5 && x.s.openings.faces === 2;
+  const capOk = (x, nOpen) => x.tiles.length === 3 && x.tiles[0].v === x.expSel && x.tiles[1].v === x.expQ && x.tiles[2].v === x.expOpen && x.openPores === nOpen && x.poresTotal === 40000;
+  const waterOk = Math.abs(f16.s.water.dOH_nm - 0.1) < 1e-12 && Math.abs(f16.s.water.angleHOH_deg - 109.47) < 1e-9;
+  const b16 = focusOk(f16) && arrayOk(a16) && same(f16, a16) && openOk(f16) && f16.badge === 'Continuum-driven schematic' && f16.tag === 'Recorded CP2K AIMD' && f16.order &&
+    capOk(f16, 40000) && capOk(c16, 39999) && c16.blockedSel && !f16.standsStill && !c16.standsStill && waterOk && a16.pressed.array === 'true' && a16.pressed.focus === 'false' &&
+    gg16.preset === 'array' && gg16.pressed === 'true' && gg16.visible && !/stands still/.test(gg16.text) && focusOk(m16) && arrayOk(ma16) && same(m16, ma16) && e16.length === 0;
+  rec('B16', '3D view: presets, openings, provenance, caption', b16,
+    `opens on ${f16.s.preset} (target ${f16.s.targetToSelected_nm.toFixed(2)} nm from the selected tube, camera distance ${f16.s.orbit.dist.toFixed(2)} nm, bar ${f16.s.scaleBar}); Array context: distance ${a16.s.orbit.dist.toFixed(2)} nm, bar ${a16.s.scaleBar}, tubes, positions, speeds and factor unchanged ${same(f16, a16)}; openings ${JSON.stringify(f16.s.openings)}; badge “${f16.badge}”, molecule tag “${f16.tag}”; controls before the caption ${f16.order}; ` +
+    `caption: “${f16.tiles.map((t) => t.k + ': ' + t.v).join('; ')}” (expected ${f16.expSel}, ${f16.expQ}, ${f16.expOpen}); one tube closed: “${c16.tiles.map((t) => t.k + ': ' + t.v).join('; ')}”; 2026.7 blocked-water wording outside the Validation section ${f16.standsStill || c16.standsStill}; water O–H ${f16.s.water.dOH_nm} nm, H–O–H ${f16.s.water.angleHOH_deg}°; ` +
+    `guided step 6: preset ${gg16.preset}, Array context pressed ${gg16.pressed}; phone: opens on ${m16.s.preset} (distance ${m16.s.orbit.dist.toFixed(2)} nm, bar ${m16.s.scaleBar}), Array context ${ma16.s.orbit.dist.toFixed(2)} nm (${ma16.s.scaleBar}); page errors: ${e16.length ? e16.join(' | ') : 'none'}`);
+
   // ======================================================== R1 regression
   const rg = await browser.newContext({ viewport: { width: 1280, height: 900 } }); const g = await rg.newPage();
   const rerr = []; g.on('pageerror', (e) => rerr.push(e.message));
@@ -290,7 +448,7 @@ async function setDp(p, mpa) { await p.evaluate((v) => { const r = document.getE
 
   await browser.close();
   const pass = items.every((i) => i.verdict === 'PASS');
-  const res = { id: 'browser', name: 'Browser and regression B1-B13, R1', verdict: pass ? 'PASS' : 'FAIL', chromium: version, items,
+  const res = { id: 'browser', name: 'Browser and regression B1-B16, R1', verdict: pass ? 'PASS' : 'FAIL', chromium: version, items,
     environment: 'Chromium ' + version + ' (headless shell, Playwright) on ' + os.cpus()[0].model + ' (' + os.cpus().length + ' cores); local static server; no Safari, Firefox or real phones' };
   fs.writeFileSync(path.join(ROOT, 'tools/continuum/results/browser.json'), JSON.stringify(res, null, 1) + '\n');
   console.log('browser:', res.verdict, '-', items.filter((i) => i.verdict === 'PASS').length, 'of', items.length, 'passed');

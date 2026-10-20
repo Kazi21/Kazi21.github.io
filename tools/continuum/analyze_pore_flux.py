@@ -22,9 +22,16 @@ Analysis, in order:
      origin-constrained q = G dP with a bootstrap interval for G (replicas resampled within each condition).
   7. Tests: zero drive consistent with zero flux; intercept consistent with zero; linearity (reduced chi-square);
      symmetry for +/- drive pairs when present; prediction of every 'heldout' condition within its interval.
-  8. Equilibrium linear response from the zero-drive runs: D_N = Var(block crossings) / (2 tau) and
-     G_eq = v_w^2 D_N / (k_B T), with v_w = m_w / rho_ref (Einstein relation for the net crossing count); reported as
-     a consistency diagnostic against the driven slope.
+  8. Equilibrium linear response from the zero-drive runs, required before the supported interval may reach zero
+     drive (the lab's 0-10 MPa range lies far below the drives molecular dynamics can resolve): D_N is the slope of
+     the pooled block variance of the crossing count against block length, Var(N(tau)) = 2 D_N tau + C, over 1x, 2x,
+     4x and 8x the block length (those with >= 10 blocks in every replica); the offset C absorbs rapid back-and-forth
+     recrossings of the counting plane, which bias a single-block estimate. G_eq = v_w^2 D_N / (k_B T) (Einstein
+     relation for the net crossing count, v_w = m_w / rho_ref). The low-pressure extension is granted only if at
+     least two zero-drive replicas show crossing fluctuations, the variance grows linearly with block length
+     (chi-square test, >= 3 block lengths), the relative standard error of G_eq is <= 10 % and
+     |G_eq - G| <= z sqrt(SE_eq^2 + SE_G^2); otherwise the supported interval is the tested driven range (lowest
+     positive drive to the highest drive) and the reason is reported.
 Volume flow: q = m_w (net crossings per s) / rho_ref with m_w = 2.991506e-26 kg and rho_ref from the manifest.
 Insufficient data are reported as such; no interval is invented. Synthetic fixtures are labelled and their result
 can never become a pore law.
@@ -122,6 +129,80 @@ def se_of(blocks, block):
     return math.sqrt(var / n) / block            # SE of the mean rate (molecules per ps)
 
 
+EQ_MIN_BLOCKS = 10          # blocks per zero-drive replica required at each block length of the variance fit
+EQ_MAX_REL_SE = 0.10        # largest relative standard error of G_eq for which agreement is informative
+
+
+def chi2_quantile(dof, z):
+    """Wilson-Hilferty chi-square quantile for dof degrees of freedom at the normal quantile z."""
+    return dof * (1 - 2 / (9 * dof) + z * math.sqrt(2 / (9 * dof))) ** 3
+
+
+def equilibrium_gate(zero, block_ps, vw, T, G, seG, z):
+    """Test 8. zero: {run_id: (series, t0)} for the zero-drive runs on the primary plane; G, seG: driven slope and its
+    standard error (m^3 Pa^-1 s^-1). Returns the record of the test; rec['pass'] decides the low-pressure extension."""
+    rec = {'replicas': sorted(zero), 'block_lengths_ps': [], 'pooled_variance': [], 'dof': [], 'reasons': [],
+           'criteria': {'min_replicas': 2, 'min_blocks_per_length': EQ_MIN_BLOCKS, 'min_block_lengths': 3, 'max_rel_se_G_eq': EQ_MAX_REL_SE, 'z': z},
+           'method': 'Var(N(tau)) = 2 D_N tau + C fitted over block lengths tau = 1x, 2x, 4x, 8x the analysis block (pooled over '
+                     'zero-drive replicas, weights from the chi-square variance of a sample variance); G_eq = v_w^2 D_N / (k_B T); '
+                     'SE of D_N = larger of the fit standard error and the scatter of per-replica fits'}
+    reasons = rec['reasons']
+    if len(zero) < 2:
+        reasons.append('fewer than two independent zero-drive replicas (%d)' % len(zero))
+    flat = [run for run, (s, t0) in sorted(zero.items()) if len(set(blocks_of(s, t0, block_ps))) <= 1]
+    if flat:
+        reasons.append('no crossing fluctuations in zero-drive run%s %s: the equilibrium exchange through the pore is not sampled'
+                       % ('s' if len(flat) > 1 else '', ', '.join(flat)))
+    if reasons:
+        rec['pass'] = False; return rec
+    per = {run: [] for run in zero}
+    for k in range(4):
+        tau = block_ps * 2 ** k
+        bl = {run: blocks_of(s, t0, tau) for run, (s, t0) in zero.items()}
+        if min(len(b) for b in bl.values()) < EQ_MIN_BLOCKS: break
+        ss = dof = 0
+        for run, b in bl.items():
+            m = sum(b) / len(b); sr = sum((x - m) ** 2 for x in b)
+            per[run].append((tau, sr / (len(b) - 1), len(b) - 1)); ss += sr; dof += len(b) - 1
+        rec['block_lengths_ps'].append(tau); rec['pooled_variance'].append(ss / dof); rec['dof'].append(dof)
+    taus, V, nu = rec['block_lengths_ps'], rec['pooled_variance'], rec['dof']
+    if len(taus) < 3:
+        reasons.append('fewer than three block lengths with %d or more blocks in every zero-drive replica' % EQ_MIN_BLOCKS)
+        rec['pass'] = False; return rec
+
+    def slope_fit(t, v, n):
+        return wls(t, v, [max(vi, 1e-12) * math.sqrt(2 / ni) for vi, ni in zip(v, n)], True)
+    f = slope_fit(taus, V, nu)
+    D = f['G'] / 2 * 1e12                                    # 1/s (the slope is 2 D_N, molecules^2 per ps)
+    se_fit = math.sqrt(f['cov'][0][0]) / 2 * 1e12
+    Dr = [slope_fit([p[0] for p in per[r]], [p[1] for p in per[r]], [p[2] for p in per[r]])['G'] / 2 * 1e12 for r in sorted(per)]
+    mD = sum(Dr) / len(Dr)
+    se_rep = math.sqrt(sum((x - mD) ** 2 for x in Dr) / (len(Dr) - 1)) / math.sqrt(len(Dr))
+    se_D = max(se_fit, se_rep)
+    fdof = len(taus) - 2; crit = chi2_quantile(fdof, z)
+    Geq, seGeq = vw * vw * D / (KB * T), vw * vw * se_D / (KB * T)
+    naive = V[0] / (2 * taus[0] * 1e-12)
+    rec.update({'D_N_per_s': D, 'se_D_N_per_s': se_D, 'se_fit_per_s': se_fit, 'se_replica_scatter_per_s': se_rep, 'replica_D_N_per_s': Dr,
+                'offset_C': f['q0'], 'linearity': {'chi2': f['chi2'], 'dof': fdof, 'critical': crit, 'pass': f['chi2'] <= crit},
+                'G_eq': Geq, 'se_G_eq': seGeq, 'rel_se_G_eq': seGeq / Geq if Geq > 0 else None, 'G_driven': G, 'se_G_driven': seG,
+                'z': (Geq - G) / math.hypot(seGeq, seG) if math.hypot(seGeq, seG) > 0 else float('inf'),
+                'single_block_G_eq': vw * vw * naive / (KB * T)})
+    if D <= 0:
+        reasons.append('the zero-drive variance does not grow with block length (D_N = %.3g per s)' % D)
+    else:
+        if f['chi2'] > crit:
+            reasons.append('the zero-drive variance does not grow linearly with block length (chi2 %.2f > %.2f with %d dof): the flux '
+                           'correlation is not resolved; analyse with longer blocks' % (f['chi2'], crit, fdof))
+        if seGeq / Geq > EQ_MAX_REL_SE:
+            reasons.append('equilibrium conductance too imprecise (relative standard error %.3f > %.2f): extend the zero-drive sampling'
+                           % (seGeq / Geq, EQ_MAX_REL_SE))
+        if abs(rec['z']) > z:
+            reasons.append('equilibrium conductance G_eq = %.3e disagrees with the driven slope G = %.3e m^3 Pa^-1 s^-1 (z = %.2f): '
+                           'linear response between zero and the driven range is not established' % (Geq, G, rec['z']))
+    rec['pass'] = not reasons
+    return rec
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--input', nargs='+', required=True, help='crossing-count CSV file(s)')
@@ -164,10 +245,11 @@ def main():
                   'blocks of --block-ps are long compared with the flux correlation time (checked in test 3)']}
     insufficient, failed = [], []
     # ---- per run
-    per_cond = defaultdict(lambda: defaultdict(dict))
+    per_cond = defaultdict(lambda: defaultdict(dict)); raw = {}
     for (run, plane), series in sorted(rows.items()):
         series.sort()
         t0 = series[0][0] + a.discard_ps
+        raw[(run, plane)] = (series, t0)
         b1 = blocks_of(series, t0, a.block_ps)
         info = {'plane': plane, 'blocks': len(b1), 'block_crossings': b1}
         if len(b1) < a.min_blocks:
@@ -289,22 +371,25 @@ def main():
     result['tests']['held_out'] = {'pass': all(t['pass'] for t in ho) if ho else None, 'details': ho}
     if not ho: failed.append('no held-out condition (required)')
     elif not all(t['pass'] for t in ho): failed.append('held-out prediction failed')
-    # equilibrium linear response from the zero-drive runs
-    eq = []
-    for run, rr in result['runs'].items():
-        if rr['meta']['drive_Pa'] != 0 or primary not in rr['planes']: continue
-        b = rr['planes'][primary]['block_crossings']
-        if len(b) >= 2:
-            m = sum(b) / len(b); var = sum((v - m) ** 2 for v in b) / (len(b) - 1)
-            eq.append(var / (2 * a.block_ps * 1e-12))           # D_N in 1/s
-    if eq:
-        DN = sum(eq) / len(eq); Geq = vw * vw * DN / (KB * T)
-        boots = sorted(vw * vw * (sum(rng.choice(eq) for _ in eq) / len(eq)) / (KB * T) for _ in range(a.bootstrap)) if len(eq) >= 2 else [Geq]
-        result['diagnostics']['equilibrium_linear_response'] = {'D_N_per_s': DN, 'G_eq': Geq, 'interval_G_eq': [boots[int(alpha / 2 * len(boots))], boots[min(len(boots) - 1, int((1 - alpha / 2) * len(boots)))]],
-            'ratio_to_driven_G': Geq / G if G else None, 'method': 'Einstein relation for the net crossing count: G_eq = v_w^2 D_N / (k_B T), D_N = Var(block crossings) / (2 tau)'}
+    # equilibrium linear response from the zero-drive runs (test 8): decides whether the interval may reach zero drive
+    zero_runs = {run: raw[(run, primary)] for run, rr in result['runs'].items() if rr['meta']['drive_Pa'] == 0 and 'rate_per_ps' in rr['planes'].get(primary, {})}
+    eqg = equilibrium_gate(zero_runs, a.block_ps, vw, T, G, seG, z)
+    result['tests']['equilibrium_consistency'] = eqg
+    if 'G_eq' in eqg:
+        result['diagnostics']['equilibrium_linear_response'] = {'D_N_per_s': eqg['D_N_per_s'], 'G_eq': eqg['G_eq'], 'se_G_eq': eqg['se_G_eq'],
+            'interval_G_eq': [eqg['G_eq'] - z * eqg['se_G_eq'], eqg['G_eq'] + z * eqg['se_G_eq']], 'ratio_to_driven_G': eqg['G_eq'] / G if G else None,
+            'single_block_G_eq': eqg['single_block_G_eq'], 'method': eqg['method']}
     # ---- verdict
     lo_d = min(c['drive_Pa'] for c in summ.values()); hi_d = max(c['drive_Pa'] for c in summ.values())
-    result['supported_interval_Pa'] = [lo_d if sym else max(0.0, lo_d), hi_d]
+    pos = sorted(c['drive_Pa'] for c in summ.values() if c['drive_Pa'] > 0)
+    neg = sorted(c['drive_Pa'] for c in summ.values() if c['drive_Pa'] < 0)
+    if eqg['pass']:
+        result['supported_interval_Pa'] = [lo_d if sym else max(0.0, lo_d), hi_d]
+    else:                                                    # README: without the equilibrium check, only the tested range
+        result['supported_interval_Pa'] = [pos[0], hi_d] if pos else [neg[0], neg[-1]]
+    result['low_pressure_extension'] = {'granted': bool(eqg['pass']), 'reasons': list(eqg['reasons']),
+        'rule': 'the supported interval reaches zero drive only if the equilibrium linear response (test 8) agrees with the driven slope; '
+                'otherwise it is the tested driven range'}
     result['status'] = 'failed' if failed else 'supported_in_scope'
     result['reasons'] = failed
     result['law_candidate'] = None if synthetic or failed else {
@@ -312,7 +397,11 @@ def main():
         'form': 'linear-constant', 'G_m3_Pa_s': G, 'uncertainty': {'interval': [G_lo, G_hi], 'level': a.confidence, 'relHalfWidth': (G_hi - G_lo) / (2 * G)},
         'domain': {'dPiMin_Pa': result['supported_interval_Pa'][0], 'dPiMax_Pa': result['supported_interval_Pa'][1]}}
     json.dump(result, open(a.out, 'w'), indent=1)
-    print('G = %.4e m^3 Pa^-1 s^-1, %g %% interval [%.4e, %.4e]; status %s%s' % (G, 100 * a.confidence, G_lo, G_hi, result['status'], ('; ' + '; '.join(failed)) if failed else ''))
+    si = result['supported_interval_Pa']
+    ext = ('equilibrium gate passed (G_eq = %.4e), interval reaches zero drive' % eqg['G_eq']) if eqg['pass'] else \
+          ('low-pressure extension refused: ' + '; '.join(eqg['reasons']))
+    print('G = %.4e m^3 Pa^-1 s^-1, %g %% interval [%.4e, %.4e]; status %s%s; supported drive interval [%.4g, %.4g] Pa; %s'
+          % (G, 100 * a.confidence, G_lo, G_hi, result['status'], ('; ' + '; '.join(failed)) if failed else '', si[0], si[1], ext))
     sys.exit(1 if failed else 0)
 
 

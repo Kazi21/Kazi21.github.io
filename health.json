@@ -1,9 +1,9 @@
 {
   "site": "kazi21.github.io",
-  "version": "2026.6",
+  "version": "2026.8",
   "status": "research-site-light-theme-with-trajectory-inspector-live-water-lab-continuum-lab-and-complete-evidence-package",
   "evidence_package": "NaCl_Water_CNT_Website_Evidence v0.1.1: complete (28 files plus MANIFEST.json); documented tests 13 passed; synthetic fixtures only",
-  "thesis": "seven studies: three published or accepted, two in submission, two in preparation",
-  "simulation_lab": "stage 1: trajectory inspector for the four CNT ab initio seed runs (opened on demand); Live Water Lab: rigid SPC/E water simulated live by LAMMPS 22 Jul 2025 compiled to WebAssembly, with a centre-of-mass tether experiment, conditions experiment, validation checks 1-10, allowed-range check S1 and reproducible export; Continuum Lab: (6,6) CNT pore law, exactly counted membrane map and steady 3D Stokes flow in feed and permeate chambers (browser CFD solver, MAC finite volumes, Float64), live 3D continuum solver with an illustrative pore conductance, a one-minute guided experiment, colours and tracer clock fixed to the baseline, a total-flow resolution check of every displayed configuration, acceptance tests N1-N9, S1-S15, D1-D3, F1-F4, B1-B13, R1, A1-A3 and a molecular calibration package; molecular interaction in a nanotube and the calibrated pore law are planned",
-  "built": "2026-10-19"
+  "thesis": "seven studies: three published, two in submission, two in preparation",
+  "simulation_lab": "stage 1: trajectory inspector for the four CNT ab initio seed runs (opened on demand); Live Water Lab: rigid SPC/E water simulated live by LAMMPS 22 Jul 2025 compiled to WebAssembly, with a centre-of-mass tether experiment, conditions experiment, validation checks 1-10, allowed-range check S1 and reproducible export; Continuum Lab: (6,6) CNT pore law, exactly counted membrane map and steady 3D Stokes flow in feed and permeate chambers (browser CFD solver, MAC finite volumes, Float64), live 3D continuum solver with an illustrative pore conductance, a one-minute guided experiment, colours and tracer clock fixed to the baseline, a total-flow resolution check of every displayed configuration, a 3D pore view (true-geometry cutaway of the tubes around the selected one with real pore openings, Focus pore and Array context cameras, water drifting at the solved single-pore flow; labelled as a continuum-driven schematic), acceptance tests N1-N9, S1-S15, D1-D3, F1-F4, B1-B16, R1, A1-A5 and a molecular calibration package whose analysis grants the 0-10 MPa range only when the zero-drive equilibrium conductance agrees with the driven slope; molecular interaction in a nanotube and the calibrated pore law are planned",
+  "built": "2026-10-20"
 }

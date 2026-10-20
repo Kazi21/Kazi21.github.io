@@ -7,7 +7,7 @@
 const fs = require('fs'), path = require('path');
 const katex = require('katex');
 const ROOT = path.resolve(__dirname, '../..');
-const VERSION = '2026.6';
+const VERSION = '2026.8';
 const T = (f) => path.join(ROOT, 'tools/continuum', f);
 const readJson = (f) => { try { return JSON.parse(fs.readFileSync(T(f), 'utf8')); } catch (e) { return null; } };
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -95,8 +95,8 @@ function validationHtml() {
     { title: 'Network and core modules (Node)', short: 'core modules', ids: ['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9'], res: readJson('results/t_core.json') },
     { title: 'Continuum solver (Node)', short: 'solver (analytic solutions, an independent SciPy assembly, conservation, energy closure)', ids: ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12', 'S13', 'S14', 'S15'], res: readJson('results/t_solver.json') },
     { title: 'Decision rules (Node)', short: 'decision rules', ids: ['D1', 'D2', 'D3'], res: readJson('results/t_decision.json') },
-    { title: 'Browser and regression (Chromium)', short: 'browser and regression', ids: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13', 'R1'], res: readJson('results/browser.json') },
-    { title: 'Calibration and analysis tools', short: 'calibration tools', ids: ['A1', 'A2', 'A3'], res: readJson('results/t_tools.json') },
+    { title: 'Browser and regression (Chromium)', short: 'browser and regression', ids: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13', 'B14', 'B15', 'B16', 'R1'], res: readJson('results/browser.json') },
+    { title: 'Calibration and analysis tools', short: 'calibration tools', ids: ['A1', 'A2', 'A3', 'A4', 'A5'], res: readJson('results/t_tools.json') },
     { title: 'Native comparison (OpenFOAM v1912)', short: 'native OpenFOAM comparison', ids: ['F1', 'F2', 'F3', 'F4'], res: readJson('results/openfoam.json') },
   ];
   const amended = { N5: 'procedure amended after the first run failed (3.17 × 10⁻⁹ at N = 10¹⁰); criterion unchanged', S13: 'reference procedure corrected during development (equilibration and iterative refinement), after the reference found a sparse-matrix defect in the solver that was fixed', S14: 'criterion amended after the first official run failed: the frozen expectation −G ΔΠ_local ignored the chambers’ feedback (relative difference 6.51 × 10⁻⁶ > 10⁻⁶); now ΔS ΔΠ_c²/ΔP', B4: 'amended before the browser tests were run, as S14' };

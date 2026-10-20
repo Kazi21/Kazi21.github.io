@@ -12,7 +12,7 @@ Net water crossings through the declared (6,6) membrane, pure SPC/E water, 300 K
 
 | Condition | Drive ΔP | Role | Replicas × length |
 |---|---|---|---|
-| `zero` | 0 | zero-drive test and equilibrium linear response | 4 × 20 ns |
+| `zero` | 0 | zero-drive test and equilibrium linear response (the gate for the 0–10 MPa range) | 8 × 20 ns |
 | `m100` | −100 MPa | fit; symmetry pair of `p100` | 4 × 20 ns |
 | `p050` | +50 MPa | fit | 4 × 20 ns |
 | `p100` | +100 MPa | fit | 4 × 20 ns |
@@ -20,7 +20,10 @@ Net water crossings through the declared (6,6) membrane, pure SPC/E water, 300 K
 | `p200` | +200 MPa | held out (never used in the fit) | 4 × 20 ns |
 
 with crossing counts at two planes inside the tube (mid-plane and near the entrance), 100 ps discarded after every
-switch of the drive, and the mean reservoir pressure recorded. Total: 24 runs, 480 ns of production.
+switch of the drive, and the mean reservoir pressure recorded. Total: 28 runs, 560 ns of production. The zero-drive
+condition has eight replicas because the equilibrium gate (below) needs G_eq to 10 %: in synthetic tests with the
+rapid back-and-forth recrossings of a counting plane, four 20 ns replicas give a relative standard error of about
+8 % and pass the gate in 75 % of consistent data sets (test A5).
 
 **Why drives of 50–200 MPa when the lab runs at 0–10 MPa?** At 10 MPa a tube with G ≈ 10⁻²⁷ m³ Pa⁻¹ s⁻¹ passes about
 0.3 molecules per ns, while zero-drive back-and-forth crossings add noise of about √(2 k₀ t) with k₀ of a few per ns:
@@ -30,7 +33,9 @@ G_eq = v_w² D_N / (k_B T) (Einstein relation for the net crossing count, v_w = 
 the slope and test linearity, intercept, symmetry and a held-out drive. The law may cover 0–10 MPa only if G_eq
 agrees with the driven slope **and** the linearity test passes; otherwise the supported interval is the tested one,
 and the lab must say that it cannot use the law in its 0–10 MPa range. High-pressure data are never treated as a
-low-pressure calibration without that check. The chamber model itself stays incompressible only up to 10 MPa
+low-pressure calibration without that check. Since release 2026.8 `analyze_pore_flux.py` enforces this rule (test 8,
+checked by A4 and A5 in `../tests/t_tools.py`); before, it reported G_eq only as a diagnostic and its supported
+interval always reached zero drive. The chamber model itself stays incompressible only up to 10 MPa
 (0.446 % density change), so drives above 10 MPa exist only inside the MD calibration, not in the continuum.
 
 ## Files
@@ -79,7 +84,24 @@ blocks of 1×, 2× and 4× the block length) and reports the uncertainty as unsu
 is accepted (`supported_in_scope`, exit 0) only when: every run has enough blocks; the correlation is resolved; the
 two planes agree; the zero-drive flux is zero within its interval; the intercept is consistent with zero; the linear
 model passes the χ² test; ± drives are antisymmetric; and the held-out drive is predicted within its interval.
-Exit 1 means a test failed, exit 2 insufficient data. The interval on G is the wider of a replica bootstrap and a
+Exit 1 means a test failed, exit 2 insufficient data.
+
+**Equilibrium gate (test 8).** The supported interval reaches zero drive, and so covers the lab's 0–10 MPa range, only
+when the zero-drive runs pass all of the following; otherwise it starts at the lowest positive driven condition and
+`low_pressure_extension.reasons` says why:
+
+- at least two zero-drive replicas, each with crossing fluctuations;
+- D_N from the slope of the pooled block variance of the crossing count against block length,
+  Var(N(τ)) = 2 D_N τ + C, over 1×, 2×, 4× and 8× the block length (those with ten or more blocks per replica, at
+  least three of them), with D_N > 0 and a linear growth that passes the χ² test. The offset C absorbs the rapid
+  recrossings of the counting plane: with 20 ps blocks they make a single-block estimate several times too large
+  (3.7 × in the synthetic test A5), the slope does not;
+- a relative standard error of G_eq = v_w² D_N / (k_B T) of at most 10 % (larger of the fit error and the scatter of
+  per-replica fits);
+- |G_eq − G| ≤ z √(SE_eq² + SE_G²) at the analysis confidence level.
+
+A refusal close to the threshold calls for more zero-drive sampling, not a different threshold: a 95 % test refuses
+about one consistent data set in twenty. The interval on G is the wider of a replica bootstrap and a
 Student-t interval (few replicas make a percentile bootstrap too narrow). Synthetic fixtures (`../fixtures/`) are
 labelled `SYNTHETIC`, test the program and can never become a law.
 
@@ -101,8 +123,9 @@ Functionality only: no number here enters the lab.
   62-row CSV that `analyze_pore_flux.py` reads. With ⟨N_slab⟩ = 289 molecules and
   A = 8.80 × 10⁻¹⁸ m², f_z = 0.010 kcal mol⁻¹ Å⁻¹ corresponds to ΔP = 22.8 MPa; the campaign drives of 50–200 MPa then
   need f_z ≈ 0.022–0.088 kcal mol⁻¹ Å⁻¹ (recompute from the equilibrated ⟨N_slab⟩ before production).
-- **Speed.** 2.73–3.06 ns/day (1 fs, PPPM 10⁻⁵). The 480 ns campaign therefore needs about
-  157–176 single-core days; the 24 production runs are independent and can run in parallel.
+- **Speed.** 2.73–3.06 ns/day (1 fs, PPPM 10⁻⁵). The 560 ns campaign therefore needs about
+  183–205 single-core days (157–176 for the 480 ns campaign defined when the pilot was recorded); the 28 production
+  runs are independent and can run in parallel.
 - **Filling was not reached — the main risk of the campaign.** In 36 ps from the empty tube, the number of
   oxygens inside the tube (r < 3.0 Å, 0 ≤ z ≤ 24.6 Å) averaged 0.42 between 10 and 36 ps (largest 1 ps
   mean 1.0; none in 31 % of the 1 ps windows), whereas a hydrogen-bonded single file (O–O ≈ 0.28 nm)

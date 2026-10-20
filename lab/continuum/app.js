@@ -26,6 +26,7 @@
     view: 'flow', tab: 'flow', memMode: 'map', compare: false, meshChecks: {}, refinements: {}, molLoaded: false, guide: { step: -1 },
     staleDiscarded: 0,
     scaleFixed: true, scaleRef: null,                  // colour range and tracer clock fixed to the baseline (same device)
+    pores: null, poresState: 'idle', p3preset: 'focus', // 3D pore view (pores3d.js + three.js, loaded when first opened); camera preset
   };
   window.__continuumState = S;                         // read-only hook for the automated browser checks
 
@@ -46,9 +47,11 @@
     stateLine: $('.cl-stateline'), compareBody: $('#cl-compare-body'), why: $('#cl-why'), whyBody: $('#cl-why-body'), resist: $('#cl-resist'), resistBody: $('#cl-resist-body'),
     decision: $('#cl-decision-body'), numerics: $('#cl-numerics-body'), announce: $('.cl-announce'),
     tabs: $('.cl-tabs'), tabBtns: $$('.cl-tabs button'), viewBtns: $$('.cl-viewbar [data-view]'),
-    panes: { flow: $('#cl-pane-flow'), membrane: $('#cl-pane-membrane'), molecule: $('#cl-pane-molecule') }, main: $('.cl-main'), side: $('.cl-side'),
+    panes: { flow: $('#cl-pane-flow'), membrane: $('#cl-pane-membrane'), pores: $('#cl-pane-pores'), molecule: $('#cl-pane-molecule') }, main: $('.cl-main'), side: $('.cl-side'),
     guideText: $('#cl-guide-text'), guideDo: $('.cl-guide-do'), guideSkip: $('.cl-guide-skip'), guideSteps: $$('.cl-guide-steps li'),
     meshCheckBtn: null, fixScale: $('#cl-fixscale'), qline: $('.cl-qline'), settings: $('.cl-settings'), tubePanel: $('#cl-tube-panel'),
+    p3: { host: $('.cl-p3-host'), poster: $('.cl-p3-poster'), msg: $('.cl-p3-msg'), run: $('.cl-p3-run'), legend: $('#cl-p3-legend'), play: $('.cl-p3-play'), reset: $('.cl-p3-reset'),
+          focus: $('.cl-p3-focus'), array: $('.cl-p3-array'), how: $('.cl-p3-how') },
   };
 
   /* ---------------------------------------------------------------- views */
@@ -76,15 +79,18 @@
     } else {
       el.tabs.removeAttribute('role'); el.tabs.removeAttribute('aria-label');
       el.tabBtns.forEach((b) => { b.removeAttribute('role'); b.removeAttribute('aria-selected'); b.removeAttribute('aria-controls'); b.tabIndex = 0; });
-      const names = { flow: 'Device flow', membrane: 'Membrane map', molecule: 'Molecule' };
+      const names = { flow: 'Device flow', membrane: 'Membrane map', pores: 'Pores in 3D', molecule: 'Molecule' };
       Object.keys(el.panes).forEach((k) => { el.panes[k].setAttribute('role', 'region'); el.panes[k].setAttribute('aria-label', names[k]); el.panes[k].removeAttribute('aria-labelledby'); });
-      el.panes.flow.hidden = S.view !== 'flow'; el.panes.membrane.hidden = S.view !== 'membrane'; el.panes.molecule.hidden = false;
+      el.panes.flow.hidden = S.view !== 'flow'; el.panes.membrane.hidden = S.view !== 'membrane'; el.panes.pores.hidden = S.view !== 'pores'; el.panes.molecule.hidden = false;
       el.main.hidden = false; el.side.hidden = false;
     }
     el.viewBtns.forEach((b) => b.setAttribute('aria-pressed', b.getAttribute('data-view') === S.view ? 'true' : 'false'));
     flow.setVisible(!el.panes.flow.hidden && !el.main.hidden);
     if (!el.panes.membrane.hidden) membrane.render();
     if (!el.panes.molecule.hidden && !el.side.hidden) molecule.draw();
+    const pv = !el.panes.pores.hidden && !el.main.hidden;
+    if (pv) ensurePores();
+    if (S.pores) S.pores.setVisible(pv);
   }
   function setView(v, animate) {
     if (v === S.view && (!narrow.matches || S.tab === v)) return Promise.resolve();
@@ -302,6 +308,7 @@
     membrane.setSelection(selectionForViews());
     renderMemLegend(cmp);
     renderStrip(cmp); renderTube(); renderCompare(cmp); renderWhy(cmp); renderResistance(); renderDecision(); renderNumerics(); renderNumbers(cmp); refreshControls();
+    updatePores();
     el.download.disabled = false;
   }
   function renderMemLegend(cmp) {
@@ -403,7 +410,7 @@
     h += '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">Quantity</th><th scope="col">Baseline</th><th scope="col">Now</th><th scope="col">Change</th></tr></thead><tbody>';
     h += row('Total flow Q (m³/s)', fmt3(b.Q), fmt3(rd.Q_m3_s), (cmp.dQ >= 0 ? '+' : '') + fmt3(cmp.dQ) + ' (' + (cmp.rel >= 0 ? '+' : '') + pct(cmp.rel) + ')');
     h += row('Flux per area Q/A (m/s)', fmt3(bd.Jmean_m_s), fmt3(rd.Jmean_m_s), pct(rd.Jmean_m_s / bd.Jmean_m_s - 1));
-    h += row('Open area (µm²)', fmt3(bd.openArea_m2 * 1e12), fmt3(rd.openArea_m2 * 1e12), pct(rd.openArea_m2 / bd.openArea_m2 - 1));
+    h += row('Active membrane footprint (µm²)', fmt3(bd.openArea_m2 * 1e12), fmt3(rd.openArea_m2 * 1e12), pct(rd.openArea_m2 / bd.openArea_m2 - 1));   // membrane area of open faces, not the summed tube openings
     h += row('Pores, open-equivalent', fmtInt(bd.poresOpenEquivalent), fmtInt(rd.poresOpenEquivalent), pct(rd.poresOpenEquivalent / bd.poresOpenEquivalent - 1));
     h += row('Affected physical pores', '–', '–', Number.isFinite(cmp.affected) ? fmtInt(cmp.affected) : 'different devices');
     if (cmp.sameGrid) h += row('Largest |ΔJ| on faces open in both (m/s)', '–', '–', fmt3(cmp.maxOpen) + (cmp.jRef ? ' (' + fmt3(cmp.maxOpen / cmp.jRef) + ' of J)' : ''));
@@ -481,7 +488,7 @@
     h += '</tbody></table></div>';
     h += '<p class="cl-small">Φ_v is the discrete viscous quadratic form of the solved velocity field and Φ_m the membrane term; with the MAC discretisation their sum equals ΔP Q to rounding, which is the closure shown. Pore-scale (entrance, interior, exit and access) losses are inside the membrane term, because the pore law lumps them.</p>';
     h += '<p><b>Network reference</b> (series resistances taken from this solution, not a new CFD result): Q = ΔP / (R_chambers + R_pore/N). If every pore conducted 10 times more, Q would rise ×' + fmt3(gain(10)) + '; 1000 times more, ×' + fmt3(gain(1000)) + '. The pores would have to conduct ' + fmt3(Rm / Rch) + ' times more before the chambers carried half the resistance. ' +
-      (d.membraneShare > 0.99 ? 'This device is pore-limited: total flow follows the pore law and the open area, and better pores would pay off almost fully.' : 'Shared chamber losses matter here: multiplying one-tube flow by N would overestimate Q.') + '</p>';
+      (d.membraneShare > 0.99 ? 'This device is pore-limited: total flow follows the pore law and the number of open pores, and better pores would pay off almost fully.' : 'Shared chamber losses matter here: multiplying one-tube flow by N would overestimate Q.') + '</p>';
     el.resistBody.innerHTML = h;
   }
 
@@ -666,7 +673,7 @@
     const sel = selectionForViews();
     flow.setSelection(sel); membrane.setSelection(sel);
     if (S.result) { renderStrip(comparison()); renderMemInfo(); if (S.memMode === 'zoom') renderMemLegend(comparison()); }
-    renderTube(); refreshControls();
+    renderTube(); refreshControls(); updatePores();
   }
   function setMemMode(mode) {
     S.memMode = mode; membrane.setMode(mode);
@@ -728,6 +735,11 @@
     if (el.fixScale) el.fixScale.addEventListener('change', () => { S.scaleFixed = el.fixScale.checked; logEvent('display-scale', { fixedToBaseline: S.scaleFixed }); if (S.result) render(); });
     el.slice.addEventListener('change', () => { flow.sliceOn = el.slice.checked; flow.invalidate(); });
     el.flowReset.addEventListener('click', () => flow.resetView());
+    el.p3.play.addEventListener('click', () => { if (!S.pores) return; const on = !S.pores.playing; S.pores.setPlaying(on); el.p3.play.textContent = on ? 'Pause' : 'Play'; el.p3.play.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    el.p3.reset.addEventListener('click', () => { if (S.pores) S.pores.resetView(); });
+    el.p3.focus.addEventListener('click', () => setP3Preset('focus'));
+    el.p3.array.addEventListener('click', () => setP3Preset('array'));
+    el.p3.run.addEventListener('click', () => el.run.click());
     el.molShow.addEventListener('click', ensureMolecule);
     el.molPlay.addEventListener('click', () => { const on = !molecule.playing; molecule.play(on); el.molPlay.textContent = on ? 'Pause' : 'Play'; el.molPlay.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     el.download.addEventListener('click', download);
@@ -757,17 +769,123 @@
     }).catch((e) => { el.molPoster.hidden = false; S.molLoaded = false; el.molPoster.querySelector('p').textContent = 'The recorded trajectory could not be loaded (' + e.message + ').'; });
   }
 
+  /* ---------------------------------------------------------------- 3D pore view */
+  /* A 5 × 5 window of real lattice positions with the selected tube at its front-left corner (the block is cut through its row),
+     each tube with q_i = G_i ΔΠ_c from the current solution. Drift speed on screen = q_i × factor, with one factor for
+     all tubes: two molecular spacings per second at the reference flow, the reference being the baseline's largest
+     single-pore flow while the scale is fixed to the baseline (so 4 MPa runs four times faster), otherwise this
+     result's own. */
+  const P3_HOPS = 2, P3_ELL = 0.27;                    // molecular spacings per second at the reference flow; nm between molecules
+  /* 3 significant figures, with a power of ten below 0.01 (8.99 × 10⁻³ rather than 0.00899) */
+  const sig3 = (x) => { if (!(Math.abs(x) < 0.01) || x === 0) return fmt3(x); const e = Math.floor(Math.log10(Math.abs(x))), mt = x / Math.pow(10, e);
+    return (mt.toFixed(2) === '10.00' ? '1.00 × 10' + String(e + 1) : mt.toFixed(2) + ' × 10' + String(e)).replace(/10(-?\d+)$/, (m0, k) => '10' + k.replace('-', '⁻').replace(/\d/g, (c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c])); };
+  function ensurePores() {
+    if (S.poresState !== 'idle') return;
+    S.poresState = 'loading';
+    el.p3.msg.textContent = 'Loading the 3D view…'; el.p3.run.hidden = true; el.p3.poster.hidden = false;
+    const go = () => window.ContinuumPores3D.create(el.p3.host, { onPick: (u) => selectTube(u.ti, u.tj, true), reduceMotion: V.reduceMotion, preset: S.p3preset });
+    (window.ContinuumPores3D ? Promise.resolve() : loadScript('pores3d.js')).then(go).then((v) => {
+      S.pores = v; S.poresState = 'ready';
+      el.p3.play.disabled = false; el.p3.reset.disabled = false; el.p3.focus.disabled = false; el.p3.array.disabled = false;
+      el.p3.play.textContent = v.playing ? 'Pause' : 'Play'; el.p3.play.setAttribute('aria-pressed', v.playing ? 'true' : 'false');
+      updatePores();
+      v.setVisible(!el.panes.pores.hidden && !el.main.hidden);
+      logEvent('pores3d', { loaded: true });
+    }).catch((e) => {
+      S.poresState = 'failed'; el.p3.poster.hidden = false; el.p3.run.hidden = true;
+      el.p3.msg.textContent = e && e.code === 'NO_WEBGL' ? 'This view needs WebGL, which this browser has switched off or does not support. The experiment and the other views work without it.' : 'The 3D view could not be loaded (' + (e && e.message || e) + ').';
+    });
+  }
+  function poresData() {
+    const r = S.result, t0 = S.sel.tube; if (!r || !t0) return null;
+    const m = r.membrane, sc = r.scenario, geo = S.manifest.geometries[0];
+    if (t0.ti >= m.Nx || t0.tj >= m.Ny) return null;
+    const pitch_nm = sc.pitch_m * 1e9;
+    const ti0 = Math.max(0, Math.min(t0.ti, m.Nx - 5)), ti1 = Math.min(m.Nx - 1, ti0 + 4), tj0 = t0.tj, tj1 = Math.min(m.Ny - 1, t0.tj + 4);   // selected tube at the front-left corner
+    const ref = scaleRefFor(r), qRef = ref ? ref.qmax : refSinglePoreMax(r);
+    const factor = qRef > 0 ? P3_ELL * P3_HOPS / qRef : 0;
+    const tubes = [];
+    for (let tj = tj0; tj <= tj1; tj++) for (let ti = ti0; ti <= ti1; ti++) {
+      const f = tubeFlow({ ti, tj }), blocked = !!(f.closed || f.f.total === 0);
+      tubes.push({ ti, tj, x: (ti - t0.ti) * pitch_nm, z: -(tj - t0.tj) * pitch_nm, q: f.q, speed: f.q * factor, blocked, modified: !blocked && f.f.total !== 1, selected: ti === t0.ti && tj === t0.tj, face: f.p.face });
+    }
+    const vw = U.C.mWater / U.C.rhoRef;
+    return { r, ref, qRef, factor, T_ns: qRef > 0 ? P3_HOPS * vw / qRef * 1e9 : null, vw, tubes, t0, win: { ti0, ti1, tj0, tj1 },
+      pitch_nm, L_nm: geo.tubeLength_m * 1e9, R_nm: geo.carbonCentreDiameter_m * 1e9 / 2,
+      text: { feed: 'Feed side', perm: 'Permeate side', membrane: 'Membrane · ' + fmt3(geo.tubeLength_m * 1e9) + ' nm', selected: 'Selected tube (' + t0.ti + ', ' + t0.tj + ')' } };
+  }
+  function setP3Preset(name) {
+    S.p3preset = name === 'array' ? 'array' : 'focus';
+    el.p3.focus.setAttribute('aria-pressed', S.p3preset === 'focus' ? 'true' : 'false');
+    el.p3.array.setAttribute('aria-pressed', S.p3preset === 'array' ? 'true' : 'false');
+    if (S.pores) S.pores.setPreset(S.p3preset, true);
+  }
+  /* physical pores with non-zero conductance (closed patches and closed tubes excluded) */
+  function openPoreCount(r) {
+    const m = r.membrane, mods = r.scenario.mods || {}, mf = mods.membraneFactor == null ? 1 : mods.membraneFactor;
+    if (!(mf > 0)) return 0;
+    const shut = new Float64Array(m.counts.length);
+    (m.tubes || []).forEach((t) => { if (!(t.factor > 0)) shut[t.face] += 1; });
+    let n = 0;
+    for (let c = 0; c < m.counts.length; c++) if (m.patchFactor[c] > 0) n += m.counts[c] - shut[c];
+    return n;
+  }
+  const P3_KB = 1.380649e-23;                          // J/K
+  function updatePores() {
+    const d = poresData();
+    if (!d) {
+      S.display3d = null;
+      if (S.poresState !== 'failed') { el.p3.poster.hidden = false; el.p3.run.hidden = S.started; el.p3.msg.textContent = S.started ? 'Computing…' : 'Run the experiment first: this view then shows the tubes around the selected one at true size, with their water moving at the solved single-pore flow.'; }
+      el.p3.legend.innerHTML = ''; el.p3.how.innerHTML = '<p>Run the experiment to see how the drawing follows the computed flow.</p>'; return;
+    }
+    const m = d.r.membrane, sel = d.tubes.find((t) => t.selected), open = d.tubes.filter((t) => !t.blocked && t.q > 0);
+    const toMolNs = (q) => U.conv.moleculesPerNs.fromSI(q);
+    const qSel = sel && !sel.blocked ? sel.q : 0, qOpen = qSel > 0 ? qSel : open.reduce((a, t) => Math.max(a, t.q), 0);
+    const Q = d.r.diag.Q_m3_s, nOpen = openPoreCount(d.r), nTot = d.r.diag.poresTotal;
+    S.display3d = { factor: d.factor, T_ns: d.T_ns, qRef: d.qRef, fixed: !!d.ref, refRevision: d.ref ? d.ref.revision : null, revision: d.r.revision,
+      tubes: d.tubes.map((t) => ({ ti: t.ti, tj: t.tj, q: t.q, speed: t.speed, blocked: t.blocked, selected: t.selected })),
+      selectedMolNs: toMolNs(qSel), Q_m3_s: Q, openPores: nOpen, poresTotal: nTot, vw: d.vw };
+    if (S.pores) { S.pores.setData(d); el.p3.poster.hidden = true; }
+    const uTube = qOpen / d.vw * P3_ELL * 1e-9, Jf = sel ? m.J[sel.face] : d.r.diag.Jmean_m_s;
+    const nWin = (d.win.ti1 - d.win.ti0 + 1) + ' × ' + (d.win.tj1 - d.win.tj0 + 1);
+    const clock = d.T_ns ? '1 s on screen = ' + fmt3(d.T_ns) + ' ns' + (d.ref && !(S.baseline && S.baseline.revision === d.r.revision) ? ', clock fixed to the baseline' : '') : '';
+    const sentence2 = d.T_ns ? 'The water in each tube advances at that tube’s flow from the live solution (' + clock + ').' : 'No net flow in this state, so no water moves.';
+    const selVal = sel && sel.blocked ? 'Blocked: no net flow' : fmt3(toMolNs(qSel)) + ' molecules/ns';
+    const tile = (k, v, sub) => '<div class="cl-p3-tile"><p class="cl-tile-k">' + k + '</p><p class="cl-p3-v">' + v + '</p><p class="cl-p3-sub">' + sub + '</p></div>';
+    el.p3.legend.innerHTML = '<p class="cl-legend-title">Water through the pores, at the computed flow</p>' +
+      '<p class="cl-legend-note">A cutaway of the membrane at true size: (6,6) carbon nanotubes ' + fmt3(d.R_nm * 2) + ' nm wide and ' + fmt3(d.L_nm) + ' nm long on the ' + fmt3(d.pitch_nm) + ' nm lattice of the calculation, the selected tube in front. ' + sentence2 + '</p>' +
+      '<div class="cl-p3-results">' +
+        tile('Selected pore', selVal, sel && sel.blocked ? 'q = 0' : 'q = ' + fmt3(qSel) + ' m³/s') +
+        tile('Whole membrane', fmt3(Q) + ' m³/s', 'J = ' + fmt3(d.r.diag.Jmean_m_s) + ' m/s') +
+        tile('Open pores', fmtInt(nOpen) + ' of ' + fmtInt(nTot), nWin + ' drawn here') +
+      '</div>' +
+      '<p class="cl-legend-note"><span class="cl-key cl-key-sel"></span>Selected tube <span class="cl-key cl-key-blocked"></span>Blocked <span class="cl-key cl-key-mod"></span>Modified conductance</p>';
+    // how the illustration works (expandable): geometry, water, clock, speed, fluctuations, scope
+    const G0 = S.law.G_m3_Pa_s, Tk = (S.law.domain && S.law.domain.T_K) || 300, DN = G0 * P3_KB * Tk / (d.vw * d.vw) * 1e-9;   // per ns
+    const vwNm3 = d.vw * 1e27, aChain = vwNm3 / P3_ELL, aPitch = d.pitch_nm * d.pitch_nm, aOpen = Math.PI * d.R_nm * d.R_nm;
+    const li = [];
+    li.push('<b>Window.</b> ' + nWin + ' lattice positions of the ' + fmtInt(nTot) + ' in the membrane, cut open through the selected tube’s row. Nothing is enlarged: the tube cross-sections (carbon-centre diameter) cover ' + fmt3(100 * aOpen / aPitch) + ' % of the membrane, which is why the tubes look sparse. <b>Focus pore</b> shows the selected tube and its carbon lattice; <b>Array context</b> its row and neighbours.');
+    li.push('<b>Water.</b> Drawn as a single file, one molecule per ' + fmt3(P3_ELL) + ' nm, with SPC/E geometry (O–H 0.100 nm, H–O–H 109.47°, the model of the calibration package and of the Water Lab), each molecule donating a hydrogen bond to the next: the ordered water wire that molecular dynamics finds in (6,6) tubes (<a href="https://doi.org/10.1038/35102535">Hummer, Rasaiah and Noworyta, Nature 414, 188, 2001</a>). Only the net transport is drawn; thermal motion and back-and-forth crossings are omitted, so a blocked pore shows no net transport, not frozen water.');
+    if (d.T_ns) li.push('<b>Clock.</b> One factor for every tube, set by the baseline’s largest single-pore flow: ' + P3_HOPS + ' molecular spacings per second on screen, so ' + clock + '. Raising ΔP from 1 to 4 MPa makes every chain move 4 × faster.');
+    if (uTube > 0 && Jf > 0) li.push('<b>Speed.</b> At ' + fmt3(toMolNs(qOpen)) + ' molecules/ns the drawn chain advances at ' + sig3(uTube) + ' m/s, ' + fmt3(uTube / Jf) + ' × the superficial velocity J = ' + fmt3(Jf) + ' m/s of its face. For a face of identical open pores the ratio is the membrane area per pore, ' + fmt3(aPitch) + ' nm², divided by the chain’s effective cross-section v_w/ℓ = ' + fmt3(aChain) + ' nm² (one ' + fmt3(vwNm3) + ' nm³ molecule per ' + fmt3(P3_ELL) + ' nm): ' + fmt3(aPitch / aChain) + ', a number set by the assumed spacing ℓ. The carbon-centre opening, ' + fmt3(aOpen) + ' nm², would give ' + fmt3(aPitch / aOpen) + ': the water occupies only the centre of the tube.');
+    li.push('<b>Fluctuations.</b> The same pore law implies an equilibrium collective diffusion of the net crossing count D_N = G k_B T / v_w² = ' + fmt3(DN) + ' ns⁻¹ at ' + fmt3(Tk) + ' K: in 1 ns the count wanders by about √(2 D_N t) = ' + fmt3(Math.sqrt(2 * DN)) + ' molecules, against a net drift of ' + fmt3(toMolNs(G0 * 1e6)) + ' molecules per ns at 1 MPa. Molecular dynamics therefore measures G from equilibrium fluctuations or at 50–200 MPa, and the calibration analysis accepts the low-pressure range only if the two agree.');
+    li.push('<b>Scope.</b> Neighbouring tubes interact only hydraulically, through the chamber water drawn as a continuum; molecular interactions between tubes (for example carbon polarization) are not modelled and would enter through G_i.');
+    li.push('<b>Controls.</b> Drag to rotate, scroll or pinch to zoom, double-click to return to the chosen view; with the view focused, arrow keys rotate and <kbd>+</kbd> / <kbd>−</kbd> zoom. Click a tube to select it.');
+    el.p3.how.innerHTML = '<ul class="cl-p3-how-list"><li>' + li.join('</li><li>') + '</li></ul>';
+  }
+
   function drawGeometry() {
     const dev = device();
     flow.setGeometry(dev); flow.setSelection(selectionForViews());
     membrane.setGeometry(dev); membrane.setSelection(selectionForViews());
-    renderTube(); renderStateLine();
+    renderTube(); renderStateLine(); updatePores();
   }
 
   /* ---------------------------------------------------------------- guided path */
-  /* Five steps a visitor can follow in about a minute: run, raise the pressure (fixed colour scale, so the flow visibly
-     speeds up), block the centre patch against the new baseline, compare, then block one tube instead to see what the
-     scope means. Each step changes inputs through the same controls a visitor uses; the button waits for the result. */
+  /* Six steps a visitor can follow in about a minute: run, raise the pressure (fixed colour scale, so the flow visibly
+     speeds up), block the centre patch against the new baseline, compare, block one tube instead to see what the
+     scope means, then watch the tubes in 3D. Each step changes inputs through the same controls a visitor uses; the
+     button waits for the result. */
   const scrollOpt = () => ({ block: 'nearest', behavior: V.reduceMotion ? 'auto' : 'smooth' });
   const GUIDE = [
     { text: () => 'Run the experiment: ' + fmtInt(poreCounts(S.sc).total) + ' tubes at ΔP = 1 MPa (earlier changes of pressure and membrane are cleared). This result becomes the baseline.',
@@ -795,6 +913,8 @@
         if (narrow.matches) setTab('membrane'); else setView('membrane', false);
         setMemMode('zoom'); el.why.open = true; if (el.tubePanel) el.tubePanel.open = true;
       } },
+    { text: () => 'Pores in 3D: the tubes around the selected one at true size (' + fmt3(S.manifest.geometries[0].carbonCentreDiameter_m * 1e9) + ' nm wide, ' + fmt3(S.sc.pitch_m * 1e9) + ' nm apart). Net transport stops through the blocked tube while its neighbours carry their computed flow; thermal motion is not drawn. Focus pore shows the carbon lattice and the water chain up close.',
+      act: () => { setP3Preset('array'); if (narrow.matches) setTab('pores'); else setView('pores', false); } },
   ];
   /* the guided experiment's result in one sentence: one closed tube against the closed patch of step 3 (computed values) */
   function guideSummary() {
@@ -807,7 +927,7 @@
   function guideRender() {
     const s = S.guide.step;
     el.guideSteps.forEach((li, i) => { li.classList.toggle('is-done', i < s); li.classList.toggle('is-now', i === s); if (i === s) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current'); });
-    if (s < 0) { el.guideText.textContent = 'Five steps, about a minute: run, raise the pressure, block a patch, compare, then see how one tube, one patch and the whole membrane differ. Each button performs one step; you can also explore freely.'; el.guideDo.textContent = 'Start: run the experiment'; }
+    if (s < 0) { el.guideText.textContent = 'Six steps, about a minute: run, raise the pressure, block a patch, compare, close one tube instead, then watch the water move through the pores in 3D. Each button performs one step; you can also explore freely.'; el.guideDo.textContent = 'Start: run the experiment'; }
     else if (s >= GUIDE.length) { el.guideText.textContent = 'Done. ' + guideSummary() + 'Explore freely: pick tubes and patches, change the conductance, the pressure or the size, and download the experiment.'; el.guideDo.textContent = 'Start again'; }
     else { el.guideText.textContent = 'Step ' + (s + 1) + ' of ' + GUIDE.length + ': ' + GUIDE[s].text(); el.guideDo.textContent = 'Do step ' + (s + 1); }
   }

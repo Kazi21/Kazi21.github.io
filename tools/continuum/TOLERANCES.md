@@ -84,6 +84,27 @@ Addition (19 Oct 2026, presentation review; written before the code change and b
 | B12 | Guided path | The guided experiment (Run → ΔP 1 → 4 MPa → block the centre patch → compare with the baseline → tube, patch and whole membrane explained with the tube zoom) completes at 1280 px and at 390 px with touch, without page errors: after the pressure step Q is 4 × the first result (relative 1 × 10⁻⁹); after the block J = 0 on the patch faces; the comparison table shows a ΔQ equal to the computed value; the zoom shows tubes of the selected patch |
 | B13 | Resolution status in the page | For the default device and for its closed-patch state, the decision panel shows a total-flow two-level check of the displayed configuration (same configuration identifier) with status PASS; at ΔP = 0 it shows NOT APPLICABLE; the panel states that the check concerns total flow, not the local field near the ports |
 
+Addition (20 Oct 2026, release 2026.7: 3D pore view; written before the code change and before these tests were run):
+
+| # | Test | Criterion |
+|---|---|---|
+| B14 | 3D pore view | Opening "Pores in 3D" after a run requests the 3D library only then (no request for it before the view is opened) and draws a non-blank WebGL frame; the scene holds exactly the tubes of its reported window (rendered tube count = reported count) at their real lattice positions (10 nm pitch, 0.814 nm diameter, 2.46 nm length, no enlargement); each tube's drift speed equals its single-pore flow q_i = G_i ΔΠ_c from the current solution (the same values as the membrane zoom) times one factor common to all tubes (relative 1 × 10⁻¹²); with the scale fixed to a 1 MPa baseline the factor is unchanged at 4 MPa, so every speed is 4 × its baseline value (relative 1 × 10⁻⁹); a blocked tube has speed 0 and carries a blocked marker; under reduced motion the molecules do not move until Play is pressed; no page errors at 1280 px and at 390 px with touch |
+| B15 | WebGL fallback | With WebGL unavailable (browser started with WebGL disabled), opening "Pores in 3D" shows a text fallback that names the missing capability, the experiment still runs to a converged result, and there are no page errors |
+
+Addition (20 Oct 2026, release 2026.8: composition and wording of the 3D view after an external review; written
+before the code change and before the test was run):
+
+| # | Test | Criterion |
+|---|---|---|
+| B16 | 3D view: camera presets, openings, provenance and caption | The view opens on "Focus pore" (camera target within 2 nm of the selected tube, camera distance below 10 nm, 1 nm scale bar shown) and "Array context" moves the camera back (distance above 15 nm, 5 nm bar shown) without changing the tube count, positions, drift speeds or speed factor (relative 1 × 10⁻¹²); the membrane faces have real openings, one per drawn tube (for a 5 × 5 window: 20 holes and 5 half-openings at the cut edge, on both faces); the viewport carries the badge "Continuum-driven schematic" and the molecule panel the tag "Recorded CP2K AIMD"; the camera buttons, Pause and Reset come before the caption in document order; the caption's selected-pore throughput equals q_sel / v_w in molecules per ns (to its 3 displayed significant figures), its total flow equals the result's Q and its open-pore count is 40 000 of 40 000 for the default device and 39 999 of 40 000 with one tube closed; no page text contains "stands still"; the drawn molecules use O–H 0.1000 nm and H–O–H 109.47° (SPC/E); the sixth guided step shows "Array context"; no page errors at 1280 px and at 390 px with touch |
+
+Clarification of B16 (20 Oct 2026, after its first two runs, before release). "No page text" was implemented as the
+whole page, including the Validation section, which reproduces every criterion and recorded result verbatim. Run 1
+failed only on that check because the section still carried the 2026.7 record of the guided path, which quotes the
+old sentence; run 2 failed only on it because the section now quotes this criterion itself and run 1's detail. The
+check is self-referential there, so it applies to the page outside the Validation section; every other part of B16
+passed in both runs, unchanged. Both runs are kept (`results/browser.2026.8-run1.json`, `results/browser.2026.8-run2.json`).
+
 ## Calibration and analysis tools (`tools/continuum/tests/t_tools.sh`)
 
 | # | Test | Criterion |
@@ -91,6 +112,28 @@ Addition (19 Oct 2026, presentation review; written before the code change and b
 | A1 | analyze_pore_flux.py | `--help` works; on the labelled synthetic fixture with known G the estimate's interval contains G; a too-short series reports insufficient data; failed acceptance exits non-zero |
 | A2 | check_conservation.py | Passes on an exported result; exits non-zero on a deliberately corrupted copy |
 | A3 | compare_openfoam.py | Exits non-zero when a comparison exceeds its gate |
+
+Addition (20 Oct 2026, release 2026.8; written before the code change and before the test was run). An external
+review showed that `analyze_pore_flux.py` computed the equilibrium linear response only as a diagnostic, although
+`md-calibration/README.md` makes its agreement with the driven slope the condition for covering the lab's 0–10 MPa
+range: the supported interval always reached zero drive. A4 makes the README's rule executable.
+
+| # | Test | Criterion |
+|---|---|---|
+| A4 | Equilibrium gate (analyze_pore_flux.py) | The low-pressure extension (supported interval reaching zero drive) is granted only when (a) at least two zero-drive replicas show crossing fluctuations and the equilibrium conductance G_eq has a relative standard error ≤ 10 % (so that a 30 % disagreement would be detected with about 85 % probability); (b) the pooled block variance of the zero-drive crossing counts grows linearly with block length over at least three block lengths (χ² test at the analysis confidence level; a constant offset is allowed for rapid recrossings of the counting plane), with D_N > 0; (c) \|G_eq − G\| ≤ z √(SE_eq² + SE_G²). Synthetic fixtures sharing the driven data of A1: unchanged zero-drive data → granted, interval starts at or below 0; zero-drive crossing fluctuations removed → refused; zero-drive fluctuations four times the fluctuation–dissipation value → refused; a single zero-drive replica → refused. Every refusal names its reason and starts the supported interval at the lowest positive driven condition (50 MPa), so no lab drive (0–10 MPa) lies inside it |
+| A5 | Equilibrium estimator, Monte Carlo (analyze_pore_flux.py) | 40 independent synthetic data sets of the zero-drive design (4 replicas × 20 ns, declared G = 1.00 × 10⁻²⁷ m³ Pa⁻¹ s⁻¹, seeds 2000–2039, not used before this criterion was written), each analysed without and with rapid recrossings of the counting plane (two-state term switching 0.5 times per ps: variance offset 0.5, long-time D_N unchanged): the mean of G_eq/G lies within 3 standard errors of 1 in both cases; with recrossings the mean single-block estimate exceeds 2 G (the bias the variance slope removes); the mean reported relative standard error lies within a factor 1.5 of the observed scatter of G_eq/G in both cases. Reported but not gated: the fraction of data sets for which the gate grants the extension, taking the driven slope as the declared G with a 3.5 % standard error |
+
+Revision of A4 before release (20 Oct 2026, after a pilot run; disclosed here and in the QA report). As first written,
+A4 also required that a sixth fixture, 'recross' (the 'good' zero-drive data plus rapid recrossings), be granted. The
+pilot refused it: G_eq = 1.153 × 10⁻²⁷ against the driven slope 9.684 × 10⁻²⁸, z = 2.36 > 1.96, offset C = 0.496
+recovered, single-block estimate 3.83 × 10⁻²⁷. That sub-criterion was ill-posed: it fixed the outcome of a 95 % test
+on one random realization (such a test refuses about one consistent data set in twenty), and the realization reuses
+the zero-drive draws of 'good', which already lie at z = 1.86. The gate did what the README rule says on the data it
+was given. The sub-criterion was removed from A4 and replaced by A5, which tests the property it was meant to test
+(no bias from recrossings) on fresh seeds. A pilot Monte Carlo with seeds 1000–1039, run before A5 was written, gave
+mean G_eq/G = 1.011 (scatter 0.060, mean reported relative standard error 0.068) without and 1.019 (0.099, 0.088)
+with recrossings, and a mean single-block estimate of 3.73 G with recrossings. The `recross` fixture stays in
+`fixtures/` for inspection; its gate decision is reported in the A4 detail as measured.
 
 ## Decision rules (Node; `tools/continuum/tests/t_decision.js`)
 
