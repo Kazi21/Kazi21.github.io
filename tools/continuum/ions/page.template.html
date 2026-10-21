@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Continuum Lab: bioinspired ion transport — Kazi Ehsanul Karim</title>
+<meta name="description" content="Why does a pore pass one ion and resist another? A browser Poisson–Nernst–Planck experiment on one carbon-nanotube pore: the classical continuum, charged rims, ion size, dehydration taken from recorded CP2K hydration shells, confined mobility and electro-osmosis, compared on common axes. Simulation Lab, by Kazi Ehsanul Karim.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="The Continuum Lab: bioinspired ion transport">
+<meta property="og:description" content="One nanotube pore, six levels of physics: how molecular information changes a continuum prediction of ion current and selectivity, computed in the browser.">
+<meta property="og:image" content="../../assets/icons/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#F8FAFC">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="../../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="continuum.css">
+<link rel="stylesheet" href="ions/ions.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
+      <a href="../../index.html#lab" aria-current="page">Simulation Lab</a>
+      <a href="../../index.html#practice">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section cl-top ion-top" id="top">
+  <div class="container">
+    <p class="project-kicker">Simulation Lab · ion transport · browser Poisson–Nernst–Planck solver</p>
+    <h1 class="evidence-title cl-title">The Continuum Lab</h1>
+    <p class="cl-subtitle">Bioinspired ion transport</p>
+    <nav class="ion-switch" aria-label="Continuum Lab experiments">
+      <a href="./" aria-current="page">Ion transport</a>
+      <a href="water.html">Water flow through a membrane</a>
+    </nav>
+    <p class="ion-question">Why does a pore pass one ion and resist another?</p>
+    <p class="cl-lede">Change the voltage and compare how charge, hydration and mobility alter ion transport through one carbon-nanotube pore, step by step against the classical Poisson–Nernst–Planck prediction.</p>
+    <p class="cl-badge ion-provenance"><span class="cl-badge-dot" aria-hidden="true"></span>Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model. <a href="#evidence">What is measured and what is not</a></p>
+
+    <div class="cl-app ion-app" id="ion-lab" data-version="{{VERSION}}">
+      <div class="cl-guide" id="ion-guide">
+        <p class="cl-guide-h">Guided experiment · about two minutes</p>
+        <ol class="cl-guide-steps">
+          <li>Classical reference</li><li>Charge the rims</li><li>Size and solvation</li><li>Electro-osmosis</li><li>Compare closures</li><li>Inspect the evidence</li>
+        </ol>
+        <div class="cl-guide-now">
+          <p id="ion-guide-text" aria-live="polite">Six steps: the same pore, one more piece of physics each time.</p>
+          <div class="cl-guide-actions"><button type="button" class="btn btn-primary btn-small ion-guide-do">Start the guided experiment</button> <button type="button" class="btn-link ion-guide-skip">Skip</button></div>
+        </div>
+      </div>
+
+      <div class="cl-stage ion-stage">
+        <div class="cl-main">
+          <div class="ion-viewbar">
+            <div class="cl-seg" role="group" aria-label="Field on the section">
+              <button type="button" data-overlay="conc" aria-pressed="true">Concentration</button>
+              <button type="button" data-overlay="phi" aria-pressed="false">Potential</button>
+              <button type="button" data-overlay="flux" aria-pressed="false">Current density</button>
+            </div>
+            <div class="cl-seg ion-species" role="group" aria-label="Ion shown">
+              <button type="button" data-species="0" aria-pressed="true">Na⁺</button>
+              <button type="button" data-species="1" aria-pressed="false">Cl⁻</button>
+            </div>
+          </div>
+          <div class="cl-viewport ion-viewport">
+            <div class="ion-3d-host"></div>
+            <div class="cl-poster ion-poster">
+              <img class="ion-poster-img" src="ions/preview.jpg" width="1280" height="880" decoding="async" alt="Still image of the 3D view after the default experiment: the (7,7) carbon-nanotube pore between two NaCl reservoirs, coloured by the computed Na⁺ concentration.">
+              <p class="ion-preview-tag">Preview — run to calculate</p>
+              <div class="ion-poster-cta">
+                <p class="cl-poster-title">One carbon-nanotube pore between two NaCl reservoirs</p>
+                <p class="cl-poster-note">The solver and the 3D view load and run in your browser only when you start. Nothing is sent anywhere.</p>
+                <button type="button" class="btn btn-primary ion-poster-run">Start: run the experiment</button>
+              </div>
+            </div>
+            <p class="cl-vstatus ion-vstatus" role="status" hidden></p>
+            <p class="cl-vbadge">Reduced 1D model drawn in 3D · schematic ions</p>
+            <div class="ion-3d-fallback" hidden><p>The 3D view needs WebGL, which this browser does not provide. The experiment, the charts and the numbers below work without it.</p></div>
+          </div>
+          <div class="cl-legend" id="ion-legend"></div>
+          <div class="cl-view-opts ion-view-opts">
+            <div class="cl-seg" role="group" aria-label="Camera">
+              <button type="button" class="ion-cam-pore" aria-pressed="true" disabled>Pore</button>
+              <button type="button" class="ion-cam-device" aria-pressed="false" disabled>Access regions</button>
+            </div>
+            <button type="button" class="btn btn-small ion-play" aria-pressed="true" disabled>Pause</button>
+            <button type="button" class="btn btn-small ion-reset-view" disabled>Reset view</button>
+            <span class="cl-small ion-key"><span class="ion-dot ion-dot-na" aria-hidden="true"></span>Na⁺ <span class="ion-dot ion-dot-cl" aria-hidden="true"></span>Cl⁻ <span class="ion-dot ion-dot-o" aria-hidden="true"></span>shell water</span>
+            <p class="cl-small ion-markers-note">Markers show mean transport, not molecular trajectories · 1 s on screen = 100 ns</p>
+          </div>
+          <details class="cl-more cl-help-more"><summary>How to read this view</summary><div class="cl-help ion-help">
+            <p>The back half of the membrane and of the nanotube is drawn; the colour is the computed field on the section through the pore axis, inside the pore and in the two access regions of the reduced model (cones of slope 4/π, which reproduce Hall’s access resistance). Drag to rotate, scroll or pinch to zoom, double-click to reset; with the view focused, arrow keys rotate.</p>
+            <p>Markers are not a recorded trajectory. They are placed with the computed line density N<sub>A</sub>c(x)A(x) and move at the mean drift speed J/(N<sub>A</sub>cA) of the computed flux, so their density and their crossing rate follow the solution; thermal motion is not drawn. One second on screen is 100 ns. At equilibrium the markers stop: the net drift is zero, while the ions keep moving thermally. The drawing follows the model step: point ions, then spheres of the crowding size, then ions with the first-shell waters the dehydration closure assumes (fewer inside the pore).</p>
+          </div></details>
+        </div>
+
+        <div class="cl-side">
+          <div class="cl-card cl-controls ion-quick" role="group" aria-label="Run and voltage">
+            <div class="cl-run-row"><button type="button" class="btn btn-primary ion-run">Run experiment</button><button type="button" class="btn-link ion-reset">Reset</button></div>
+            <p class="ion-chips"><span class="cl-state is-idle" id="ion-state">Not started</span> <span class="cl-state ion-closure-chip" id="ion-closure-chip" hidden>No molecular closure</span></p>
+            <p class="cl-qline ion-qline">The current appears here after the first run.</p>
+            <div class="cl-field">
+              <label for="ion-V">Voltage V = φ<sub>feed</sub> − φ<sub>permeate</sub></label>
+              <div class="cl-range"><input type="range" id="ion-V" min="-200" max="200" step="5" value="100"><output id="ion-V-out" for="ion-V">+100 mV</output></div>
+            </div>
+          </div>
+          <div class="cl-card cl-controls ion-model-card" role="group" aria-label="Model and pore">
+            <fieldset class="cl-field ion-ladder">
+              <legend>Model (each step adds to the previous)</legend>
+              <div class="ion-steps">
+                {{LADDER}}
+              </div>
+            </fieldset>
+            <div class="cl-field">
+              <label for="ion-preset">Pore: tube of a recorded CP2K run</label>
+              <select id="ion-preset">{{PRESET_OPTIONS}}</select>
+              <p class="cl-small" id="ion-preset-note">d: tube diameter (carbon centres); a = d/2 − 0.170 nm (carbon van der Waals radius), the radius open to ions.</p>
+            </div>
+            <fieldset class="cl-field ion-closure" id="ion-closure-field">
+              <legend>Solvation closure (one at a time)</legend>
+              <div class="cl-radios ion-closures">
+                <label><input type="radio" name="ion-closure" value="cp2k" checked> Dehydration: recorded CP2K shells</label>
+                <label><input type="radio" name="ion-closure" value="shell"> Dehydration: rigid-shell geometry</label>
+                <label><input type="radio" name="ion-closure" value="born"> Dielectric exclusion (Born)</label>
+              </div>
+              <div class="cl-inline ion-lining-row"><label for="ion-lining">Pore lining</label><select id="ion-lining"><option value="carbon" selected>Bare carbon</option><option value="carbonyl">Carbonyl-lined (illustrative motif)</option><option value="amide">N–H / O–H donor-lined (illustrative motif)</option></select></div>
+              <div class="cl-inline ion-eps-row" hidden><label for="ion-eps">Permittivity in the pore</label><select id="ion-eps"><option value="10">10</option><option value="20">20</option><option value="30" selected>30</option><option value="50">50</option></select></div>
+            </fieldset>
+            <details class="cl-more cl-settings"><summary>More settings <span class="cl-settings-now" id="ion-settings-now">0.100 M · 2 COO⁻ per rim · D ×0.5 · slip 10 nm</span></summary>
+              <div class="cl-settings-body">
+                <div class="cl-field"><label for="ion-c">Reservoir NaCl concentration</label><select id="ion-c"><option value="10">0.0100 M</option><option value="100" selected>0.100 M</option><option value="1000">1.00 M</option></select><p class="cl-small">Selectivity is computed with this concentration on the feed side and one tenth of it on the permeate side.</p></div>
+                <div class="cl-field"><label for="ion-rim">Charged groups per rim</label><select id="ion-rim"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+                <div class="cl-field"><label for="ion-D">Confined / bulk diffusivity</label><select id="ion-D"><option value="0.2">0.2</option><option value="0.5" selected>0.5</option><option value="0.8">0.8</option><option value="1">1 (no reduction)</option></select></div>
+                <div class="cl-field"><label for="ion-slip">Slip length in the pore</label><select id="ion-slip"><option value="0">0 nm (no slip)</option><option value="1">1 nm</option><option value="10" selected>10 nm</option><option value="100">100 nm</option></select></div>
+                <p class="cl-small">Pore length 5.00 nm, 300 K. Every value is listed with its source in “Inspect molecular evidence”.</p>
+              </div>
+            </details>
+            <div class="cl-dl ion-dl"><div class="cl-buttons"><button type="button" class="btn btn-primary btn-small ion-dl-json" disabled>Download result (JSON)</button><button type="button" class="btn btn-small ion-dl-csv" disabled>Profiles (CSV)</button></div><p class="cl-small ion-dl-note" aria-live="polite"></p></div>
+          </div>
+        </div>
+
+        <div class="cl-strip ion-strip" role="group" aria-label="Results">
+          <div class="cl-tile"><p class="cl-tile-k">Ionic current I</p><p class="cl-tile-v" id="ion-I">–</p><p class="cl-tile-s" id="ion-I-s">at the set voltage</p></div>
+          <div class="cl-tile"><p class="cl-tile-k">Conductance · Na⁺ share</p><p class="cl-tile-v" id="ion-G">–</p><p class="cl-tile-s" id="ion-G-s">G = I/V, t₊ = I<sub>Na</sub>/I</p></div>
+          <div class="cl-tile"><p class="cl-tile-k">Reversal potential (10:1)</p><p class="cl-tile-v" id="ion-P">–</p><p class="cl-tile-s" id="ion-P-s">and the GHK-equivalent Na⁺/Cl⁻ selectivity</p></div>
+          <div class="cl-tile"><p class="cl-tile-k">Water flow</p><p class="cl-tile-v" id="ion-Q">–</p><p class="cl-tile-s" id="ion-Q-s">electro-osmosis (last step)</p></div>
+        </div>
+        <div class="ion-explain">
+          <p class="ion-why" id="ion-why" aria-live="polite">Run the experiment: a one-sentence explanation of the last change appears here, built from the computed numbers.</p>
+          <p class="visually-hidden" id="ion-flags-h">Model-domain checks</p>
+          <ul class="ion-flags" id="ion-flags" aria-labelledby="ion-flags-h"></ul>
+        </div>
+      </div>
+      <p class="visually-hidden cl-announce ion-announce" aria-live="polite"></p>
+
+      <div class="cl-workbench ion-workbench">
+        <div class="cl-results">
+          <section class="cl-card" aria-labelledby="ion-iv-h"><h2 id="ion-iv-h" class="cl-card-h">Current–voltage: this model and the classical reference</h2><div class="ion-chart-host" id="ion-iv"><p class="cl-small">Run the experiment to draw both curves on common axes.</p></div></section>
+          <section class="cl-card" aria-labelledby="ion-prof-h"><h2 id="ion-prof-h" class="cl-card-h">Along the pore axis</h2>
+            <div class="cl-seg ion-prof-seg" role="group" aria-label="Profile"><button type="button" data-prof="c" aria-pressed="true">Concentration</button><button type="button" data-prof="phi" aria-pressed="false">Potential</button><button type="button" data-prof="mu" aria-pressed="false">Excess free energy</button></div>
+            <div class="ion-chart-host" id="ion-prof"><p class="cl-small">Run the experiment to see the profiles.</p></div></section>
+          <section class="cl-card" aria-labelledby="ion-cmp-h"><h2 id="ion-cmp-h" class="cl-card-h">All six steps at the set voltage</h2><div id="ion-ladder-table"><p class="cl-small">Run the experiment to compare the steps.</p></div></section>
+        </div>
+        <div class="cl-results">
+          <section class="cl-card" aria-labelledby="ion-hyd-h"><h2 id="ion-hyd-h" class="cl-card-h">Hydration recorded with CP2K</h2><div class="ion-chart-host" id="ion-hyd"><p class="cl-small">Run the experiment to load the recorded first-shell counts.</p></div>
+            <p class="cl-small">Filled: water oxygens within 0.32 nm of Na⁺ or 0.38 nm of Cl⁻, averaged over every stored frame of the recorded CP2K run of that tube (PBE-D3(BJ), NVT 300 K, 0.50–0.75 ps; bars span the five block means). Open: the rigid-shell estimate, a spherical shell cut by the water-accessible radius. {{SHELL_RATIO}} The runs are short; these are recorded configurations, not converged hydration numbers. <a href="../cnt/">Open the recorded trajectories</a>.</p></section>
+          <section class="cl-card ion-next-card" aria-labelledby="ion-next-h"><h2 id="ion-next-h" class="cl-card-h">Sensitivity ranking <span class="cl-pass is-na">Rule-based</span></h2><p class="ion-next-lead">Ranks sensitivity to stated input ranges and identifies molecular calculations that could constrain those inputs.</p><p class="cl-small ion-next-dev"><b>Next research development:</b> an adaptive, agentic loop that weighs uncertainty, correlations between inputs, model discrepancy and computational cost to choose the next molecular calculation (the <a href="../../index.html#vision">adaptive-simulation direction</a>). This panel does not do that yet.</p><div id="ion-next"><p class="cl-small">Run the experiment to see the ranking.</p></div></section>
+          <details class="cl-card cl-more ion-evidence-drawer" id="ion-evidence-drawer"><summary>Inspect molecular evidence</summary><div id="ion-evidence"><p class="cl-small">Run the experiment to list every input of the current model with its value, units, source, conditions and status.</p></div></details>
+          <p class="cl-small ion-membrane" id="ion-membrane"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-band" id="details">
+  <div class="container cl-docs">
+    <details class="disclosure" id="scales" open>
+      <summary>How molecular simulation enters the prediction</summary>
+      <div class="disclosure-body cl-doc">
+        <svg class="cl-diagram ion-diagram-h" viewBox="0 0 900 250" role="img" aria-label="Information flow: molecular evidence (recorded CP2K first-shell water counts and shell radii) enters an explicit, illustrative closure assumption that gives the free energy of entering the pore; the transport calculation (Poisson–Nernst–Planck and Stokes) gives current, reversal potential and water flow; a sensitivity ranking over stated input ranges points to the next molecular question.">
+          <defs><marker id="ionArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16324F"/></marker><marker id="ionArrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#006B62"/></marker></defs>
+          <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="12.5" fill="#243447">
+            <rect x="8" y="34" width="200" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="108" y="57" text-anchor="middle" font-weight="600" fill="#16324F">Molecular evidence</text>
+            <text x="108" y="80" text-anchor="middle">CP2K AIMD, PBE-D3(BJ), 300 K</text>
+            <text x="108" y="100" text-anchor="middle">(6,6) (7,7) (9,9) (11,11) tubes</text>
+            <text x="108" y="124" text-anchor="middle" fill="#7A4300">recorded: first-shell waters,</text>
+            <text x="108" y="142" text-anchor="middle" fill="#7A4300">shell radii, tube radii</text>
+            <text x="108" y="166" text-anchor="middle" fill="#526477">0.50–0.75 ps: not converged</text>
+            <rect x="238" y="34" width="200" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="338" y="57" text-anchor="middle" font-weight="600" fill="#16324F">Closure assumption</text>
+            <text x="338" y="80" text-anchor="middle">ΔG = (1 − κ) (N_lost / n_ref) ΔG₁</text>
+            <text x="338" y="100" text-anchor="middle">or Born exclusion (ε in the pore)</text>
+            <text x="338" y="124" text-anchor="middle" fill="#6B2C91">illustrative: κ, ε, D in the pore,</text>
+            <text x="338" y="142" text-anchor="middle" fill="#6B2C91">slip, ion size, rim charge</text>
+            <text x="338" y="166" text-anchor="middle" fill="#526477">no mean-field electrostatics</text>
+            <rect x="468" y="34" width="200" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="568" y="57" text-anchor="middle" font-weight="600" fill="#16324F">Transport calculation</text>
+            <text x="568" y="80" text-anchor="middle">1D Poisson–Nernst–Planck</text>
+            <text x="568" y="100" text-anchor="middle">+ Stokes flow with slip</text>
+            <text x="568" y="124" text-anchor="middle">access cones (Hall, Sampson)</text>
+            <text x="568" y="142" text-anchor="middle">Newton, Float64, in the browser</text>
+            <text x="568" y="166" text-anchor="middle" fill="#526477">tests I1–I14, IB1–IB10</text>
+            <rect x="698" y="34" width="194" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="795" y="57" text-anchor="middle" font-weight="600" fill="#16324F">Prediction</text>
+            <text x="795" y="80" text-anchor="middle">current, Na⁺ / Cl⁻ split</text>
+            <text x="795" y="100" text-anchor="middle">V_rev, GHK-equivalent ratio</text>
+            <text x="795" y="124" text-anchor="middle">water flow</text>
+            <text x="795" y="142" text-anchor="middle">model-domain flags</text>
+            <text x="795" y="166" text-anchor="middle" fill="#526477">compared with classical PNP</text>
+            <line x1="210" y1="100" x2="235" y2="100" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrow)"/>
+            <line x1="440" y1="100" x2="465" y2="100" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrow)"/>
+            <line x1="670" y1="100" x2="695" y2="100" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrow)"/>
+            <path d="M795 186 V212 H108 V189" fill="none" stroke="#006B62" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ionArrowG)"/>
+            <path d="M338 212 V189" fill="none" stroke="#006B62" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ionArrowG)"/>
+            <text x="450" y="236" text-anchor="middle" font-size="12" fill="#006B62">dashed: next molecular question, from a sensitivity ranking over stated input ranges</text>
+            <text x="450" y="18" text-anchor="middle" font-size="12" fill="#526477">each arrow carries numbers with a stated status (Recorded, Derived, Illustrative); nothing is labelled MD-informed</text>
+          </g>
+        </svg>
+        <svg class="cl-diagram ion-diagram-v" viewBox="0 0 360 792" role="img" aria-label="Information flow: molecular evidence (recorded CP2K first-shell water counts and shell radii) enters an explicit, illustrative closure assumption that gives the free energy of entering the pore; the transport calculation (Poisson–Nernst–Planck and Stokes) gives current, reversal potential and water flow; a sensitivity ranking over stated input ranges points to the next molecular question.">
+          <defs><marker id="ionArrowV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16324F"/></marker><marker id="ionArrowVG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#006B62"/></marker></defs>
+          <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="12.5" fill="#243447">
+            <text x="160" y="14" text-anchor="middle" font-size="11.5" fill="#526477">each arrow carries numbers with a stated status:</text>
+            <text x="160" y="29" text-anchor="middle" font-size="11.5" fill="#526477">Recorded, Derived or Illustrative;</text>
+            <text x="160" y="44" text-anchor="middle" font-size="11.5" fill="#526477">nothing is labelled MD-informed</text>
+            <rect x="10" y="56" width="300" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="160" y="79" text-anchor="middle" font-weight="600" fill="#16324F">Molecular evidence</text>
+            <text x="160" y="102" text-anchor="middle">CP2K AIMD, PBE-D3(BJ), 300 K</text>
+            <text x="160" y="122" text-anchor="middle">(6,6) (7,7) (9,9) (11,11) tubes</text>
+            <text x="160" y="146" text-anchor="middle" fill="#7A4300">recorded: first-shell waters,</text>
+            <text x="160" y="164" text-anchor="middle" fill="#7A4300">shell radii, tube radii</text>
+            <text x="160" y="188" text-anchor="middle" fill="#526477">0.50–0.75 ps: not converged</text>
+            <line x1="160" y1="208" x2="160" y2="232" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrowV)"/>
+            <rect x="10" y="236" width="300" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="160" y="259" text-anchor="middle" font-weight="600" fill="#16324F">Closure assumption</text>
+            <text x="160" y="282" text-anchor="middle">ΔG = (1 − κ) (N_lost / n_ref) ΔG₁</text>
+            <text x="160" y="302" text-anchor="middle">or Born exclusion (ε in the pore)</text>
+            <text x="160" y="326" text-anchor="middle" fill="#6B2C91">illustrative: κ, ε, D in the pore,</text>
+            <text x="160" y="344" text-anchor="middle" fill="#6B2C91">slip, ion size, rim charge</text>
+            <text x="160" y="368" text-anchor="middle" fill="#526477">no mean-field electrostatics</text>
+            <line x1="160" y1="388" x2="160" y2="412" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrowV)"/>
+            <rect x="10" y="416" width="300" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="160" y="439" text-anchor="middle" font-weight="600" fill="#16324F">Transport calculation</text>
+            <text x="160" y="462" text-anchor="middle">1D Poisson–Nernst–Planck</text>
+            <text x="160" y="482" text-anchor="middle">+ Stokes flow with slip</text>
+            <text x="160" y="506" text-anchor="middle">access cones (Hall, Sampson)</text>
+            <text x="160" y="524" text-anchor="middle">Newton, Float64, in the browser</text>
+            <text x="160" y="548" text-anchor="middle" fill="#526477">tests I1–I14, IB1–IB10</text>
+            <line x1="160" y1="568" x2="160" y2="592" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrowV)"/>
+            <rect x="10" y="596" width="300" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
+            <text x="160" y="619" text-anchor="middle" font-weight="600" fill="#16324F">Prediction</text>
+            <text x="160" y="642" text-anchor="middle">current, Na⁺ / Cl⁻ split</text>
+            <text x="160" y="662" text-anchor="middle">V_rev, GHK-equivalent ratio</text>
+            <text x="160" y="686" text-anchor="middle">water flow</text>
+            <text x="160" y="704" text-anchor="middle">model-domain flags</text>
+            <text x="160" y="728" text-anchor="middle" fill="#526477">compared with classical PNP</text>
+            <path d="M312 671 H338 V131 H315" fill="none" stroke="#006B62" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ionArrowVG)"/>
+            <path d="M338 311 H315" fill="none" stroke="#006B62" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ionArrowVG)"/>
+            <text x="160" y="768" text-anchor="middle" font-size="12" fill="#006B62">dashed: next molecular question, from a</text>
+            <text x="160" y="784" text-anchor="middle" font-size="12" fill="#006B62">sensitivity ranking over stated input ranges</text>
+          </g>
+        </svg>
+        <p class="ion-lead-sentence"><b>Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model.</b></p>
+        <p>The recorded runs enter through one number per ion and tube: how many first-shell waters the ion keeps inside the tube. With the hydration free energy (Marcus) and the first-shell radius from the same runs, the closure, an explicit assumption, converts the lost waters into the free energy of entering the pore; the electrodiffusion solver turns that into current and reversal potential. {{CLOSURE_CMP}} The sensitivity ranking then names the molecular calculations that could constrain the illustrative inputs: a free-energy profile, longer sampling of the shell, a dielectric response, a diffusion coefficient, a slip length or a protonation state.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" id="theory">
+      <summary>The model ladder and the theories behind it</summary>
+      <div class="disclosure-body cl-doc">
+        <p>Every step solves the same steady electrodiffusion equations for the same pore; each adds one ingredient from an established continuum theory of ion channels and nanopores. The excess chemical potential carries only terms that mean-field electrostatics does not: crowding and solvation. The electrostatics of the fixed and mobile charges stays in Poisson’s equation, so nothing is counted twice.</p>
+        <div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">Step</th><th scope="col">What it adds</th><th scope="col">Theory it comes from</th><th scope="col">What it cannot capture</th></tr></thead><tbody>
+          <tr><th scope="row">1 Classical PNP</th><td>Nernst–Planck electrodiffusion with Poisson’s equation; bulk diffusivities; point ions; neutral pore</td><td>Mean-field electrodiffusion; its constant-field limit is the Goldman–Hodgkin–Katz equation {{R:goldman1943}}{{R:hodgkin1949}}</td><td>In schematic channels tested against Brownian dynamics, PNP differed most when the radius was below the Debye length and converged with it only above about two Debye lengths {{R:corry2000}}: a finding under those conditions, not a universal cutoff. It has no dielectric self-energy and no ion size</td></tr>
+          <tr><th scope="row">2 Charged rims</th><td>Ionised carboxylates at both mouths, as fixed charge in Poisson’s equation</td><td>Donnan exclusion and the Teorell–Meyer–Sievers model; the space-charge model {{R:gross1968}}; charged rings at channel entrances {{R:imoto1988}}</td><td>Charges are fully ionised; no charge regulation, no Stern layer</td></tr>
+          <tr><th scope="row">3 Finite ion size</th><td>Lattice-gas excess chemical potential −RT ln(1 − N<sub>A</sub>d³Σc)</td><td>Bikerman {{R:bikerman1942}}; modified PNP {{R:borukhov1997}}{{R:kilic2007}}</td><td>One size for both ions; no ion–ion correlations, which density-functional PNP includes {{R:gillespie2002}}</td></tr>
+          <tr><th scope="row">4 Solvation</th><td>The free energy of entering the pore, with one of three closures</td><td>Dielectric exclusion with Born radii {{R:born1920}}, as in DSPM-DE {{R:bowen2002}} and dielectric-self-energy PNP {{R:graf2004}}{{R:corry2003}}; dehydration: lost first-shell waters times the first-shell share of the hydration free energy {{R:zwolak2009}}{{R:sahu2019}}, with counts from the recorded CP2K runs or from a rigid-shell geometry</td><td>A potential of mean force from molecular simulation would replace all three; the closures differ by orders of magnitude in the narrow tubes, which is why the input matters</td></tr>
+          <tr><th scope="row">5 Confined mobility</th><td>A diffusivity in the pore below the bulk value</td><td>Hindered transport in pores (as in DSPM {{R:bowen2002}})</td><td>The factor is illustrative; molecular dynamics gives the axial diffusion coefficient</td></tr>
+          <tr><th scope="row">6 Electro-osmosis</th><td>Water flow driven by the net force on the ions, with Navier slip in the pore</td><td>Area-averaged Stokes flow with Navier slip {{R:karniadakis2005}}; slip enhances electro-osmosis {{R:joly2004}}; molecularly informed models carry concentration profiles, viscosity and wall friction from MD into the continuum {{R:bhadauria2017}}. Onsager reciprocity is a test of the implementation (I11)</td><td>In 1.5 nm carbon-nanotube porins electro-osmotic coupling dominates the conductance {{R:yao2019}}; the model shows the coupling, not its molecular magnitude</td></tr>
+        </tbody></table></div>
+        <h3>Beyond mean field</h3>
+        <p>The model-domain flags under the results say when these effects should be expected; none is in the equations:</p>
+        <ul>
+          <li><b>Discrete occupancy and Coulomb blockade.</b> With fewer than one ion in the pore on average, conduction proceeds by discrete entries that may be correlated; ionic Coulomb blockade has been observed in some sub-nanometre pores {{R:feng2016}}. Low mean occupancy is a reason to examine discrete or correlated transport, not evidence that blockade occurs here.</li>
+          <li><b>Single-file knock-on.</b> Ions in single file move in concert, as in the K⁺ channel filter {{R:kopfer2014}}; a mean-field flux cannot represent it.</li>
+          <li><b>Field-dependent conductivity.</b> At strong fields the ionic conductivity depends on the field itself; generalized fluctuation–dissipation relations obtain it from molecular simulation {{R:lesnicki2020}}. The model uses field-independent diffusivities.</li>
+          <li><b>Pore-to-pore heterogeneity.</b> Nominally identical sub-nanometre graphene pores differ in conductance and selectivity {{R:jain2015}}; one deterministic pore is a model of one pore.</li>
+          <li><b>Single-species selectivity.</b> Size and charge exclusion alone rarely separate ions of the same charge; single-species selectivity needs specific interactions at the pore {{R:epsztein2020}}.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="disclosure" id="bio">
+      <summary>Biological inspiration</summary>
+      <div class="disclosure-body cl-doc">
+        <p>Biological channels select ions by replacing the water an ion loses with ligands placed at the right distance. The lab borrows that idea as an illustrative parameter, the fraction κ of the lost first-shell energy that the pore wall gives back, with two illustrative lining motifs inspired by coordination chemistry:</p>
+        <ul>
+          <li><b>Carbonyl cages (K⁺ channels).</b> In the KcsA selectivity filter, backbone carbonyl oxygens form cages that take the place of the hydration shell around a dehydrated K⁺ {{R:doyle1998}}{{R:zhou2001}}. The carbonyl-lined motif gives Na⁺ a higher κ than Cl⁻.</li>
+          <li><b>Hydrogen-bond donors (CLC).</b> In CLC chloride channels and transporters, Cl⁻ is coordinated by backbone amide N–H groups and side-chain hydroxyls {{R:dutzler2002}}. The donor-lined motif gives Cl⁻ the higher κ.</li>
+          <li><b>Charged rings.</b> Rings of charged residues at the entrance of the acetylcholine receptor channel set its conductance {{R:imoto1988}}: step 2 of the ladder.</li>
+          <li><b>Engineered analogue.</b> Short carbon nanotubes inserted in lipid membranes act as channels, carbon-nanotube porins {{R:tunuguntla2017}}.</li>
+        </ul>
+        <p>The experiment is a bioinspired synthetic pore, not a simulation of a protein channel and not a demonstration of K⁺/Na⁺ selectivity. The κ values are stated examples: neither the short CP2K hydration counts nor the KcsA and CLC structures calibrate them for this CNT/NaCl system. K⁺/Na⁺ selectivity by coordination and mechanosensitive gating are later modules; they need models and evidence this release does not have.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" id="model">
+      <summary>Model and equations</summary>
+      <div class="disclosure-body cl-doc">
+        <h3>Electrodiffusion along the pore axis</h3>
+        <div class="eq">{{EQ_NP}}</div>
+        <div class="eq">{{EQ_POISSON}}</div>
+        <p>Area-averaged equations for Na⁺ and Cl⁻ in a cylindrical pore of radius a and length L = 5.00 nm, with x along the axis from the feed (left) to the permeate (right). The fixed charge of the rims (step 2) is spread over 0.5 nm at each mouth. Reservoirs: concentration and potential fixed 300 nm beyond each mouth.</p>
+        <h3>Excess chemical potential (no mean-field electrostatics)</h3>
+        <div class="eq">{{EQ_MUEX}}</div>
+        <div class="eq">{{EQ_BORN}}</div>
+        <div class="eq">{{EQ_DEHYD}}</div>
+        <p>s(x) is a smooth step of width 0.15 nm at each mouth. Born radii a<sub>B</sub> are chosen so that the Born equation reproduces the hydration Gibbs energies of Marcus (−365 kJ mol⁻¹ for Na⁺, −340 kJ mol⁻¹ for Cl⁻) {{R:marcus1991}}: 0.188 nm and 0.202 nm. ΔG₁ is the part of the hydration energy carried by the first shell: the total minus the Born energy of a sphere of radius r₁ + r<sub>w</sub> (r₁ = 0.24 nm for Na⁺ and 0.32 nm for Cl⁻ from the recorded CP2K run, r<sub>w</sub> = 0.14 nm): 185 and 191 kJ mol⁻¹. N<sub>lost</sub> is the reference shell (the CP2K (11,11) run) minus the shell in the selected tube.</p>
+        <h3>Access regions</h3>
+        <div class="eq">{{EQ_ACCESS}}</div>
+        <p>Outside the pore the cross-section grows as a cone of slope 4/π, which gives exactly Hall’s access resistance {{R:hall1975}} in the Ohmic limit (test I3), and, with a factor 9/4, Sampson’s viscous resistance of an orifice {{R:sampson1891}}.</p>
+        <h3>Electro-osmotic flow</h3>
+        <div class="eq">{{EQ_FLOW}}</div>
+        <p>The body force is the force on the ions, electric and excess; at equilibrium it is balanced by the osmotic pressure, so no water moves (test I1), an ion-excluding pore under a salt gradient gives van ’t Hoff osmosis (I11c), and the coupling coefficients obey Onsager reciprocity (I11b). Slip only in the pore; no slip in the access regions.</p>
+        <h3>Reversal potential and GHK-equivalent selectivity</h3>
+        <div class="eq">{{EQ_GHK}}</div>
+        <p>The reversal potential V<sub>rev</sub> is the direct output: the zero-current potential with {{C_FEED}} on the feed side and one tenth of it on the permeate side (the current–voltage curve uses equal reservoirs). The GHK-equivalent Na⁺/Cl⁻ selectivity P<sub>Na</sub>/P<sub>Cl</sub> is the permeability ratio with which the constant-field Goldman–Hodgkin–Katz equation reproduces V<sub>rev</sub>, using reservoir activities when the finite-size term is on. In a charged pore with access regions and excess free energies this is an effective, model-dependent descriptor, not a measured permeability, also without water flow; the constant-field interpretation has known limits when the Debye length is much smaller than the channel {{R:green2025}}. Ratios above 10⁴ are shown as “&gt; 10⁴” and below 10⁻⁴ as “&lt; 10⁻⁴”; within 1 nV of a Nernst potential of the reservoirs the ratio is reported as that limit; a V<sub>rev</sub> beyond a Nernst potential has no positive GHK ratio and is shown as “outside GHK range” (test I15). With electro-osmosis the water flow also carries ions at zero current.</p>
+        <h3>Discretisation and solver</h3>
+        <p>Finite volumes on {{NODES}} nodes: 0.0125 nm cells within 0.6 nm of each mouth, 0.025 nm in the rest of the pore, and cells growing by a factor 1.08 out to the reservoirs. Scharfetter–Gummel fluxes {{R:scharfetter1969}} in Slotboom form: the unknowns are the potential and, for each ion, u = c e<sup>ψ − χ</sup> relative to its reservoir value, where χ = Q∫dx/(DA) accounts for the water flow. An ion that carries no net flux has constant u, so the small flux of an excluded ion is computed without cancellation (test I5). Newton’s method on a block-tridiagonal system bordered by the flow unknown, continuation in the drives, Float64, in a Web Worker. Each run solves all six steps at the set voltage, the selected model and the classical reference at 17 voltages, two reversal potentials and each illustrative input at both ends of its range: about 70 Newton solves. In headless Chromium on the build machine (two cores at 2.8 GHz) the first result appears after about 0.6 s and the whole run takes about 2 s.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" id="evidence">
+      <summary>Evidence: what is measured and what is not</summary>
+      <div class="disclosure-body cl-doc">
+        <p>Inputs carry one of five statuses. <b>Literature</b>: a published measurement or reference correlation. <b>Recorded (CP2K)</b>: read from this site’s CP2K trajectories, with the caveats below. <b>Derived</b>: computed from the entries above by a stated formula. <b>Illustrative</b>: a stated example, not the result of an assessed calculation. <b>Setting</b>: chosen by the visitor. No input is obtained from an assessed molecular calculation, so none is labelled “MD-informed”.</p>
+        <h3>The recorded CP2K runs</h3>
+        {{CP2K_TABLE}}
+        <ul>{{CP2K_CAVEATS}}</ul>
+        <p>The four runs differ in water and ion inventory (6 to 67 waters; one or two ion pairs) and include ion pairing, so the differences between tubes are not caused by diameter alone. The (11,11) reference shell is confined, not bulk.</p>
+        <h3>Inputs of the default experiment ((7,7) tube, all six steps, recorded shells, bare carbon)</h3>
+        {{REGISTRY_TABLE}}
+        <p>The recorded runs are periodic 2.46 nm segments without reservoirs, each with one or two ion pairs: they supply hydration structure, not a channel conductance.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" id="validation">
+      <summary>Validation</summary>
+      <div class="disclosure-body cl-doc">
+        <!-- BEGIN:validation -->
+        {{VALIDATION}}
+        <!-- END:validation -->
+      </div>
+    </details>
+
+    <details class="disclosure" id="numerics">
+      <summary>Numerical details of the current result</summary>
+      <div class="disclosure-body cl-doc"><div id="ion-numerics"><p>Run the experiment to see the grid, the Newton iterations, the residuals and the timing of the current result.</p></div></div>
+    </details>
+
+    <details class="disclosure" id="reproduce">
+      <summary>Reproduce and download</summary>
+      <div class="disclosure-body cl-doc">
+        <p>“Download result” saves a JSON file with the inputs, the results at the set voltage, both current–voltage curves, the reversal potentials, the ranking of illustrative inputs, the evidence table and the SHA-256 hashes of the solver files that produced it; “Profiles” saves the axial profiles as CSV. <code>node tools/continuum/ions/reproduce_ions.js result.json</code> recomputes the result from the inputs with the same solver files and checks it (relative tolerance 10⁻¹²).</p>
+        <p>The solver tests (<code>node tools/continuum/ions/t_ions.js</code>), the independent SciPy reference (<code>tools/continuum/ions/ref_pnp.py</code>), the generator of the hydration counts (<code>tools/continuum/ions/make_hydration.py</code>) and the frozen acceptance criteria (<code>tools/continuum/ions/TOLERANCES.md</code>) are in the site’s repository.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" id="limits">
+      <summary>Limitations</summary>
+      <div class="disclosure-body cl-doc">
+        <ul>
+          <li>Mean-field continuum: in sub-nanometre pores at these concentrations there is usually less than one ion in the pore, and the result is a time average over discrete events (flag “occupancy”).</li>
+          <li>The (6,6) tube holds a single file of water: the continuum description is outside its domain there, and the result is shown for comparison only.</li>
+          <li>One-dimensional and area-averaged: the radial structure of the double layer is not resolved; the access cones reproduce Hall’s and Sampson’s resistances, not the three-dimensional field near the mouth.</li>
+          <li>Except for the tube radii, the first-shell radii and the first-shell counts, every molecular input is a literature value or a stated example. The counts come from runs of 0.50–0.75 ps and are not converged. The solvation closure is an assumption: the difference between closures is a sensitivity of the prediction, and the short AIMD trajectories do not establish the transport barrier or the current.</li>
+          <li>One permittivity everywhere in Poisson’s equation; dielectric effects enter only through the Born closure. No charge regulation, ion pairing or specific adsorption.</li>
+          <li>Electro-osmosis: area-averaged flow with the force spread over the cross-section and slip only in the pore.</li>
+          <li>NaCl only; no K⁺, no divalent ions.</li>
+          <li>The membrane estimate assumes independent pores at one per 100 nm², all at the same voltage: no shared access resistance or concentration polarisation.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="disclosure" id="references">
+      <summary>References</summary>
+      <div class="disclosure-body cl-doc">
+        <ol class="ion-refs">{{REFERENCES}}</ol>
+      </div>
+    </details>
+
+    <details class="disclosure" id="credits">
+      <summary>Credits and licences</summary>
+      <div class="disclosure-body cl-doc">
+        <p>Ion-transport solver, model ladder, tests, interface and 3D view: Kazi Ehsanul Karim (page code MIT). The hydration counts come from the author’s CP2K calculations (CP2K, GPL-2.0). The 3D view uses three.js 0.160.0 (three.js authors, MIT; <code>vendor/three.module.min.js</code>), loaded only when the view is shown. Code drafted with AI assistance and checked by the tests above; scientific decisions and validation design are the author’s.</p>
+      </div>
+    </details>
+    <p class="cl-back"><a href="../../index.html#lab">Back to the Simulation Lab</a> · <a href="water.html">Continuum Lab: water flow</a> · <a href="../cnt/">CNT trajectory inspector</a> · <a href="../water/">Live Water Lab</a></p>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Simulation Lab, The Continuum Lab (ion transport). Website version {{VERSION}}.</p></div>
+    <div><p>Page code: MIT. three.js: MIT, loaded only with the 3D view.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics. The solver loads only after you start the experiment.</p></div>
+  </div>
+</footer>
+<script src="ions/app.js"></script>
+<script src="../../js/nav.js" defer></script>
+</body>
+</html>

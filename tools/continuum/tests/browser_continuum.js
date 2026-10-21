@@ -15,7 +15,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'lab/continuum/data/
 const items = [];
 const rec = (id, name, pass, detail) => { items.push({ id, name, verdict: pass ? 'PASS' : 'FAIL', detail }); console.log((pass ? 'PASS ' : 'FAIL ') + id + ' ' + name + ' — ' + detail); };
 const rel = (a, b) => Math.abs(a - b) / Math.abs(b);
-const URL0 = BASE + 'lab/continuum/';
+const URL0 = BASE + 'lab/continuum/water.html';
 
 async function converged(p, timeout) {
   await p.waitForFunction(() => { const S = window.__continuumState; return S && S.status === 'converged' && S.result && S.result.revision === S.revision; }, null, { timeout: timeout || 120000 });

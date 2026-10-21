@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '../../..');
   const browser = await chromium.launch({ executablePath: EXE, headless: true });
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const p = await ctx.newPage();
-  await p.goto(BASE + 'lab/continuum/', { waitUntil: 'networkidle' });
+  await p.goto(BASE + 'lab/continuum/water.html', { waitUntil: 'networkidle' });
   const conv = () => p.waitForFunction(() => { const S = window.__continuumState; return S && S.status === 'converged' && S.result && S.result.revision === S.revision; }, null, { timeout: 600000 });
   const take = (label) => p.evaluate((l) => { const r = window.__continuumState.result; return { case: l, cells: r.device.nx + ' × ' + r.device.ny + ' × ' + r.device.nz, unknowns: r.solver.unknowns, iterations: r.solver.iterations, mode: r.mode, worker_s: r.solver.wallMs / 1000, roundTrip_s: r.receivedMs / 1000, Q: r.diag.Q_m3_s }; }, label);
   const rows = [];

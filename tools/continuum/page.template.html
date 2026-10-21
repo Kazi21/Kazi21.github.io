@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Continuum Lab — Kazi Ehsanul Karim</title>
+<title>The Continuum Lab: water flow through a nanotube membrane — Kazi Ehsanul Karim</title>
 <meta name="description" content="From one nanotube to membrane flow: a browser experiment that couples a sub-1-nm carbon-nanotube pore law to a membrane map and to 3D Stokes flow in feed and permeate chambers. Change the pressure, one tube, a patch or the whole membrane, and follow the consequence across scales. Simulation Lab, by Kazi Ehsanul Karim.">
 <meta name="robots" content="index,follow">
-<meta property="og:title" content="The Continuum Lab — Kazi Ehsanul Karim">
+<meta property="og:title" content="The Continuum Lab: water flow through a nanotube membrane">
 <meta property="og:description" content="From one nanotube to membrane flow: a pore law, a membrane map and 3D Stokes flow, computed in the browser.">
 <meta property="og:image" content="../../assets/icons/og-image.png">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="../../styles/components.css">
 <link rel="stylesheet" href="../../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="continuum.css">
+<link rel="stylesheet" href="ions/ions.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -39,6 +40,10 @@
     <p class="project-kicker">Simulation Lab · multiscale experiment · browser CFD solver</p>
     <h1 class="evidence-title cl-title">The Continuum Lab</h1>
     <p class="cl-subtitle">From one nanotube to membrane flow</p>
+    <nav class="ion-switch" aria-label="Continuum Lab experiments">
+      <a href="./">Ion transport</a>
+      <a href="water.html" aria-current="page">Water flow through a membrane</a>
+    </nav>
     <p class="cl-lede">Explore how pore conductance, pressure and local blockage shape membrane throughput.</p>
     <p class="cl-badge"><span class="cl-badge-dot" aria-hidden="true"></span>Live 3D continuum solver · illustrative pore conductance · <a href="#provenance">why this is not yet a calibrated CNT prediction</a></p>
 
@@ -330,14 +335,14 @@
         <p>Browser CFD solver, membrane map, coupling, diagnostics, decision rules, interface and reproducibility workflow: Kazi Ehsanul Karim (page code MIT). The recorded trajectory comes from the author’s CP2K calculations (CP2K, GPL-2.0). Native comparisons use OpenFOAM v1912 (OpenCFD Ltd, GPL-3.0), run outside the browser; no OpenFOAM code is part of this page. The 3D pore view uses three.js 0.160.0 (three.js authors, MIT; <code>vendor/three.module.min.js</code>), loaded only when that view is opened. Code drafted with AI assistance and checked by the tests above; scientific decisions and validation design are the author’s.</p>
       </div>
     </details>
-    <p class="cl-back"><a href="../../index.html#lab">Back to the Simulation Lab</a> · <a href="../water/">Live Water Lab</a> · <a href="../cnt/">CNT trajectory inspector</a></p>
+    <p class="cl-back"><a href="../../index.html#lab">Back to the Simulation Lab</a> · <a href="./">Continuum Lab: ion transport</a> · <a href="../water/">Live Water Lab</a> · <a href="../cnt/">CNT trajectory inspector</a></p>
   </div>
 </section>
 
 </main>
 <footer class="site-footer">
   <div class="container footer-grid">
-    <div><p class="version">Simulation Lab, The Continuum Lab. Website version {{VERSION}}.</p></div>
+    <div><p class="version">Simulation Lab, The Continuum Lab (water flow). Website version {{VERSION}}.</p></div>
     <div><p>Page code: MIT. OpenFOAM is used only for offline reference cases (GPL-3.0).</p></div>
     <div><p>This page makes no third-party requests, sets no cookies and runs no analytics. The solver loads only after you press Run experiment.</p></div>
   </div>

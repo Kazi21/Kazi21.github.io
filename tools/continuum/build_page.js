@@ -1,4 +1,5 @@
-// build_page.js — builds lab/continuum/index.html from tools/continuum/page.template.html:
+// build_page.js — builds lab/continuum/water.html (the water-flow experiment; the ion experiment is lab/continuum/index.html,
+// built by tools/continuum/ions/build_ions_page.js) from tools/continuum/page.template.html:
 // pre-renders the equations with KaTeX (the page never loads katex.js), inserts the scale diagram, and writes the
 // validation table from the machine-readable results in tools/continuum/results/ with the criteria parsed from
 // tools/continuum/TOLERANCES.md (single source). Tests without a result are listed as NOT_RUN.
@@ -7,7 +8,7 @@
 const fs = require('fs'), path = require('path');
 const katex = require('katex');
 const ROOT = path.resolve(__dirname, '../..');
-const VERSION = '2026.8';
+const VERSION = '2026.9.1';
 const T = (f) => path.join(ROOT, 'tools/continuum', f);
 const readJson = (f) => { try { return JSON.parse(fs.readFileSync(T(f), 'utf8')); } catch (e) { return null; } };
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -156,5 +157,5 @@ html = html.split('{{LIMIT_PORTS}}').join(limitPorts);
 html = html.split('{{DIAGRAM}}').join(DIAGRAM).split('{{VALIDATION}}').join(validationHtml()).split('{{VERSION}}').join(VERSION);
 const left = html.match(/\{\{[A-Z_]+\}\}/g);
 if (left) throw new Error('unrendered tokens: ' + left.join(', '));
-fs.writeFileSync(path.join(ROOT, 'lab/continuum/index.html'), html);
-console.log('wrote lab/continuum/index.html (' + (html.length / 1024).toFixed(1) + ' kB)');
+fs.writeFileSync(path.join(ROOT, 'lab/continuum/water.html'), html);
+console.log('wrote lab/continuum/water.html (' + (html.length / 1024).toFixed(1) + ' kB)');

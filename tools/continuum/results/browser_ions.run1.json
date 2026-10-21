@@ -1,0 +1,71 @@
+{
+ "id": "browser_ions",
+ "name": "Ion experiment browser tests IB1–IB10",
+ "verdict": "PASS",
+ "chromium": "141.0.7390.37",
+ "items": [
+  {
+   "id": "IB1",
+   "name": "Lazy start",
+   "verdict": "PASS",
+   "detail": "requested during load + 1.5 s: none of the solver, worker, chart, data or 3D files; after Start: ions/core.js, ions/params.js, ions/charts.js, data/hydration.json, ions/worker.js, ions/ions3d.js, vendor/three.module.min.js"
+  },
+  {
+   "id": "IB2",
+   "name": "Run",
+   "verdict": "PASS",
+   "detail": "default experiment (7,7, step 6, 100 mV): page I = 3.76e-12 A, Node 3.76e-12 A, relative difference 0.00e+0; converged in the page: true"
+  },
+  {
+   "id": "IB3",
+   "name": "Model ladder",
+   "verdict": "PASS",
+   "detail": "step 1: I 7.22 pA (sentence quotes it: true), classical reference curve equals Node step 1: true; step 2: I 9.19 pA (sentence quotes 7.22 pA → 9.19 pA: true), classical reference curve equals Node step 1: true; step 3: I 9.38 pA (sentence quotes 9.19 pA → 9.38 pA: true), classical reference curve equals Node step 1: true; step 4: I 6.45 pA (sentence quotes 9.38 pA → 6.45 pA: true), classical reference curve equals Node step 1: true; step 5: I 3.32 pA (sentence quotes 6.45 pA → 3.32 pA: true), classical reference curve equals Node step 1: true; step 6: I 3.76 pA (sentence quotes 3.32 pA → 3.76 pA: true), classical reference curve equals Node step 1: true; six different currents: true"
+  },
+  {
+   "id": "IB4",
+   "name": "Geometry presets",
+   "verdict": "PASS",
+   "detail": "(6,6): I 2.51 pA (Node agrees: true), chart highlights it: true, flagged single-file; (7,7): I 3.76 pA (Node agrees: true), chart highlights it: true; (9,9): I 9.54 pA (Node agrees: true), chart highlights it: true; (11,11): I 16.4 pA (Node agrees: true), chart highlights it: true; four different results: true"
+  },
+  {
+   "id": "IB5",
+   "name": "Evidence",
+   "verdict": "PASS",
+   "detail": "21 inputs (registry 21), each with value, units, source, conditions and status: true; statuses {\"Setting\":2,\"Derived\":6,\"Literature\":3,\"Recorded (CP2K)\":4,\"Illustrative\":6}; “MD-informed” used: false"
+  },
+  {
+   "id": "IB6",
+   "name": "What to compute next",
+   "verdict": "PASS",
+   "detail": "ranking rimN ×3.62, Dratio ×2.09, nShell ×2.09, kappa ×1.71, slip ×1.06, ionSize ×1.02; same order as Node: true; factors agree to 0.00e+0; sorted by computed effect: true; states that it is rule-based: true"
+  },
+  {
+   "id": "IB7",
+   "name": "3D view",
+   "verdict": "PASS",
+   "detail": "three.js requested only after Start (IB1); frame non-blank: 65.2 % non-background pixels, 88 colour classes; overlays one at a time with a legend: true (phi: “Electric potential (mV)”; flux: “Current density |I| / A(x) (A m⁻²)”; conc: “Na⁺ concentration relative to its reservoir (c / c_res)”); at 100 mV markers moved 11.38 nm (Na⁺, towards the permeate) and -21.93 nm (Cl⁻, towards the feed) in 2 s; reduced motion: still before Play true, moving after Play true; without WebGL: fallback shown true (“The 3D view needs WebGL, which this browser does not provide. The expe…”), result 3.76 pA converged true, three.js requested false; page errors 0"
+  },
+  {
+   "id": "IB8",
+   "name": "Keyboard, touch, layout",
+   "verdict": "PASS",
+   "detail": "keyboard: Enter on Start, → on the voltage slider (now 105 mV), ↑ on the model ladder (step 5), ↓ on the tube preset (9,9), Enter on a profile button (pressed true); touch at 390 px: tap Start, tap step 2 (step 2), tap Potential (pressed true); horizontal overflow with all sections open: 360 px 0, 390 px 0, 768 px 0, 1440 px 0; page errors 0"
+  },
+  {
+   "id": "IB9",
+   "name": "Export",
+   "verdict": "PASS",
+   "detail": "continuum-ions-7-7-step6.json and continuum-ions-profiles-7-7-step6.csv downloaded; solver-file hashes recorded: true; reproduce_ions.js: 55 checks, 0 failed; largest relative difference 1.07e-15 (exit 0)"
+  },
+  {
+   "id": "IB10",
+   "name": "Water experiment",
+   "verdict": "PASS",
+   "detail": "water.html converged, Q = 4.00e-17 m³ s⁻¹; switch on the water page marks it current and leads to the ion page: true; switch on the ion page leads back: true; external requests from both pages: none; page errors 0"
+  }
+ ],
+ "pageErrors": [],
+ "environment": "Chromium 141.0.7390.37 (headless shell, Playwright, SwiftShader WebGL) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox, real phones or GPUs",
+ "date": "2026-10-21T08:59:52.599Z"
+}

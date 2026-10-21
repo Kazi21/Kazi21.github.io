@@ -205,3 +205,16 @@ alone and from the intact-membrane table for a modified membrane.
   with the F1–F4 settings the pressure solver reached its 200-iteration limit in every outer iteration once the
   residual approached 10⁻¹⁰ (about 12 s per iteration); that first attempt was stopped after 1787 iterations without a
   result. The run's iteration count and final residual are recorded in `results/openfoam.json`.
+
+- 21 Oct 2026 (release 2026.9; written before the run): the water-flow experiment moved from `lab/continuum/` to
+  `lab/continuum/water.html`, because the ion experiment now opens at `lab/continuum/`. The browser and regression
+  tests B1–B16 and R1 run at the new address; the page gained an experiment switch and a link to the ion experiment.
+  No criterion changed. The 2026.8 record is kept as `results/browser.2026.8-run3.json`. Run 1 at the new address:
+  17 of 17 PASS (`results/browser.2026.9-run1.json`). After run 1 a shared stylesheet changed (the outlook panel of
+  the home page, which R1 loads, no longer overflows on a phone), so the suite was run again for the released files:
+  run 2, 17 of 17 PASS (`results/browser.2026.9-run2.json`). After run 2 one sentence of the home page changed (text
+  only), so the suite was run a third time: run 3, 17 of 17 PASS (`results/browser.json`).
+
+- 21 Oct 2026 (release 2026.9.1; written before the run): the status label of the water page reads "Numerically
+  converged"; the home page changed (defense date, Lab card wording). No criterion changed. The 2026.9 record is kept
+  as `results/browser.2026.9-run3.json`; run 1 of 2026.9.1: 17 of 17 PASS (`results/browser.json`).

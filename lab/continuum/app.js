@@ -196,7 +196,7 @@
     S.result = r; S.lastValid = r;
     app.classList.remove('is-stale');
     if (!S.baseline) setBaseline(r, true);
-    setStatus('converged', 'Converged');
+    setStatus('converged', 'Numerically converged');
     render();
     announce('Result for revision ' + r.revision + ': total flow ' + fmt3(d.Q_m3_s) + ' cubic metres per second.');
     if (S.guide.after) { const f = S.guide.after; S.guide.after = null; f(); }
@@ -209,7 +209,7 @@
   }
   function setStatus(st, text) {
     S.status = st; S.statusText = text;
-    const label = { idle: 'Not started', loading: 'Loading the solver', solving: 'Solving', converged: 'Converged', stale: 'Recomputing', cancelled: 'Cancelled', unsupported: 'Unsupported', failed: 'Failed' }[st] || st;
+    const label = { idle: 'Not started', loading: 'Loading the solver', solving: 'Solving', converged: 'Numerically converged', stale: 'Recomputing', cancelled: 'Cancelled', unsupported: 'Unsupported', failed: 'Failed' }[st] || st;
     el.state.textContent = label; el.state.className = 'cl-state is-' + st;
     el.vstatus.textContent = text; el.vstatus.hidden = st === 'converged' || st === 'idle';
     el.vstatus.classList.toggle('is-error', st === 'unsupported' || st === 'failed');

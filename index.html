@@ -86,7 +86,7 @@
         <h2 class="facts-title">At a glance</h2>
         <dl>
           <dt>Position</dt><dd>Ph.D. candidate, University of Ulsan, Republic of Korea (since March 2019); supervisor Prof. BoHung Kim</dd>
-          <dt>Availability</dt><dd>Postdoctoral or research-fellow positions from early 2027; defense November 2026, degree conferral February 2027</dd>
+          <dt>Availability</dt><dd>Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from early 2027.</dd>
           <dt>Research focus</dt><dd>Water and electrolyte transport in carbon nanotubes and graphene slits: LAMMPS EMD/NEMD, CP2K and DeePMD reference workflows, statistical mechanics of boundary conditions</dd>
         </dl>
       </aside>
@@ -128,7 +128,7 @@
       <li class="rmap-step">
         <span class="rmap-n" aria-hidden="true">5</span>
         <h3>Continuum prediction</h3>
-        <p>Chamber flow that takes a pore law or wall closure as input: live in the browser now, OpenFOAM with calibrated closures next.</p>
+        <p>Continuum models that take molecular input: ion transport with recorded hydration shells and chamber flow with a pore law, live in the browser now; OpenFOAM with calibrated closures next.</p>
         <p class="rmap-meta"><span class="status status-live">Live demonstration</span> <a href="lab/continuum/">Continuum Lab</a></p>
       </li>
     </ol>
@@ -274,20 +274,21 @@
 <section class="section section-band" id="lab">
   <div class="container">
     <h2>Simulation Lab</h2>
-    <p class="section-intro">Three experiments, each on its own page, loading its solver or data only when you start it: a multiscale membrane-flow experiment, live molecular dynamics and recorded ab initio trajectories.</p>
+    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: the Continuum Lab (ion transport through one nanotube pore, and water flow through a nanotube membrane), live molecular dynamics and recorded ab initio trajectories.</p>
     <article class="lab-card lab-card-feature">
       <a class="lab-card-media" href="lab/continuum/" tabindex="-1" aria-hidden="true"><img src="assets/figures/continuum-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
       <div class="lab-card-body">
-        <p class="project-kicker">Multiscale experiment · browser CFD solver</p>
+        <p class="project-kicker">Multiscale experiments · browser solvers</p>
         <h3>The Continuum Lab</h3>
-        <p><span class="status">Live 3D continuum solver · illustrative pore conductance</span></p>
-        <p class="lab-lead">Explore how pore conductance, pressure and local blockage shape membrane throughput: 40 000 (6,6) carbon nanotubes counted exactly, steady 3D Stokes flow in the feed and permeate chambers, solved in your browser in about a second.</p>
+        <p><span class="status">Live solvers · recorded CP2K hydration · illustrative closure</span></p>
+        <p class="lab-lead">Why does a pore pass one ion and resist another? Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model. Charged rims, ion size, dehydration, confined mobility and electro-osmosis are added one at a time, each compared with the classical Poisson–Nernst–Planck result: molecular evidence, an explicit closure assumption, a transport calculation and the next molecular question.</p>
         <ul class="lab-points">
-          <li>Change the pressure, one tube, one patch or the whole membrane, compare with a fixed baseline, and watch the water move through the nanotubes in a true-size 3D cutaway.</li>
-          <li>See where the resistance sits, chambers or pores, from the solved dissipation.</li>
-          <li>Solver checked against analytic solutions, an independent SciPy implementation and OpenFOAM v1912: duct flow agrees within 10⁻¹⁰ (relative); the chamber-dominated interface cases differ by 1.97–⁠2.84 % in Q and are reported as measured. The pore conductance is an input until the molecular calibration has been run.</li>
+          <li>A 3D cutaway of the pore shows the computed concentration, potential or current density, with markers moving at the computed mean drift speed.</li>
+          <li>A rule-based panel ranks sensitivity to stated input ranges and identifies molecular calculations that could constrain those inputs; an evidence drawer lists every input with its source and status.</li>
+          <li>Numerically verified against an independent solver and analytical limits (Hall’s access resistance, Goldman–Hodgkin–Katz, Donnan, Onsager reciprocity, van ’t Hoff osmosis); cases and tolerances under Validation.</li>
+          <li>Second experiment: water flow through a membrane of 40 000 nanotubes, with 3D Stokes flow in the chambers.</li>
         </ul>
-        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/">Open the Continuum Lab</a> <a class="lab-more" href="lab/continuum/#validation">Validation</a></p>
+        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/">Open the ion experiment</a> <a class="btn btn-small" href="lab/continuum/water.html">Water-flow experiment</a> <a class="lab-more" href="lab/continuum/#validation">Validation</a></p>
       </div>
     </article>
     <div class="lab-cards">
@@ -456,7 +457,7 @@
       <li><span class="status status-proposed">Planned</span><span>Scoped transport analysis of one confined system with uncertainty and a stated continuum-validity decision.</span></li>
       <li><span class="status status-live">Available</span><span>Simulation Lab: an interactive inspector for the four CNT trajectories (ab initio MD) with guided observations.</span></li>
       <li><span class="status status-live">Available</span><span>Live Water Lab: rigid SPC/E water simulated by LAMMPS in the browser, with a pull-and-release experiment, live measurements and an export that reruns in native LAMMPS; molecular interaction in one nanotube is planned next.</span></li>
-      <li><span class="status status-proposed">Planned</span><span>Ph.D. defense, November 2026; formal degree conferral expected February 2027.</span></li>
+      <li><span class="status">Scheduled</span><span>Ph.D. defense scheduled for 10 December 2026; formal degree conferral expected in February 2027.</span></li>
     </ul>
     <p class="agent-note">Dates are targets; an item becomes evidence only when its artefact is public.</p>
       </div>
@@ -693,7 +694,7 @@
 <section class="section section-band" id="contact">
   <div class="container">
     <h2>Discuss a postdoctoral or research-fellow opportunity</h2>
-    <p>I am open to positions where molecular simulation, learned potentials and transport questions meet. Target start: early 2027. Defense planned for November 2026; formal degree conferral expected in February 2027. Email is the quickest route; I reply from the address below.</p>
+    <p>I am open to positions where molecular simulation, learned potentials and transport questions meet. Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from early 2027. Email is the quickest route; I reply from the address below.</p>
     <div class="contact-row">
       <a class="contact-email" id="email-link" href="mailto:kaziehsanul45@gmail.com" data-email="kaziehsanul45@gmail.com">kaziehsanul45@gmail.com</a>
       <button class="btn btn-small" type="button" id="copy-email" data-email="kaziehsanul45@gmail.com">Copy email</button>
@@ -714,7 +715,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.8. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
+      <p class="version">Version 2026.9.1. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>

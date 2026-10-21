@@ -1,0 +1,111 @@
+{
+ "id": "browser",
+ "name": "Browser and regression B1-B16, R1",
+ "verdict": "PASS",
+ "chromium": "141.0.7390.37",
+ "items": [
+  {
+   "id": "B1",
+   "name": "Lazy start",
+   "verdict": "PASS",
+   "detail": "no worker or solver script requested during load + 1.5 s; after Run: lab/continuum/worker.js, lab/continuum/core/solver.js, lab/continuum/core/experiment.js"
+  },
+  {
+   "id": "B2",
+   "name": "Run",
+   "verdict": "PASS",
+   "detail": "browser Q = 3.999973109352e-17 m³/s, Node 3.999973109352e-17 m³/s, relative difference 0.00e+0"
+  },
+  {
+   "id": "B3",
+   "name": "Pressure change",
+   "verdict": "PASS",
+   "detail": "Q(4 MPa) / Q(1 MPa) = 4.000000000000, relative difference from 4: 0.00e+0 (full (warm start from the scaled previous solution))"
+  },
+  {
+   "id": "B6",
+   "name": "Baseline comparison",
+   "verdict": "PASS",
+   "detail": "table: ΔQ “−6.40 × 10⁻¹⁸ (−4.00 %)” (computed −6.40 × 10⁻¹⁸), affected pores “1 600” (computed 1 600), largest |ΔJ| “1.01 × 10⁻¹¹ (2.53 × 10⁻⁷ of J)” (computed 1.01 × 10⁻¹¹); strip Q “1.54 × 10⁻¹⁶ m³/s”"
+  },
+  {
+   "id": "B4",
+   "name": "Scopes",
+   "verdict": "PASS",
+   "detail": "tube (100, 100): ΔQ = -3.999949597e-21 m³/s, −G ΔΠ_c²/ΔP = -3.999949572e-21 m³/s, relative difference 6.45e-9; patch (2, 2) closed: max |J| on its 16 faces = 0; whole membrane × 2: Q = 3.199956975e-16 vs Node 3.199956975e-16 (relative 1.54e-16), Q/Q_base = 1.99998655 (between 1 and 2)"
+  },
+  {
+   "id": "B5",
+   "name": "Restore",
+   "verdict": "PASS",
+   "detail": "after restoring one tube: |Q − Q_base|/Q_base = 0.00e+0; after restoring the whole membrane: 0.00e+0"
+  },
+  {
+   "id": "B7",
+   "name": "Export",
+   "verdict": "PASS",
+   "detail": "153023 bytes; all required files present; node reproduce.js exit 0: PASS Q: recomputed 1.53599002050e-16 m^3/s, exported 1.53599002050e-16 m^3/s, relative difference 0.00e+0 (tolerance 1e-9)"
+  },
+  {
+   "id": "B9",
+   "name": "Stale results",
+   "verdict": "PASS",
+   "detail": "10 changes in 159 ms; displayed result revision 20 = current revision 20, ΔP 3.3 MPa (last input 3.3 MPa); strip “1.32 × 10⁻¹⁶ m³/s”; stale results discarded: 0"
+  },
+  {
+   "id": "B8",
+   "name": "Keyboard and touch",
+   "verdict": "PASS",
+   "detail": "keyboard: Enter on Run: converged; ArrowRight on ΔP: 1.1 MPa; arrow key in the scope group: patch; Enter on Apply: 1 patch blocked; ArrowLeft on the map: patch (2, 2) → (1, 2); Enter on the map: zoom; Enter on Restore all: 0 changes left; Enter on Download: continuum-lab-rev4.zip. Touch at 390 px: tap Run: converged; Membrane tab: visible true, aria-selected true; tap on the map: patch (2, 2) → (0, 4); Molecule tab: visible true (map hidden true); Flow tab: visible true"
+  },
+  {
+   "id": "B10",
+   "name": "Layout",
+   "verdict": "PASS",
+   "detail": "horizontal overflow (px) before/after a run with all panels open: 360 px 0/0, 390 px 0/0, 768 px 0/0, 1440 px 0/0; uncaught page errors: none; reduced motion: tracers disabled true, molecule not auto-playing (Play), view switch without camera animation in 67 ms"
+  },
+  {
+   "id": "B11",
+   "name": "Fixed visual scale",
+   "verdict": "PASS",
+   "detail": "baseline at 1 MPa: legend maximum 3.068222e-4 m/s, tracer time factor 1.520507e-2; at 4 MPa fixed: legend maximum 3.068222e-4 (relative 0.00e+0), tracer factor 1.520507e-2, computed maximum / legend maximum = 4.000000000, legend states fixed range and saturation: true; Automatic: legend maximum 1.227289e-3 = result maximum 1.227289e-3, tracer factor 3.801266e-3 (the result's own; 4.000 × faster than at 1 MPa)"
+  },
+  {
+   "id": "B12",
+   "name": "Guided path",
+   "verdict": "PASS",
+   "detail": "1280 px: Q(4 MPa)/Q(1 MPa) = 4.000000000000; patch J max 0 on 16 faces; comparison ΔQ “−6.40 × 10⁻¹⁸ (−4.00 %)” (computed −6.40 × 10⁻¹⁸); membrane view tube zoom, drawn tubes belong to the selected patch true, one tube blocked true, guide finished true (closing text: “Step 6 of 6: Pores in 3D: the tubes around the selected one at true size (0.814 nm wide, 10.0 nm apart). Net transport stops through the blocked tube while its neighbours carry their computed flow; thermal motion is not drawn. Focus pore shows the carbon lattice and the water chain up close.”). 390 px touch: Q(4 MPa)/Q(1 MPa) = 4.000000000000; patch J max 0 on 16 faces; comparison ΔQ “−6.40 × 10⁻¹⁸ (−4.00 %)” (computed −6.40 × 10⁻¹⁸); membrane view tube zoom, drawn tubes belong to the selected patch true, one tube blocked true, guide finished true (closing text: “Step 6 of 6: Pores in 3D: the tubes around the selected one at true size (0.814 nm wide, 10.0 nm apart). Net transport stops through the blocked tube while its neighbours carry their computed flow; thermal motion is not drawn. Focus pore shows the carbon lattice and the water chain up close.”); page errors: none"
+  },
+  {
+   "id": "B13",
+   "name": "Resolution status in the page",
+   "verdict": "PASS",
+   "detail": "default device: PASS (levels 10 vs 20, |ΔQ|/Q = 1.38e-6, same configuration true); closed patch: PASS (|ΔQ|/Q = 1.33e-6, same configuration true); ΔP = 0: NOT_APPLICABLE; panel note: “The resolution check concerns the total flow Q. The chamber velocity field near the port edges converges more slowly and is shown for orientation (Validation, native comparison).”"
+  },
+  {
+   "id": "B14",
+   "name": "3D pore view",
+   "verdict": "PASS",
+   "detail": "3D library requested before the view was opened: 0 (after: lab/continuum/pores3d.js, lab/continuum/vendor/three.module.min.js); frame: 309 colour classes, 69.4 % non-background (phone 307, 67.4 %); tubes reported 25, rendered 25; true geometry and lattice positions true (pitch 10.00 nm, length 2.4595 nm, carbon-centre radius 0.4069 nm); speed = q_i × factor, worst relative deviation 0.00e+0 (factor 5.400034e+20 nm s⁻¹ per m³ s⁻¹, 1 s shown = 60.037 ns); at 4 MPa factor unchanged true, speed ratios 4.00000000000–4.00000000000; patch closed: 25 blocked markers on 25 tubes, all speeds 0 true; reduced motion: still before Play true, moving after Play true; page errors: none"
+  },
+  {
+   "id": "B15",
+   "name": "WebGL fallback",
+   "verdict": "PASS",
+   "detail": "WebGL disabled: view state failed; message shown true: “This view needs WebGL, which this browser has switched off or does not support. The experiment and the other views work without it.”; experiment status converged; page errors: none"
+  },
+  {
+   "id": "B16",
+   "name": "3D view: presets, openings, provenance, caption",
+   "verdict": "PASS",
+   "detail": "opens on focus (target 0.59 nm from the selected tube, camera distance 6.20 nm, bar 1 nm); Array context: distance 18.50 nm, bar 5 nm, tubes, positions, speeds and factor unchanged true; openings {\"holes\":20,\"notches\":5,\"faces\":2}; badge “Continuum-driven schematic”, molecule tag “Recorded CP2K AIMD”; controls before the caption true; caption: “Selected pore: 0.0333 molecules/ns; Whole membrane: 4.00 × 10⁻¹⁷ m³/s; Open pores: 40 000 of 40 000” (expected 0.0333 molecules/ns, 4.00 × 10⁻¹⁷ m³/s, 40 000 of 40 000); one tube closed: “Selected pore: Blocked: no net flow; Whole membrane: 4.00 × 10⁻¹⁷ m³/s; Open pores: 39 999 of 40 000”; 2026.7 blocked-water wording outside the Validation section false; water O–H 0.1 nm, H–O–H 109.47°; guided step 6: preset array, Array context pressed true; phone: opens on focus (distance 7.40 nm, bar 1 nm), Array context 23.00 nm (5 nm); page errors: none"
+  },
+  {
+   "id": "R1",
+   "name": "Regression",
+   "verdict": "PASS",
+   "detail": "home page and Continuum Lab link present; CV assets/cv/Kazi_Ehsanul_Karim_CV.pdf HTTP 200 (application/pdf); Water Lab ran to step 10; CNT inspector time t = 86 fs → t = 98 fs after Play; evidence page “Error-aware MLIPs: methods and software demonstration — Kazi Ehsanul Karim”; page errors: none"
+  }
+ ],
+ "environment": "Chromium 141.0.7390.37 (headless shell, Playwright) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox or real phones"
+}

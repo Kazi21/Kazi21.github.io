@@ -1,6 +1,90 @@
-# The Continuum Lab — from one nanotube to membrane flow
+# The Continuum Lab
 
-Website page: `lab/continuum/` (release 2026.6; 3D pore view added in 2026.7 and recomposed in 2026.8). Status: **live 3D continuum solver with an illustrative pore
+Two experiments since release 2026.9, with a switch between them:
+
+- **Ion transport** (`lab/continuum/`, the main page): "Why does a pore pass one ion and resist another?" — described in
+  the first part of this file.
+- **Water flow through a nanotube membrane** (`lab/continuum/water.html`; release 2026.6, 3D pore view 2026.7–2026.8):
+  described in the second part, unchanged in substance.
+
+# Part 1. Bioinspired ion transport (`lab/continuum/`, release 2026.9)
+
+Status: **live one-dimensional Poisson–Nernst–Planck solver; tube radii, first-shell radii and first-shell water counts
+recorded with CP2K; every other molecular input a literature value or a stated example.** No input is presented as MD-informed.
+
+## What the experiment does
+
+One carbon-nanotube pore (the (6,6), (7,7), (9,9) or (11,11) tube of the recorded CP2K runs; pore radius = tube radius −
+0.170 nm; length 5.00 nm) separates two NaCl reservoirs. The steady, area-averaged Poisson–Nernst–Planck equations for
+Na⁺ and Cl⁻ are solved along the axis, with access regions whose cross-section grows as a cone of slope 4/π (exactly
+Hall's access resistance in the Ohmic limit). A **model ladder** adds one ingredient per step, each compared with the
+classical result on common axes:
+
+1. classical PNP (bulk diffusivities, point ions, neutral pore);
+2. charged rims (ionised carboxylates, fixed charge in Poisson's equation);
+3. finite ion size (Bikerman lattice gas);
+4. solvation, one closure at a time: dehydration with the **recorded CP2K first-shell counts**, dehydration with a
+   rigid-shell geometry, or Born dielectric exclusion; two illustrative lining motifs inspired by coordination
+   chemistry (carbonyl-lined, as in K⁺ channels; N–H / O–H donor-lined, as in CLC) change the illustrative fraction κ
+   of the shell energy the wall gives back (a bioinspired synthetic pore, not a model of a protein channel);
+5. confined mobility;
+6. electro-osmosis with Navier slip (area-averaged Stokes flow driven by the force on the ions).
+
+The excess chemical potential contains only crowding and solvation; mean-field electrostatics stays in Poisson's
+equation, so nothing is counted twice. The page reports the current and its Na⁺/Cl⁻ split, conductance, the water flow,
+the reversal potential under a 10:1 gradient with its GHK-equivalent Na⁺/Cl⁻ selectivity (constant-field inversion with
+reservoir activities: an effective, model-dependent descriptor; statuses finite, beyond the display range, Nernst limit,
+invalid when V_rev lies beyond a Nernst potential, since 2026.9.1), profiles of concentration, potential and excess free energy,
+all six steps at the set voltage, model-domain flags (single file, fewer than one ion in the pore, crowding, overlapping
+double layers), a rule-based ranking of sensitivity to stated input ranges with the molecular calculations that could
+constrain each input (one-at-a-time sensitivity, not an optimal decision), an evidence drawer (value, units, source, conditions, status of every input), a 3D cutaway
+(three.js, loaded with the view) and a reproducible download (JSON and CSV; `node tools/continuum/ions/reproduce_ions.js`).
+
+## Numerics
+
+Finite volumes (447 nodes; 0.0125 nm at the mouths, 0.025 nm in the pore, growth 1.08 out to 300 nm), Scharfetter–Gummel
+fluxes in Slotboom form with the Péclet term (u = c e^{ψ−χ}, χ = Q∫dx/(DA)), so an excluded ion's tiny flux is computed
+without cancellation; Newton's method on a block-tridiagonal system bordered by the flow unknown; continuation in the
+drives; Brent's method for the reversal potential; Float64 in a Web Worker. Units: SI internally scaled by 1 nm, 1 M,
+RT/F and 10⁻⁹ m² s⁻¹.
+
+## Files (ion experiment)
+
+| Path | Content |
+|---|---|
+| `lab/continuum/index.html` | Page (built from `tools/continuum/ions/page.template.html` by `tools/continuum/ions/build_ions_page.js`) |
+| `lab/continuum/ions/core.js` | Solver (UMD: page worker and Node tests) |
+| `lab/continuum/ions/params.js` | Parameter registry with sources and statuses, tube presets, closures, scenario builder, rule-based sensitivity inputs |
+| `lab/continuum/ions/worker.js`, `app.js`, `charts.js`, `ions3d.js`, `ions.css` | Worker protocol, page logic, SVG charts, 3D view, layout |
+| `lab/continuum/ions/data/hydration.json` | First-shell counts of the four CP2K runs with caveats and file hashes |
+| `tools/continuum/ions/TOLERANCES.md` | Acceptance criteria I1–I15 and IB1–IB10 (frozen before evaluation; I15 added for 2026.9.1), how they are applied, record of runs |
+| `tools/continuum/ions/t_ions.js`, `browser_ions.js` | Solver tests (Node) and browser tests (Chromium) |
+| `tools/continuum/ions/ref_pnp.py` | Independent SciPy (solve_bvp) reference for I8; no shared code |
+| `tools/continuum/ions/make_hydration.py` | Recomputes the first-shell counts from the public trajectories (`--check` verifies the JSON) |
+| `tools/continuum/ions/reproduce_ions.js` | Recomputes a downloaded result |
+
+## Reproduce the ion checks
+
+```
+python3 tools/continuum/ions/make_hydration.py --check   # first-shell counts from lab/cnt/data
+node tools/continuum/ions/t_ions.js                       # I1-I15 (about 20 s; I8 calls ref_pnp.py: numpy, scipy)
+python3 -m http.server 8765 &                             # from the repository root, then:
+node tools/continuum/ions/browser_ions.js                 # IB1-IB10 (Playwright + Chromium; WebGL via SwiftShader)
+NODE_PATH=<katex> node tools/continuum/ions/build_ions_page.js
+```
+
+## Known limitations (ion experiment)
+
+- Mean field in pores that usually hold less than one ion; no Coulomb blockade, knock-on or ion pairing.
+- The (6,6) tube holds single-file water: outside the continuum domain, shown for comparison only.
+- One-dimensional, area-averaged; one permittivity in Poisson's equation; no charge regulation.
+- The first-shell counts come from 0.50–0.75 ps runs and are not converged; κ, ε in the pore, D in the pore, slip,
+  ion size, rim charge and pore length are stated examples.
+- NaCl only.
+
+# Part 2. Water flow through a nanotube membrane (`lab/continuum/water.html`)
+
+Page moved from `lab/continuum/` in release 2026.9 (release 2026.6; 3D pore view added in 2026.7 and recomposed in 2026.8). Status: **live 3D continuum solver with an illustrative pore
 conductance**. The continuum calculation is verified; the pore law is a declared input scenario, so no number on the page is a
 calibrated prediction for water in real (6,6) carbon nanotubes (`INSUFFICIENT_EVIDENCE` in the page's decision panel).
 
@@ -68,7 +152,7 @@ which resolves a one-tube change exactly even in a 10¹⁰-pore membrane (test S
 
 | Path | Content |
 |---|---|
-| `lab/continuum/index.html` | Page (built from `tools/continuum/page.template.html` by `tools/continuum/build_page.js`) |
+| `lab/continuum/water.html` | Page (built from `tools/continuum/page.template.html` by `tools/continuum/build_page.js`; at `lab/continuum/index.html` until 2026.8) |
 | `lab/continuum/app.js`, `view.js`, `continuum.css` | Controller, views (device flow, membrane map and tube zoom, recorded molecule, pore-law chart), layout |
 | `lab/continuum/pores3d.js`, `vendor/three.module.min.js`, `vendor/THREE_LICENSE.txt` | 3D pore view (loaded on demand) and the three.js 0.160.0 module build with its MIT licence |
 | `lab/continuum/worker.js` | Continuum worker protocol |
@@ -99,8 +183,9 @@ NODE_PATH=<katex> node tools/continuum/build_page.js    # rebuild the page with 
 <!-- BEGIN:results (written by tools/continuum/make_qa_report.py --readme) -->
 ## Results of this release (generated)
 
-50 PASS, 3 FAIL, 0 NOT_RUN of 53 acceptance checks; every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
+75 PASS, 3 FAIL, 0 NOT_RUN of 78 acceptance checks (both experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
 
+- Ion experiment: solver I1–I15 15 of 15 PASS, browser IB1–IB10 10 of 10 PASS; independent SciPy reference: b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3. Earlier failing solver runs kept (`results/t_ions.run1.json`: I5; `results/t_ions.run2.json`: I14).
 - F1 Developed duct: **PASS** — relative Q difference 4.07 × 10⁻¹¹, velocity normalised L2 4.30 × 10⁻¹¹.
 - F2 Uniform resistance interface (porousBafflePressure): **FAIL** — relative Q difference 0.0212, velocity normalised L2 0.0843.
 - F3 Closed strip: **FAIL** — relative Q difference 0.0197, velocity normalised L2 0.0844.

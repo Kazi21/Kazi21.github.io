@@ -106,7 +106,7 @@
       probe('outlet port centre (half a cell above)', 1, W / 2, B / 2, dz / 2)].join('\n') + '\n';
     files['events.json'] = j({ note: 'ordered input changes; revision = the page revision after the change', events: S.events });
     files['environment.json'] = j({
-      page: 'lab/continuum/', websiteVersion: opt && opt.version, solverVersion: r.solverVersion, generated_utc: new Date().toISOString(),
+      page: 'lab/continuum/water.html', websiteVersion: opt && opt.version, solverVersion: r.solverVersion, generated_utc: new Date().toISOString(),
       browser: typeof navigator !== 'undefined' ? { userAgent: navigator.userAgent, hardwareConcurrency: navigator.hardwareConcurrency || null } : { node: typeof process !== 'undefined' ? process.version : null }, sha256: hashes,
       computation: { mode: r.mode, iterations: r.solver.iterations, wall_s: r.solver.wallMs / 1000, unknowns: r.solver.unknowns },
       randomSeeds: 'none: the solver is deterministic; tracer phases are fixed fractions', molecularDisplay: 'recorded CP2K trajectory (not live MD)', drivingLaw: sc.lawId,
@@ -121,7 +121,7 @@
   function readme(r, S, ch) {
     const sc = r.scenario, d = r.diag, f3 = U.fmt3;
     return '# Continuum Lab experiment, revision ' + r.revision + '\n\n' +
-      'Exported from https://kazi21.github.io/lab/continuum/ (browser CFD solver ' + r.solverVersion + ').\n\n' +
+      'Exported from https://kazi21.github.io/lab/continuum/water.html (browser CFD solver ' + r.solverVersion + ').\n\n' +
       '## What was computed\n\nSteady 3D Stokes flow of water (300 K, ' + sc.mu + ' Pa s) in a feed and a permeate chamber of ' + (sc.W_m * 1e6) + ' µm × ' + (sc.B_m * 1e6) + ' µm, coupled through a membrane of ' + d.poresTotal + ' (6,6) CNT pores at 10 nm pitch. ' +
       'Pressure difference ' + (sc.dP_Pa / 1e6) + ' MPa (permeate port face at 0.101325 MPa). Pore law: ' + sc.lawId + ' (declared input scenario, q = G ΔΠ, G = 1.0e-27 m^3 Pa^-1 s^-1; not a measured CNT property).\n\n' +
       'Total flow Q = ' + d.Q_m3_s.toPrecision(10) + ' m^3/s; |Q_in − Q_out|/Q = ' + f3(d.imbalance) + '; residual ' + f3(r.solver.relResidual) + '.\n\n' +
