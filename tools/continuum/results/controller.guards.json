@@ -1,0 +1,68 @@
+{
+ "id": "controller_guards",
+ "site": ".",
+ "node": "v22.22.0",
+ "deterministic": true,
+ "pass": true,
+ "passed": 9,
+ "total": 9,
+ "rows": [
+  {
+   "id": "nonfinite_packing",
+   "pass": true,
+   "observed": "check_failed",
+   "gate": "G3",
+   "record_valid": true
+  },
+  {
+   "id": "nonfinite_flux_diagnostic",
+   "pass": true,
+   "observed": "check_failed",
+   "gate": "G2",
+   "record_valid": true
+  },
+  {
+   "id": "nonfinite_current",
+   "pass": true,
+   "observed": "check_failed",
+   "gate": "G3",
+   "record_valid": true
+  },
+  {
+   "id": "nonfinite_reversal_packing",
+   "pass": true,
+   "observed": "check_failed",
+   "gate": "G3",
+   "record_valid": true
+  },
+  {
+   "id": "empty_molecular_contract",
+   "pass": true,
+   "observed": "not_calibrated",
+   "reasons": [
+    "MOLECULAR_STRUCTURE_MISSING_OR_INVALID"
+   ]
+  },
+  {
+   "id": "zero_voltage_remains_supported",
+   "pass": true,
+   "observed": "tolerance_reached"
+  },
+  {
+   "id": "closure-illustrative.json",
+   "pass": true,
+   "observed": "illustrative"
+  },
+  {
+   "id": "closure-molecular-template.json",
+   "pass": true,
+   "observed": "blocked"
+  },
+  {
+   "id": "tampered_passed_record",
+   "pass": true,
+   "observed": "rejected"
+  }
+ ],
+ "date": "2026-10-22T20:49:39.973Z"
+}

@@ -218,3 +218,34 @@ alone and from the intact-membrane table for a modified membrane.
 - 21 Oct 2026 (release 2026.9.1; written before the run): the status label of the water page reads "Numerically
   converged"; the home page changed (defense date, Lab card wording). No criterion changed. The 2026.9 record is kept
   as `results/browser.2026.9-run3.json`; run 1 of 2026.9.1: 17 of 17 PASS (`results/browser.json`).
+
+- 22 Oct 2026 (release 2026.10): the home page changed (hero sentence, Lab card, footer) and the ion page gained the
+  numerical controller; the water page changed only in its version number (footer and data attribute) and in the test
+  records it embeds. No criterion changed. The 2026.9.1 record is kept as `results/browser.2026.9.1-run1.json`; run 1
+  of 2026.10 (Chromium 131.0.6778.0): 17 of 17 PASS (now `results/browser.2026.10-run1.json`).
+
+- 22 Oct 2026 (release 2026.10, written before run 2): **B1 procedure.** In the Chromium 131 build used for 2026.10 the
+  page's `request` event does not report the script of a dedicated worker, so in run 1 the "after Run" list of B1 named
+  only `core/solver.js` and `core/experiment.js` (not `worker.js`), and the "before Run" half could not have seen an early
+  worker load. As for IB1 of the ion experiment (`ions/TOLERANCES.md`, "Browser procedure for release 2026.10"), the suite
+  now also records workers through Playwright's `worker` event. The criterion is unchanged; run 1 is kept as
+  `results/browser.2026.10-run1.json`. After run 1 the home page (Lab card wording) and a stylesheet shared with the ion
+  page (`lab/continuum/ions/ions.css`, the panel's position) changed, so the suite is run again (run 2).
+- 22 Oct 2026 (release 2026.10), runs after the B1 note: run 2 stalled in B8. In the keyboard session the page stopped
+  responding after Enter on Run, the 120 s wait for "converged" never returned, and the run was stopped after about
+  20 min. B1–B7 and B9 had passed; no record was written, because the suite writes its record at the end. The log is
+  kept as `results/browser.2026.10-run2-stalled.log`. Run 3, with nothing else running on the machine: 17 of 17 PASS
+  (`results/browser.json`); B1 now lists `worker.js` among the files loaded after Run.
+
+- 23 Oct 2026 (release 2026.10.1; written before the run): the home page changed (a shorter Continuum Lab card; publication
+  statuses as in the final CV) and the public CV was replaced by a version without referee details; the ion page changed
+  (controller guards, a shorter controller panel, less text above the 3D view). The water page changed only in its version
+  number. No criterion changed. The 2026.10 run-3 record is kept as `results/browser.2026.10-run3.json`.
+  Run 1 of 2026.10.1, with nothing else running: 17 of 17 PASS (`results/browser.json`).
+  After run 1 the home page gained a portrait in Contact (a new image and a rule in `styles/components.css`), so the suite
+  is run again; run 1 is kept as `results/browser.2026.10.1-run1.json` (written before run 2).
+  Run 2 was stopped by its 580 s time limit during B8, while the touch session waited for its first result (line 159);
+  B1–B7 and B9 had passed. The cause was not established. No record was written, because the suite writes its record at
+  the end; the log is kept as `results/browser.2026.10.1-run2-stalled.log`. Run 3, with a 1500 s limit and nothing else
+  running, completed in about 3.5 min: 17 of 17 PASS (`results/browser.json`; R1 again downloads the public CV, HTTP 200).
+

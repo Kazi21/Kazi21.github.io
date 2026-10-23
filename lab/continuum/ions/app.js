@@ -1,7 +1,8 @@
 /* Continuum Lab — ion experiment: page logic. Nothing is computed or loaded before the visitor starts: the solver
    (core.js, params.js, in a Web Worker), the charts and the 3D view (ions3d.js with three.js) are requested on Start.
    Every number on the page comes from the worker's solution of the selected model; sentences are assembled from
-   those numbers. */
+   those numbers. The numerical controller (controller.js, run by the worker) checks the displayed current and reversal
+   potential on finer grids; its decisions fill the panel "What limits this prediction?". */
 (function () {
   'use strict';
   const root = document.getElementById('ion-lab');
@@ -22,7 +23,7 @@
   const share = (x) => (!isFinite(x) ? '–' : x > 0.9999 ? '> 99.99 %' : x > 0.99 ? (100 * x).toFixed(2) + ' %' : x < 1e-4 && x > 0 ? '< 0.01 %' : pct(x));
 
   const S = {
-    opts: { preset: '7,7', step: 6, V: 0.1, c: 100, solvation: 'cp2k', lining: 'carbon', epsP: 30, rimN: 2, Dratio: 0.5, slip: 10 },
+    opts: { preset: '7,7', step: 6, V: 0.1, c: 100, solvation: 'cp2k', lining: 'carbon', epsP: 30, rimN: 2, Dratio: 0.5, slip: 10, target: 'standard' },
     started: false, req: 0, res: {}, overlay: 'conc', species: 0, prof: 'c', cam: 'pore', playing: !RM, guide: -1, hyd: null,
     worker: null, view: null, viewState: 'none', timer: 0, times: {},
   };
@@ -39,6 +40,7 @@
     camPore: $('.ion-cam-pore'), camDevice: $('.ion-cam-device'), play: $('.ion-play'), resetView: $('.ion-reset-view'),
     overlayBtns: $$('[data-overlay]'), speciesBtns: $$('[data-species]'), profBtns: $$('[data-prof]'), announce: $('.ion-announce'),
     guideDo: $('.ion-guide-do'), guideSkip: $('.ion-guide-skip'), guideText: $('#ion-guide-text'), guideSteps: $$('.cl-guide-steps li'), guide: $('#ion-guide'),
+    target: $('#ion-target'), ctrlChip: $('#ion-ctrl-chip'), ctrl: $('#ion-ctrl'), molChip: $('#ion-mol-chip'), request: $('#ion-request'), dlDecision: $('.ion-dl-decision'), liveChip: $('#ion-live-chip'),
   };
 
   /* ------------------------------------------------------------------ loading */
@@ -50,6 +52,7 @@
     if (!libs) libs = (async () => {
       if (!window.IonCore) await loadScript('ions/core.js');
       if (!window.IonParams) await loadScript('ions/params.js');
+      if (!window.IonController) await loadScript('ions/controller.js');
       if (!window.IonCharts) await loadScript('ions/charts.js');
       try { const r = await fetch('ions/data/hydration.json'); if (r.ok) S.hyd = await r.json(); } catch (e) { S.hyd = null; }
     })();
@@ -83,6 +86,7 @@
     o.preset = el.preset.value;
     const cl = el.closures.find((r) => r.checked); o.solvation = cl ? cl.value : 'cp2k';
     o.lining = el.lining.value; o.epsP = Number(el.eps.value); o.c = Number(el.c.value); o.rimN = Number(el.rim.value); o.Dratio = Number(el.D.value); o.slip = Number(el.slip.value);
+    o.target = el.target.value;
     syncControls();
   }
   function writeControls() {
@@ -91,6 +95,7 @@
     el.steps.forEach((r) => { r.checked = Number(r.value) === o.step; });
     el.preset.value = o.preset; el.closures.forEach((r) => { r.checked = r.value === o.solvation; });
     el.lining.value = o.lining; el.eps.value = String(o.epsP); el.c.value = String(o.c); el.rim.value = String(o.rimN); el.D.value = String(o.Dratio); el.slip.value = String(o.slip);
+    el.target.value = o.target;
     syncControls();
   }
   function syncControls() {
@@ -107,11 +112,11 @@
     clearTimeout(S.timer); S.timer = setTimeout(run, delay || 0);
   }
   el.V.addEventListener('input', () => { readControls(); schedule(160); });
-  [el.preset, el.lining, el.eps, el.c, el.rim, el.D, el.slip].forEach((x) => x.addEventListener('change', () => { readControls(); schedule(0); }));
+  [el.preset, el.lining, el.eps, el.c, el.rim, el.D, el.slip, el.target].forEach((x) => x.addEventListener('change', () => { readControls(); schedule(0); }));
   el.steps.concat(el.closures).forEach((r) => r.addEventListener('change', () => { readControls(); schedule(0); }));
   el.run.addEventListener('click', () => { readControls(); run(); });
   el.posterRun.addEventListener('click', () => { readControls(); run(); });
-  el.reset.addEventListener('click', () => { S.opts = { preset: '7,7', step: 6, V: 0.1, c: 100, solvation: 'cp2k', lining: 'carbon', epsP: 30, rimN: 2, Dratio: 0.5, slip: 10 }; writeControls(); schedule(0); });
+  el.reset.addEventListener('click', () => { S.opts = { preset: '7,7', step: 6, V: 0.1, c: 100, solvation: 'cp2k', lining: 'carbon', epsP: 30, rimN: 2, Dratio: 0.5, slip: 10, target: 'standard' }; writeControls(); schedule(0); });
 
   /* ------------------------------------------------------------------ run */
   async function run() {
@@ -119,9 +124,11 @@
     setState('solving', 'Solving …');
     try { await ensureLibs(); } catch (e) { setState('failed', 'Failed'); status('The solver files could not be loaded: ' + e.message, true); return; }
     ensureWorker(); ensureView();
-    S.req++; S.res = { opts: JSON.parse(JSON.stringify(S.opts)) }; S.times = { start: performance.now() };
+    S.req++; S.res = { opts: JSON.parse(JSON.stringify(S.opts)), ctrlLevels: [] }; S.times = { start: performance.now() };
     root.classList.add('is-stale');
-    S.worker.postMessage({ type: 'run', id: S.req, opts: S.opts });
+    el.dlDecision.disabled = true;
+    setChip(el.ctrlChip, 'solving', 'Waiting for the result …');
+    S.worker.postMessage({ type: 'run', id: S.req, opts: S.opts, version: VERSION });
   }
   function onWorker(ev) {
     const m = ev.data || {};
@@ -131,19 +138,24 @@
     if (m.stage === 'main') { S.res.main = d; root.classList.remove('is-stale'); renderMain(); }
     else if (m.stage === 'iv') { S.res.iv = d; renderIV(); }
     else if (m.stage === 'sel') { S.res.sel = d; renderSel(); }
+    else if (m.stage === 'ctrl-level') { S.res.ctrlLevels.push(d.entry); renderCtrlProgress(); }
+    else if (m.stage === 'ctrl') { S.res.ctrl = d; renderCtrl(); }
     else if (m.stage === 'sens') { S.res.sens = d; renderNext(); }
+    else if (m.stage === 'decision') { S.res.decision = d; renderDecision(); }
     else if (m.stage === 'done') { S.res.done = d; finishRun(); }
-    else if (m.stage === 'error') { setState('failed', 'Failed'); status('The solver stopped: ' + d.message, true); }
+    else if (m.stage === 'error') { setState('failed', 'Failed'); setChip(el.ctrlChip, 'failed', 'Failed'); status('The solver stopped: ' + d.message, true); }
   }
   function setState(cls, text) { el.state.className = 'cl-state is-' + cls; el.state.textContent = text; }
+  function setChip(chip, cls, text) { chip.className = 'cl-state is-' + cls; chip.textContent = text; }
   function status(text, err) { el.vstatus.hidden = !text; el.vstatus.textContent = text || ''; el.vstatus.classList.toggle('is-error', !!err); }
 
   /* ------------------------------------------------------------------ rendering: main result */
   const STEP_NAMES = ['', 'Classical PNP', '+ charged rims', '+ ion size', '+ solvation', '+ confined mobility', '+ electro-osmosis'];
   function renderMain() {
     const d = S.res.main, o = d.opts, m = d.model, Ld = d.ladder;
-    const ok = m.ok;
-    setState(ok ? 'converged' : 'failed', ok ? 'Numerically converged' : 'Not converged');   // numerical status only; the model domain is in the flags
+    // numerical status: decided by the controller after the grid check (renderCtrl); the model domain is in the flags
+    setState('solving', 'Checking the grid …');
+    el.liveChip.hidden = false;
     el.closureChip.hidden = false; el.closureChip.textContent = o.step >= 4 ? 'Illustrative molecular closure' : 'No molecular closure'; el.closureChip.classList.toggle('is-none', o.step < 4);
     el.I.textContent = pA(m.I);
     el.Is.textContent = 'Na⁺ ' + pA(m.Ispecies[0]) + ' · Cl⁻ ' + pA(m.Ispecies[1]) + ' at ' + mV(o.V);
@@ -185,6 +197,72 @@
     return s;
   }
 
+  /* ------------------------------------------------------------------ numerical controller and decision record */
+  const CHIP = { tolerance_reached: 'converged', budget_exhausted: 'warn', not_converged: 'failed', check_failed: 'failed', refused: 'failed' };
+  const pA5 = (I) => (I !== null && isFinite(I) ? (I * 1e12).toPrecision(5) : '–');
+  const mV5 = (V) => (V === null || !isFinite(V) ? '–' : (V > 0 ? '+' : V < 0 ? '−' : '') + Math.abs(V * 1000).toFixed(4));
+  const chgTxt = (c) => (!c ? '–' : (c.mode === 'absolute_floor' ? '< 10⁻¹⁶ A' : c.current_rel === null ? '–' : (100 * c.current_rel).toPrecision(3) + ' %') + (c.V_rev_V !== null ? ' · ' + Number((c.V_rev_V * 1000).toPrecision(3)) + ' mV' : ''));
+  function decisionTxt(e, rec) {
+    if (e.decision === 'compare') return 'Compare with level ' + (e.level + 1);
+    if (e.decision === 'refine') return 'Outside the target: refine to level ' + (e.level + 1);
+    if (e.rule === 4) return 'Within the target: stop';
+    if (e.rule === 6) return 'Outside the target, end of budget: stop';
+    return 'Gate ' + e.failed_gate + ' failed: stop';
+  }
+  function levelsTable(levels, out) {
+    return '<div class="cl-table-wrap"><table class="cl-table ion-ctrl-table"><thead><tr><th scope="col">Level</th><th scope="col">Nodes</th><th scope="col">I (pA)</th><th scope="col">V<sub>rev</sub> (mV)</th><th scope="col">Change from the level before</th><th scope="col">Decision</th></tr></thead><tbody>' +
+      levels.map((e) => '<tr' + (out && out.reported_level === e.level ? ' class="is-current"' : '') + '><th scope="row">' + e.level + (out && out.reported_level === e.level ? ' (reported)' : '') + '</th><td>' + e.nodes + '</td><td>' + esc(pA5(e.I_A)) + '</td><td>' + esc(mV5(e.V_rev_V)) + '</td><td>' + esc(chgTxt(e.change)) + '</td><td>' + esc(decisionTxt(e)) + '</td></tr>').join('') +
+      '</tbody></table></div>' +
+      '<ol class="ion-cards ion-ctrl-cards">' + levels.map((e) => '<li' + (out && out.reported_level === e.level ? ' class="is-current"' : '') + '><p class="ion-card-h"><b>Grid level ' + e.level + (out && out.reported_level === e.level ? ' (reported)' : '') + '</b><span class="cl-small">' + e.nodes + ' nodes</span></p>' +
+        '<p>I ' + esc(pA5(e.I_A)) + ' pA · V<sub>rev</sub> ' + esc(mV5(e.V_rev_V)) + ' mV</p>' + (e.change ? '<p class="cl-small">Change from level ' + (e.level - 1) + ': ' + esc(chgTxt(e.change)) + '</p>' : '') + '<p><b>' + esc(decisionTxt(e)) + '</b></p></li>').join('') + '</ol>';
+  }
+  const bare = (msg, st) => { const t = IonController.STATUS_TEXT[st], r = msg.indexOf(t) === 0 ? msg.slice(t.length).replace(/^[:\s]+/, '') : msg; return r.charAt(0).toUpperCase() + r.slice(1); };
+  function targetTxt() {
+    const t = IonController.TARGETS[S.res.opts.target] || IonController.TARGETS.standard;
+    return 'Target ' + t.label + ' (change between grid levels: current ≤ ' + t.label + ', reversal potential ≤ ' + Number((IonController.V_PER_T * t.t * 1000).toPrecision(3)) + ' mV) · budget: grid levels 1–' + IonController.MAX_LEVEL + ' · gates G1–G4';
+  }
+  function renderCtrlProgress() {
+    const L = S.res.ctrlLevels, last = L[L.length - 1];
+    setChip(el.ctrlChip, 'solving', last && last.decision !== 'stop' ? 'Checking grid level ' + (last.level + 1) + ' …' : 'Checking …');
+    el.ctrl.innerHTML = '<p class="ion-ctrl-msg">' + esc(last ? last.reason : '') + '</p>' + levelsTable(L, null);
+  }
+  function renderCtrl() {
+    const n = S.res.ctrl.numerical, out = n.outcome, st = out.status, text = IonController.STATUS_TEXT[st];
+    setState(CHIP[st], text); setChip(el.ctrlChip, CHIP[st], text);
+    el.ctrl.innerHTML = '<p class="ion-ctrl-msg">' + esc(bare(out.message, st)) + '</p>' + (n.levels.length ? levelsTable(n.levels, out) : '') + '<p class="cl-small">' + esc(targetTxt()) + ' · rule set ' + esc(IonController.POLICY.version) + ' · <a href="#controller">thresholds and rules</a></p>';
+    // tiles: when the reported level is not the screening level, show the reported values and say so; when no result is
+    // certified (a failed gate), the screening values stay and are marked as not certified
+    const m = S.res.main;
+    if (m && (st === 'not_converged' || st === 'check_failed')) {
+      const note = 'screening grid, not certified: ' + text.toLowerCase();
+      el.Is.textContent = note; el.Gs.textContent = note;
+      el.Ps.insertAdjacentHTML('beforeend', ' · <b>' + esc(note) + '</b>');
+      el.qline.insertAdjacentHTML('beforeend', ' · <b>not certified</b>');
+    }
+    if (m && out.reported_level && out.reported_level !== 1 && out.I_A !== null) {
+      const o = m.opts, lv = n.levels[out.reported_level - 1], note = (st === 'tolerance_reached' ? 'refined' : 'finest grid, not certified') + ': grid level ' + out.reported_level + ' (' + lv.nodes + ' nodes)';
+      el.I.textContent = pA(out.I_A); el.Is.textContent = note;
+      if (o.V !== 0) { el.G.textContent = f3(Math.abs(out.I_A / o.V) * 1e12) + ' pS'; el.Gs.textContent = 'G at grid level ' + out.reported_level + '; ' + el.Gs.textContent + ' on the screening grid'; }
+      el.qline.innerHTML = '<b>' + esc(pA(out.I_A)) + '</b> at ' + esc(mV(o.V)) + ' · ' + esc(STEP_NAMES[o.step]) + ' · ' + esc(IonParams.presetOf(o.preset).label) + ' tube · grid level ' + out.reported_level;
+      if (out.V_rev_V !== null) { const sv = IonParams.selectivity(o, out.V_rev_V); el.P.textContent = mV3(out.V_rev_V); el.Ps.innerHTML = 'GHK-equivalent Na⁺/Cl⁻ selectivity <b>' + esc(sv.text) + '</b> · ' + esc(note); }
+    }
+    el.announce.textContent = text + '.';
+  }
+  const MOL = { illustrative_closure: ['Illustrative closure', 'ion-mol-ill'], illustrative_inputs: ['Illustrative inputs', 'ion-mol-ill'], no_ranked_inputs: ['No ranked inputs', 'ion-mol-none'] };
+  function renderDecision() {
+    const rec = S.res.decision.record, me = rec.molecular_evidence, rq = rec.request, mc = MOL[me.inputs_status] || ['–', 'ion-mol-none'];
+    el.molChip.className = 'cl-state ' + mc[1]; el.molChip.textContent = mc[0];
+    if (rq) {
+      el.request.innerHTML = '<div class="ion-request"><p class="ion-request-h"><span class="cl-pass is-warn">Calculation request · not run</span></p>' +
+        '<p><b>' + esc(rq.input) + '</b> (' + esc(rq.range) + ') has the largest one-at-a-time sensitivity: across that range the current at +100 mV changes by a factor of ' + esc(f3(rq.sensitivity_factor)) + '.</p>' +
+        '<p>A calculation that could constrain it: ' + esc(rq.calculation) + '.</p>' +
+        '<p class="cl-small">Not run; nothing is submitted from this page. Basis: one-at-a-time sensitivity on the screening grid, not expected information gain (full ranking under “Sensitivity ranking”).</p></div>';
+    } else {
+      el.request.innerHTML = '<p class="cl-small">' + esc(me.request_rule) + (me.top_input ? ' Largest sensitivity: ' + esc(me.top_input.name) + ' (factor ' + esc(f3(me.top_input.factor)) + ').' : '') + '</p>';
+    }
+    el.dlDecision.disabled = false;
+  }
+
   /* ------------------------------------------------------------------ charts */
   const C = () => window.IonCharts.COLORS;
   // charts are drawn at the width of their card (300–640 px), so axis text keeps its size on a phone
@@ -205,7 +283,7 @@
       aria: 'Current–voltage curves from −200 to +200 mV. At +200 mV this model gives ' + f3(d.model[d.model.length - 1].I * 1e12) + ' pA and the classical reference ' + f3(d.reference[d.reference.length - 1].I * 1e12) + ' pA.' });
     const leg = IonCharts.legend(series.slice().reverse().map((s) => ({ color: s.color, dash: s.dash, width: s.width, name: s.name })).concat([{ color: C().mark, marker: true, width: 0, name: 'set voltage' }]));
     const ratio = d.reference[d.reference.length - 1].I !== 0 ? d.model[d.model.length - 1].I / d.reference[d.reference.length - 1].I : NaN;
-    el.iv.innerHTML = svg + leg + '<p class="cl-small">Same pore, same reservoirs (' + (o.c / 1000).toPrecision(3) + ' M on both sides). At +200 mV this model carries ' + f3(ratio) + ' times the classical current. Solved at 17 voltages in ' + (d.ms / 1000).toFixed(2) + ' s.</p>';
+    el.iv.innerHTML = svg + leg + '<p class="cl-small">Same pore, same reservoirs (' + (o.c / 1000).toPrecision(3) + ' M on both sides). At +200 mV this model carries ' + f3(ratio) + ' times the classical current. Solved at 17 voltages in ' + (d.ms / 1000).toFixed(2) + ' s on the screening grid (level 1).</p>';
   }
   function renderProfiles() {
     const d = S.res.main; if (!d || !window.IonCharts) return;
@@ -270,14 +348,14 @@
   }
   function renderNext() {
     const d = S.res.sens;
-    if (!d.rows.length) { el.next.innerHTML = '<p class="cl-small">The classical model has no illustrative molecular inputs: every input is a literature value or a setting. Add a step to rank the sensitivity of the current to stated input ranges.</p>'; return; }
+    if (!d.rows.length) { el.next.innerHTML = '<p class="cl-small">The classical model has no inputs with a stated range to rank: its inputs are settings, literature and derived values, the recorded tube radius and the fixed 5 nm pore length (an illustrative geometric setting of the experiment). Add a step to rank the sensitivity of the current to stated input ranges.</p>'; return; }
     const top = d.rows[0];
     el.next.innerHTML = '<p>Largest sensitivity: <b>' + esc(top.name) + '</b> (' + esc(top.range) + ') changes the current at +100 mV by a factor of ' + f3(top.factor) + '. A molecular calculation that could constrain it: ' + esc(top.calc) + '.</p>' +
-      '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">#</th><th scope="col">Illustrative input</th><th scope="col">Range</th><th scope="col">I(+100 mV)</th><th scope="col">Factor</th><th scope="col">Molecular calculation that could constrain it</th></tr></thead><tbody>' +
+      '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">#</th><th scope="col">Input</th><th scope="col">Range</th><th scope="col">I(+100 mV)</th><th scope="col">Factor</th><th scope="col">Molecular calculation that could constrain it</th></tr></thead><tbody>' +
       d.rows.map((r, i) => '<tr><td>' + (i + 1) + '</td><th scope="row">' + esc(r.name) + '</th><td>' + esc(r.range) + '</td><td>' + esc(f3(Math.min(r.Ilo, r.Ihi) * 1e12) + '–' + f3(Math.max(r.Ilo, r.Ihi) * 1e12)) + ' pA</td><td>× ' + esc(f3(r.factor)) + '</td><td>' + esc(r.calc) + '</td></tr>').join('') +
       '</tbody></table></div>' +
       '<ol class="ion-cards ion-rank-cards">' + d.rows.map((r) => '<li><p class="ion-card-h"><b>' + esc(r.name) + '</b><span class="ion-card-f">× ' + esc(f3(r.factor)) + '</span></p><p class="cl-small">Range ' + esc(r.range) + ': I(+100 mV) ' + esc(f3(Math.min(r.Ilo, r.Ihi) * 1e12) + '–' + f3(Math.max(r.Ilo, r.Ihi) * 1e12)) + ' pA</p><p>Could be constrained by: ' + esc(r.calc) + '</p></li>').join('') + '</ol>' +
-      '<p class="cl-small">Rule-based: each illustrative input of the current model step is moved across the stated range (others fixed) and the inputs are ranked by the change in the current at +100 mV (' + esc(pA(d.I0)) + ' at the stated values). This is one-at-a-time sensitivity, not expected information gain, calibrated uncertainty reduction or a cost-optimal choice. No learning is involved; the ranking changes when an input is replaced by an assessed calculation.</p>';
+      '<p class="cl-small">Rule-based, on the screening grid (level 1): each input of the current model step that has a stated range (the illustrative inputs and, with the recorded shells, the first-shell count) is moved across that range (others fixed) and the inputs are ranked by the change in the current at +100 mV (' + esc(pA(d.I0)) + ' at the stated values). This is one-at-a-time sensitivity, not expected information gain, calibrated uncertainty reduction or a cost-optimal choice. No learning is involved; the ranking changes when an input is replaced by an assessed calculation.</p>';
   }
   const STATUS_CLASS = { Literature: 'is-lit', Recorded: 'is-rec', Derived: 'is-der', Illustrative: 'is-ill', Setting: 'is-set' };
   function renderEvidence() {
@@ -292,23 +370,25 @@
     const d = S.res.main, o = d.opts;
     el.ladder.innerHTML = '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">Step</th><th scope="col">I at ' + esc(mV(o.V)) + '</th><th scope="col">Na⁺ share</th><th scope="col">Na⁺ / Cl⁻ in the pore</th><th scope="col">Water flow</th></tr></thead><tbody>' +
       d.ladder.map((r) => '<tr' + (r.step === o.step ? ' class="is-current"' : '') + '><th scope="row">' + r.step + ' ' + esc(STEP_NAMES[r.step]) + '</th><td>' + esc(pA(r.I)) + '</td><td>' + esc(r.I !== 0 ? share(r.INa / r.I) : '–') + '</td><td>' + esc(f3(r.nNa) + ' / ' + f3(r.nCl)) + '</td><td>' + esc(r.step >= 6 ? f3(molns(r.Q)) + ' /ns' : '–') + '</td></tr>').join('') +
-      '</tbody></table></div><p class="cl-small">Same tube, voltage and settings; each step adds one ingredient. “In the pore”: mean number of ions between the mouths.</p>';
+      '</tbody></table></div><p class="cl-small">Same tube, voltage and settings; each step adds one ingredient. “In the pore”: mean number of ions between the mouths. Screening grid (level 1).</p>';
   }
   function renderMembrane() {
     const m = S.res.main.model, o = S.res.main.opts;
-    el.membrane.textContent = o.V !== 0 ? 'Membrane estimate: with independent pores at one per 100 nm² (10¹⁶ m⁻²), all at the same voltage, the area conductance would be ' + sci(1e16 * Math.abs(m.I / o.V), 3) + ' S m⁻². This ignores shared access resistance and concentration polarisation, so it is an upper bound.' : '';
+    el.membrane.textContent = o.V !== 0 ? 'Membrane estimate: with independent pores at one per 100 nm² (10¹⁶ m⁻²), all at the same voltage, the area conductance would be ' + sci(1e16 * Math.abs(m.I / o.V), 3) + ' S m⁻². This independent-pore estimate neglects shared access resistance and concentration polarisation.' : '';
   }
   function renderNumerics() {
     const d = S.res.main, m = d.model, t = S.times;
     el.numerics.innerHTML = '<div class="cl-table-wrap"><table class="cl-table"><tbody>' +
       '<tr><th scope="row">Grid</th><td>' + m.nodes + ' nodes, 300 nm of access region on each side; pore radius ' + f3(m.poreRadius * 1e9) + ' nm, length ' + f3(m.half * 2e9) + ' nm</td></tr>' +
-      '<tr><th scope="row">Newton (selected model)</th><td>' + m.iterations + ' iterations after ' + m.continuationSteps + ' continuation steps; scaled residual ' + sci(m.residual, 2) + '; converged: ' + (m.ok ? 'yes' : 'no') + '</td></tr>' +
+      '<tr><th scope="row">Newton (selected model)</th><td>' + m.iterations + ' iterations after ' + m.continuationSteps + ' continuation steps; scaled residual ' + sci(m.residual, 2) + ' (solver stopping criterion 10⁻¹¹: ' + (m.ok ? 'met' : 'not met') + '; controller gate G1, at most 10⁻¹⁰: ' + (m.residual <= IonController.RESIDUAL_MAX ? 'passed' : 'failed') + ')</td></tr>' +
       '<tr><th scope="row">Flux conservation</th><td>largest face-to-mean deviation ' + sci(Math.max(...m.Jdev), 2) + ' (Na⁺, Cl⁻ relative to their own fluxes)</td></tr>' +
       '<tr><th scope="row">Debye length · packing</th><td>' + f3(m.debyeLength * 1e9) + ' nm · largest packing fraction ' + f3(m.packingMax) + '</td></tr>' +
-      '<tr><th scope="row">Timing</th><td>' + ['main', 'iv', 'sel', 'sens'].filter((k) => t[k]).map((k) => ({ main: 'six steps at the set voltage', iv: 'current–voltage curves', sel: 'reversal potentials', sens: 'input ranking' })[k] + ' ready after ' + (t[k] / 1000).toFixed(2) + ' s').join('; ') + '</td></tr>' +
+      (S.res.ctrl ? '<tr><th scope="row">Numerical controller</th><td>' + esc(IonController.STATUS_TEXT[S.res.ctrl.numerical.outcome.status]) + '; levels ' + S.res.ctrl.numerical.levels.map((e) => e.level + ' (' + e.nodes + ' nodes)').join(', ') + '; ' + (S.res.ctrl.ms / 1000).toFixed(2) + ' s for the finer grids</td></tr>' : '') +
+      '<tr><th scope="row">Timing</th><td>' + ['main', 'iv', 'sel', 'ctrl', 'sens'].filter((k) => t[k]).map((k) => ({ main: 'six steps at the set voltage', iv: 'current–voltage curves', sel: 'reversal potentials', ctrl: 'grid check', sens: 'input ranking' })[k] + ' ready after ' + (t[k] / 1000).toFixed(2) + ' s').join('; ') + '</td></tr>' +
       '</tbody></table></div>';
   }
   function finishRun() {
+    if (!S.res.main) { el.dlDecision.disabled = !S.res.decision; return; }   // a refused query: nothing was solved
     renderNumerics();
     el.dlJson.disabled = false; el.dlCsv.disabled = false;
   }
@@ -359,15 +439,22 @@
           nernst_Na_V: r.sel.model.sel ? r.sel.model.sel.nernstNa : null, nernst_Cl_V: r.sel.model.sel ? r.sel.model.sel.nernstCl : null, beyond_nernst_V: r.sel.model.sel ? r.sel.model.sel.beyond : null, Q_at_rev_m3_s: r.sel.model.Q },
         reference: { V_rev_V: r.sel.reference.V, ratio: r.sel.reference.sel ? r.sel.reference.sel.ratio : null, status: r.sel.reference.sel ? r.sel.reference.sel.status : null, shown: r.sel.reference.sel ? r.sel.reference.sel.text : null } } : null,
       ranking: r.sens ? r.sens.rows : null, evidence: IonParams.registry(r.main.opts),
+      decision: r.decision ? r.decision.record : null,
       profiles: { x_m: m.x, r_m: m.r, phi_V: m.phi, c_mol_m3: m.c, mu_ex_J_mol: m.muEx },
     };
   }
   el.dlJson.addEventListener('click', async () => {
     if (!S.res.main) return;
     const j = resultJson();
-    j.environment = { userAgent: navigator.userAgent, solver_files: [{ path: 'lab/continuum/ions/core.js', sha256: await sha256('ions/core.js') }, { path: 'lab/continuum/ions/params.js', sha256: await sha256('ions/params.js') }] };
+    j.environment = { userAgent: navigator.userAgent, solver_files: [{ path: 'lab/continuum/ions/core.js', sha256: await sha256('ions/core.js') }, { path: 'lab/continuum/ions/params.js', sha256: await sha256('ions/params.js') }, { path: 'lab/continuum/ions/controller.js', sha256: await sha256('ions/controller.js') }] };
     save('continuum-ions-' + S.res.main.opts.preset.replace(',', '-') + '-step' + S.res.main.opts.step + '.json', JSON.stringify(j, null, 1), 'application/json');
     el.dlNote.textContent = 'Saved the JSON result. Recompute it with node tools/continuum/ions/reproduce_ions.js <file>.';
+  });
+  el.dlDecision.addEventListener('click', () => {
+    if (!S.res.decision) return;
+    const o = S.res.main ? S.res.main.opts : S.res.opts;
+    save('continuum-ions-decision-' + String(o.preset).replace(',', '-') + '-step' + o.step + '-' + o.target + '.json', JSON.stringify(S.res.decision.record, null, 1), 'application/json');
+    el.dlNote.textContent = 'Saved the decision record (JSON).';
   });
   el.dlCsv.addEventListener('click', () => {
     if (!S.res.main) return;
@@ -384,7 +471,7 @@
     { text: 'Step 3 · Add ion size and the free energy of shedding water, with the first-shell counts recorded in the CP2K run of this (7,7) tube (chart below the 3D view).', set: { step: 4, solvation: 'cp2k' } },
     { text: 'Step 4 · Let the water move: confined mobility, then electro-osmotic flow with 10 nm slip. The water-flow tile shows the computed flow.', set: { step: 6 } },
     { text: 'Step 5 · Same pore, another closure assumption: the rigid-shell geometry removes far more water than the recorded shells do. The difference is the sensitivity of the prediction to the closure, not a validation of either. Compare the curves and the reversal potential.', set: { solvation: 'shell' } },
-    { text: 'Step 6 · Inspect the evidence: every input with its value, source and status. Only the tube radii, the first-shell radii and the first-shell counts come from the recorded CP2K runs; the rest are literature values or stated examples.', set: { solvation: 'cp2k' }, open: true },
+    { text: 'Step 6 · Inspect the evidence: every input with its value, source and status. Only the tube radii, the first-shell radii and the first-shell counts come from the recorded CP2K runs; the rest are literature values or stated examples. “What limits this prediction?” records the grid check and the molecular calculation that could constrain the most influential input.', set: { solvation: 'cp2k' }, open: true },
   ];
   function guideGo(i) {
     S.guide = i; el.guide.classList.add('is-on');

@@ -1,0 +1,111 @@
+{
+ "id": "ions",
+ "name": "Ion experiment solver and controller I1–I17",
+ "verdict": "PASS",
+ "items": [
+  {
+   "id": "I1",
+   "name": "Equilibrium",
+   "verdict": "PASS",
+   "detail": "24 cases (4 presets × 6 steps): largest |J_i(0)|/|J_i(100 mV)| = 3.74e-17 (9,9 step 5 species 1); largest |Q(0)|/|Q(100 mV)| = 6.26e-18 (step 6; Q ≡ 0 without electro-osmosis); largest deviation from the Boltzmann relation c_i e^{ψ_i} = constant: 4.33e-15; all converged: true"
+  },
+  {
+   "id": "I2",
+   "name": "Homogeneous Ohmic limit",
+   "verdict": "PASS",
+   "detail": "G = 79.171189 pS, (F²/RT)(D₊ + D₋)c πa²/L = 79.171189 pS, relative difference 3.43e-15"
+  },
+  {
+   "id": "I3",
+   "name": "Hall access resistance",
+   "verdict": "PASS",
+   "detail": "(6,6): 22.2294 GΩ vs 22.2304 GΩ (0.004 %); (7,7): 13.8580 GΩ vs 13.8590 GΩ (0.007 %); (9,9): 6.96308 GΩ vs 6.96407 GΩ (0.014 %); (11,11): 4.24425 GΩ vs 4.24525 GΩ (0.023 %)"
+  },
+  {
+   "id": "I4",
+   "name": "Voltage reversal",
+   "verdict": "PASS",
+   "detail": "4 presets × 6 steps × {50, 100, 200} mV: largest |I(V) + I(−V)|/|I(V)| = 3.43e-15 (11,11 step 1 200 mV), largest |Q(V) + Q(−V)|/|Q(V)| = 1.63e-15; all converged: true"
+  },
+  {
+   "id": "I5",
+   "name": "Flux conservation",
+   "verdict": "PASS",
+   "detail": "216 driven solutions of the I6 sweep (equilibrium cases excluded: zero net flux, see I1): largest face-to-mean deviation 4.05e-11 (6,6 step 3 gradient 200 mV species 1); reported current vs F Σ z_i J_i: 2.89e-16"
+  },
+  {
+   "id": "I6",
+   "name": "Positivity and convergence",
+   "verdict": "PASS",
+   "detail": "240 solutions (6 steps × 4 presets × 5 voltages × 2 reservoir conditions): smallest concentration 4.75e-8 mol m⁻³, all finite: true, largest packing fraction 0.481, largest scaled Newton residual 2.12e-12, all converged: true"
+  },
+  {
+   "id": "I7",
+   "name": "Mesh convergence",
+   "verdict": "PASS",
+   "detail": "(7,7), grid level 1 → 2 (every cell halved): change in I(100 mV) and in V_rev (10:1 gradient): step 1: 0.0000 %, 0.0001 mV; step 2: 0.0282 %, 0.0032 mV; step 3: 0.0347 %, 0.0033 mV; step 4: 0.1249 %, 0.0000 mV; step 5: 0.1260 %, 0.0000 mV; step 6: 0.1343 %, 0.0013 mV"
+  },
+  {
+   "id": "I8",
+   "name": "Independent reference",
+   "verdict": "PASS",
+   "detail": "a +100 mV (classical (7,7)): I 7.21605 vs 7.21605 pA (2.65e-8), Na⁺ 2.65e-8, Cl⁻ 2.65e-8; a −100 mV (classical (7,7)): I -7.21605 vs -7.21605 pA (2.65e-8), Na⁺ 2.65e-8, Cl⁻ 2.65e-8; b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3; b −100 mV ((9,9), rims + molecular solvation + confined mobility): I -7.87565 vs -7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3 (SciPy 1.18.1 solve_bvp, tol 1e-7)"
+  },
+  {
+   "id": "I9",
+   "name": "Goldman (GHK) limit",
+   "verdict": "PASS",
+   "detail": "V_rev -12.0696 mV vs GHK -12.0955 mV (0.0259 mV); I(+50 mV) 6.49e-16 A vs GHK 6.47e-16 A (0.2106 %)"
+  },
+  {
+   "id": "I10",
+   "name": "Donnan limit",
+   "verdict": "PASS",
+   "detail": "pore centre: c₊ = 0.500 M, c₋ = 2.00e-4 M; c₊c₋/c_b² = 1.00000, (c₊ − c₋)/0.500 M = 1.00000 (4049 nodes)"
+  },
+  {
+   "id": "I11",
+   "name": "Electro-osmosis",
+   "verdict": "PASS",
+   "detail": "(a) see I1; (b) Onsager, charged (9,9), b = 10 nm: I/Δp = 5.68e-19 A Pa⁻¹ vs Q/V = 5.68e-19 m³ s⁻¹ V⁻¹ (0.000 %, full model); rims and flow only 0.000 %; (c) van ’t Hoff: Q = -4.70e-21 m³ s⁻¹ vs −2RTΔc/R_h = -4.70e-21 (0.144 %, towards the concentrated side: true); (d) hydraulics: Q/Δp vs 1/R_h relative difference 4.80e-10"
+  },
+  {
+   "id": "I12",
+   "name": "Conventions and parameters",
+   "verdict": "PASS",
+   "detail": "50 closed-form checks, largest relative difference 5.11e-16 (exclusion 6,6 ε=60 Cl); with fixed charge on and solvation off, max |μ_ex| = 0 J mol⁻¹ (step 2) and μ_ex equals the finite-size term to 3.28e-14 (step 3); one solvation closure at a time: true; preset counts equal data/hydration.json: true"
+  },
+  {
+   "id": "I13",
+   "name": "Model-domain flags",
+   "verdict": "PASS",
+   "detail": "flags agree with the computed quantities in all 240 solutions of the I6 sweep; counts: single-file 60, occupancy < 1 168, packing > 0.5 0, Debye length > radius 240"
+  },
+  {
+   "id": "I14",
+   "name": "Reported selectivity",
+   "verdict": "PASS",
+   "detail": "24 cases: displayed values agree with an independent GHK inversion (reservoir activities) to 6.57e-15 (20 numbers); statuses {\"finite\":20,\"above_limit\":4}, each equal to an independent classification (Nernst potentials, 1 nV band, display range); no reversal potential lies outside the Nernst potentials; largest |I(V_rev)|/min|I(±50 mV)| = 1.04e-12; (7,7): step 1: V_rev 10.46 mV, GHK-equivalent 0.608; step 2: V_rev -58.09 mV, GHK-equivalent 173; step 3: V_rev -58.77 mV, GHK-equivalent 249; step 4: V_rev -59.78 mV, GHK-equivalent > 10⁴; step 5: V_rev -59.78 mV, GHK-equivalent > 10⁴; step 6: V_rev -57.46 mV, GHK-equivalent 106"
+  },
+  {
+   "id": "I15",
+   "name": "Selectivity classification",
+   "verdict": "PASS",
+   "detail": "20 probes: step 6 10 µV inside the Na⁺ limit → above_limit; step 6 at the Na⁺ limit → nernst_na; step 6 0.5 nV beyond the Na⁺ limit → nernst_na; step 6 10 µV beyond the Na⁺ limit → invalid; step 6 10 µV inside the Cl⁻ limit → below_limit; step 6 at the Cl⁻ limit → nernst_cl; step 6 0.5 nV beyond the Cl⁻ limit → nernst_cl; step 6 10 µV beyond the Cl⁻ limit → invalid; step 2 10 µV inside the Na⁺ limit → above_limit; step 2 at the Na⁺ limit → nernst_na; step 2 0.5 nV beyond the Na⁺ limit → nernst_na; step 2 10 µV beyond the Na⁺ limit → invalid; step 2 10 µV inside the Cl⁻ limit → below_limit; step 2 at the Cl⁻ limit → nernst_cl; step 2 0.5 nV beyond the Cl⁻ limit → nernst_cl; step 2 10 µV beyond the Cl⁻ limit → invalid; step 6 at −70 mV → invalid; step 6 at +70 mV → invalid; no reversal potential → not_found; classical (7,7) V_rev 10.46 mV → finite; raw ratios kept: −70 mV -30.73, +70 mV -0.03254; classical ratio 0.608 (independent 0.607692, relative difference 0.00e+0)"
+  },
+  {
+   "id": "I16",
+   "name": "Numerical controller",
+   "verdict": "PASS",
+   "detail": "(a) standard: tolerance_reached, reported level 1, levels 1 compare, 2 stop (0.134 %, 0.00132 mV); fine: tolerance_reached, reported level 2, levels 1 compare, 2 refine (0.134 %, 0.00132 mV), 3 stop (0.0336 %, 0.000331 mV); strict: budget_exhausted, reported level 3, levels 1 compare, 2 refine (0.134 %, 0.00132 mV), 3 stop (0.0336 %, 0.000331 mV); (b) logged I, V_rev, nodes and residuals equal independent solves to 10⁻¹², logged changes recomputed, decisions equal the independent rules: true; (c) 96 records (72 at the standard target, 24 at the fine and strict targets): every record follows rules 1–6 and none states tolerance reached above its target: true; statuses {\"standard tolerance_reached\":72,\"fine tolerance_reached\":12,\"strict tolerance_reached\":8,\"strict budget_exhausted\":4}; absolute current floor at V = 0 in 24 of 24; (d) {\"V\":0.3} → refused [VOLTAGE_OUT_OF_RANGE]; {\"preset\":\"8,8\"} → refused [TUBE_UNSUPPORTED]; {\"c\":5000} → refused [CONCENTRATION_UNSUPPORTED]; {\"target\":\"extreme\"} → refused [TARGET_UNKNOWN]; {\"solvation\":\"pmf\"} → refused [CLOSURE_UNKNOWN]; solves attempted: 0; (e) same query twice gives the same record apart from timing: true; (f) injected solver failing at level 2 → not_converged, certified result null, request null; solver calls in the sweeps (memoised): 208"
+  },
+  {
+   "id": "I17",
+   "name": "Decision record, calculation request and closure contract",
+   "verdict": "PASS",
+   "detail": "(a) 106 records validate: true; statuses present: tolerance_reached, budget_exhausted, refused, not_converged, check_failed; 27 of 27 corrupted copies rejected; (b) requests issued in 79 records and withheld in 27, each as rule 7 says against an independent ranking: true; default experiment: rimN ×3.62, not run, approval required, not submitted; (c) 126 contract values against params.js and hydration.json: largest relative difference 0.00e+0; SHA-256 of hydration.json matches, of the four trajectories match; template: blocked with 7 required values null, usable as calibrated false; illustrative contract: illustrative, usable as calibrated false; make_closures.js --check exit 0"
+  }
+ ],
+ "environment": "Node v22.22.0, linux x64, 75.2 s",
+ "date": "2026-10-22T08:40:51.959Z"
+}

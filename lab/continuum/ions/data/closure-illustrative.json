@@ -1,0 +1,606 @@
+{
+ "schema_version": "1.0.0",
+ "artifact_kind": "transport_closure",
+ "id": "cnt-nacl-solvation-illustrative-1",
+ "evidence_status": "illustrative",
+ "title": "Solvation closure of the Continuum Lab ion experiment (model steps 4–6), with the confined-mobility ratio (steps 5–6)",
+ "summary": "Recorded CP2K first-shell counts and shell radii, literature hydration energies and stated example values give the excess free energy of each ion in the pore. Executable and labelled illustrative: it is not an ion-transfer free energy from molecular simulation, and it is not calibrated against a molecular or experimental conductance.",
+ "execution": {
+  "status": "in_use",
+  "used_by": "lab/continuum/ions/params.js (solvation, build), model steps 4–6"
+ },
+ "conditions": {
+  "temperature": {
+   "value": 300,
+   "unit": "K",
+   "status": "Setting",
+   "source": "Chosen to match the CP2K runs (NVT, 300 K)"
+  },
+  "reservoir_salt_concentration": {
+   "values": [
+    10,
+    100,
+    1000
+   ],
+   "unit": "mol m^-3",
+   "status": "Setting",
+   "source": "Visitor setting; the reversal potential uses a 10:1 gradient"
+  },
+  "pressure_difference": {
+   "value": 0,
+   "unit": "Pa",
+   "status": "Setting",
+   "source": "No applied pressure difference"
+  },
+  "relative_permittivity_of_water": {
+   "value": 77.6480819210337,
+   "unit": "1",
+   "status": "Literature",
+   "source": "Malmberg & Maryott (1956) correlation at 26.85 °C"
+  }
+ },
+ "geometry": {
+  "tubes": [
+   {
+    "id": "6,6",
+    "carbon_centre_radius": {
+     "value": 4.12e-10,
+     "unit": "m",
+     "status": "Recorded",
+     "source": "(6,6) tube of the CP2K run"
+    },
+    "ion_accessible_radius": {
+     "value": 2.42e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon van der Waals radius 0.170 nm (Bondi 1964)"
+    },
+    "water_accessible_radius": {
+     "value": 9.3e-11,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon–oxygen LJ σ 0.319 nm (Werder et al. 2003)"
+    }
+   },
+   {
+    "id": "7,7",
+    "carbon_centre_radius": {
+     "value": 4.795e-10,
+     "unit": "m",
+     "status": "Recorded",
+     "source": "(7,7) tube of the CP2K run"
+    },
+    "ion_accessible_radius": {
+     "value": 3.095e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon van der Waals radius 0.170 nm (Bondi 1964)"
+    },
+    "water_accessible_radius": {
+     "value": 1.605e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon–oxygen LJ σ 0.319 nm (Werder et al. 2003)"
+    }
+   },
+   {
+    "id": "9,9",
+    "carbon_centre_radius": {
+     "value": 6.15e-10,
+     "unit": "m",
+     "status": "Recorded",
+     "source": "(9,9) tube of the CP2K run"
+    },
+    "ion_accessible_radius": {
+     "value": 4.45e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon van der Waals radius 0.170 nm (Bondi 1964)"
+    },
+    "water_accessible_radius": {
+     "value": 2.96e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon–oxygen LJ σ 0.319 nm (Werder et al. 2003)"
+    }
+   },
+   {
+    "id": "11,11",
+    "carbon_centre_radius": {
+     "value": 7.505e-10,
+     "unit": "m",
+     "status": "Recorded",
+     "source": "(11,11) tube of the CP2K run"
+    },
+    "ion_accessible_radius": {
+     "value": 5.805e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon van der Waals radius 0.170 nm (Bondi 1964)"
+    },
+    "water_accessible_radius": {
+     "value": 4.315e-10,
+     "unit": "m",
+     "status": "Derived",
+     "source": "Carbon-centre radius − carbon–oxygen LJ σ 0.319 nm (Werder et al. 2003)"
+    }
+   }
+  ],
+  "pore_length": {
+   "value": 5e-9,
+   "unit": "m",
+   "status": "Illustrative",
+   "source": "Example membrane; the CP2K segment is a 2.46 nm periodic cell, not a finite pore"
+  },
+  "area_convention": "A(x) = π a² in the pore (a: ion-accessible radius); access cones of slope 4/π outside, which reproduce Hall’s access resistance"
+ },
+ "species": [
+  {
+   "name": "Na+",
+   "valence": 1,
+   "hydration_gibbs_energy": {
+    "value": -365000,
+    "unit": "J mol^-1",
+    "status": "Literature",
+    "source": "Marcus (1991), 25 °C, standard state"
+   },
+   "born_radius": {
+    "value": 1.87891964674062e-10,
+    "unit": "m",
+    "status": "Derived",
+    "source": "Born equation inverted to reproduce the Marcus energy at the relative permittivity of water at 25 °C"
+   },
+   "first_shell_radius": {
+    "value": 2.4e-10,
+    "unit": "m",
+    "status": "Recorded",
+    "source": "Most frequent ion–oxygen distance in the CP2K (11,11) run, rounded",
+    "conditions": "0.50 ps; 2 ions of each kind"
+   },
+   "first_shell_share_of_hydration_energy": {
+    "value": 184524.823405177,
+    "unit": "J mol^-1",
+    "status": "Derived",
+    "source": "|ΔG_hyd| minus the Born energy of a sphere of radius r1 + 0.14 nm"
+   },
+   "first_shell_count": {
+    "values": {
+     "6,6": 3.4894,
+     "7,7": 4,
+     "9,9": 5.5737,
+     "11,11": 5.5299
+    },
+    "unit": "molecules",
+    "status": "Recorded",
+    "source": "lab/continuum/ions/data/hydration.json (mean over every stored frame and ion)",
+    "conditions": {
+     "6,6": "0.75 ps, 6 waters: not converged",
+     "7,7": "0.50 ps, 16 waters: not converged",
+     "9,9": "0.50 ps, 39 waters: not converged",
+     "11,11": "0.50 ps, 67 waters: not converged"
+    },
+    "block_means": {
+     "6,6": [
+      4,
+      4,
+      3.44,
+      3,
+      3
+     ],
+     "7,7": [
+      4,
+      4,
+      4,
+      4,
+      4
+     ],
+     "9,9": [
+      6,
+      6.07,
+      5.81,
+      5.09,
+      4.89
+     ],
+     "11,11": [
+      5.5,
+      5.4,
+      5.19,
+      5.96,
+      5.6
+     ]
+    }
+   },
+   "reference_shell_count": {
+    "value": 5.5299,
+    "unit": "molecules",
+    "status": "Recorded",
+    "source": "CP2K (11,11) run, the least confined tube",
+    "conditions": "0.50 ps: not converged; not a bulk value"
+   },
+   "wall_recovery_kappa": {
+    "values": {
+     "carbon": 0.8,
+     "carbonyl": 0.95,
+     "amide": 0.8
+    },
+    "unit": "1",
+    "status": "Illustrative",
+    "source": "Stated example values per pore lining; not calibrated for this CNT/NaCl system"
+   },
+   "excess_free_energy_in_pore": {
+    "unit": "J mol^-1",
+    "status": "Derived",
+    "source": "Pm.solvation(): the selected closure applied to the inputs above",
+    "dehydration_recorded_shells": {
+     "6,6": {
+      "carbon": 13617.7110674068,
+      "carbonyl": 3404.4277668517,
+      "amide": 13617.7110674068
+     },
+     "7,7": {
+      "carbon": 10210.1132869521,
+      "carbonyl": 2552.52832173802,
+      "amide": 10210.1132869521
+     },
+     "9,9": {
+      "carbon": 0,
+      "carbonyl": 0,
+      "amide": 0
+     },
+     "11,11": {
+      "carbon": 0,
+      "carbonyl": 0,
+      "amide": 0
+     }
+    },
+    "dehydration_rigid_shell": {
+     "6,6": {
+      "carbon": 34021.5688435568,
+      "carbonyl": 8505.39221088921,
+      "amide": 34021.5688435568
+     },
+     "7,7": {
+      "carbon": 27438.3743401784,
+      "carbonyl": 6859.5935850446,
+      "amide": 27438.3743401784
+     },
+     "9,9": {
+      "carbon": 0,
+      "carbonyl": 0,
+      "amide": 0
+     },
+     "11,11": {
+      "carbon": 0,
+      "carbonyl": 0,
+      "amide": 0
+     }
+    },
+    "born_exclusion": {
+     "6,6": {
+      "epsP_10": 32210.6617859426,
+      "epsP_20": 13724.5788545364,
+      "epsP_30": 7562.55121073431,
+      "epsP_50": 2632.92909569266
+     },
+     "7,7": {
+      "epsP_10": 32210.6617859426,
+      "epsP_20": 13724.5788545364,
+      "epsP_30": 7562.55121073431,
+      "epsP_50": 2632.92909569266
+     },
+     "9,9": {
+      "epsP_10": 32210.6617859426,
+      "epsP_20": 13724.5788545364,
+      "epsP_30": 7562.55121073431,
+      "epsP_50": 2632.92909569266
+     },
+     "11,11": {
+      "epsP_10": 32210.6617859426,
+      "epsP_20": 13724.5788545364,
+      "epsP_30": 7562.55121073431,
+      "epsP_50": 2632.92909569266
+     }
+    }
+   },
+   "bulk_diffusivity": {
+    "value": 1.3951188311815e-9,
+    "unit": "m^2 s^-1",
+    "status": "Derived",
+    "source": "Li & Gregory (1974) at 25 °C, scaled to 300 K with D ∝ T/η (IAPWS 2008 viscosities)",
+    "conditions": "Infinite dilution"
+   },
+   "confined_to_bulk_diffusivity_ratio": {
+    "values": [
+     0.2,
+     0.5,
+     0.8,
+     1
+    ],
+    "unit": "1",
+    "status": "Illustrative",
+    "source": "Stated example values, the same for both ions"
+   }
+  },
+  {
+   "name": "Cl-",
+   "valence": -1,
+   "hydration_gibbs_energy": {
+    "value": -340000,
+    "unit": "J mol^-1",
+    "status": "Literature",
+    "source": "Marcus (1991), 25 °C, standard state"
+   },
+   "born_radius": {
+    "value": 2.01707550311861e-10,
+    "unit": "m",
+    "status": "Derived",
+    "source": "Born equation inverted to reproduce the Marcus energy at the relative permittivity of water at 25 °C"
+   },
+   "first_shell_radius": {
+    "value": 3.2e-10,
+    "unit": "m",
+    "status": "Recorded",
+    "source": "Most frequent ion–oxygen distance in the CP2K (11,11) run, rounded",
+    "conditions": "0.50 ps; 2 ions of each kind"
+   },
+   "first_shell_share_of_hydration_energy": {
+    "value": 190911.81063906,
+    "unit": "J mol^-1",
+    "status": "Derived",
+    "source": "|ΔG_hyd| minus the Born energy of a sphere of radius r1 + 0.14 nm"
+   },
+   "first_shell_count": {
+    "values": {
+     "6,6": 2.5718,
+     "7,7": 4.1076,
+     "9,9": 5.992,
+     "11,11": 6.4462
+    },
+    "unit": "molecules",
+    "status": "Recorded",
+    "source": "lab/continuum/ions/data/hydration.json (mean over every stored frame and ion)",
+    "conditions": {
+     "6,6": "0.75 ps, 6 waters: not converged",
+     "7,7": "0.50 ps, 16 waters: not converged",
+     "9,9": "0.50 ps, 39 waters: not converged",
+     "11,11": "0.50 ps, 67 waters: not converged"
+    },
+    "block_means": {
+     "6,6": [
+      2.5921,
+      2,
+      2.8533,
+      2.44,
+      2.9733
+     ],
+     "7,7": [
+      4,
+      4,
+      4.14,
+      4.4,
+      4
+     ],
+     "9,9": [
+      6.5588,
+      6.68,
+      6.59,
+      5.32,
+      4.8
+     ],
+     "11,11": [
+      7,
+      5.45,
+      5.5,
+      7.07,
+      7.2
+     ]
+    }
+   },
+   "reference_shell_count": {
+    "value": 6.4462,
+    "unit": "molecules",
+    "status": "Recorded",
+    "source": "CP2K (11,11) run, the least confined tube",
+    "conditions": "0.50 ps: not converged; not a bulk value"
+   },
+   "wall_recovery_kappa": {
+    "values": {
+     "carbon": 0.8,
+     "carbonyl": 0.8,
+     "amide": 0.95
+    },
+    "unit": "1",
+    "status": "Illustrative",
+    "source": "Stated example values per pore lining; not calibrated for this CNT/NaCl system"
+   },
+   "excess_free_energy_in_pore": {
+    "unit": "J mol^-1",
+    "status": "Derived",
+    "source": "Pm.solvation(): the selected closure applied to the inputs above",
+    "dehydration_recorded_shells": {
+     "6,6": {
+      "carbon": 22948.9844913274,
+      "carbonyl": 22948.9844913274,
+      "amide": 5737.24612283185
+     },
+     "7,7": {
+      "carbon": 13852.0790655116,
+      "carbonyl": 13852.0790655116,
+      "amide": 3463.01976637791
+     },
+     "9,9": {
+      "carbon": 2690.33366610595,
+      "carbonyl": 2690.33366610595,
+      "amide": 672.583416526488
+     },
+     "11,11": {
+      "carbon": 0,
+      "carbonyl": 0,
+      "amide": 0
+     }
+    },
+    "dehydration_rigid_shell": {
+     "6,6": {
+      "carbon": 36534.2981243235,
+      "carbonyl": 36534.2981243235,
+      "amide": 9133.57453108087
+     },
+     "7,7": {
+      "carbon": 33032.3790616251,
+      "carbonyl": 33032.3790616251,
+      "amide": 8258.0947654063
+     },
+     "9,9": {
+      "carbon": 14508.0415554468,
+      "carbonyl": 14508.0415554468,
+      "amide": 3627.0103888617
+     },
+     "11,11": {
+      "carbon": 0,
+      "carbonyl": 0,
+      "amide": 0
+     }
+    },
+    "born_exclusion": {
+     "6,6": {
+      "epsP_10": 30004.4520745766,
+      "epsP_20": 12784.5392069654,
+      "epsP_30": 7044.56825109497,
+      "epsP_50": 2452.59148639864
+     },
+     "7,7": {
+      "epsP_10": 30004.4520745766,
+      "epsP_20": 12784.5392069654,
+      "epsP_30": 7044.56825109497,
+      "epsP_50": 2452.59148639864
+     },
+     "9,9": {
+      "epsP_10": 30004.4520745766,
+      "epsP_20": 12784.5392069654,
+      "epsP_30": 7044.56825109497,
+      "epsP_50": 2452.59148639864
+     },
+     "11,11": {
+      "epsP_10": 30004.4520745766,
+      "epsP_20": 12784.5392069654,
+      "epsP_30": 7044.56825109497,
+      "epsP_50": 2452.59148639864
+     }
+    }
+   },
+   "bulk_diffusivity": {
+    "value": 2.12939190022439e-9,
+    "unit": "m^2 s^-1",
+    "status": "Derived",
+    "source": "Li & Gregory (1974) at 25 °C, scaled to 300 K with D ∝ T/η (IAPWS 2008 viscosities)",
+    "conditions": "Infinite dilution"
+   },
+   "confined_to_bulk_diffusivity_ratio": {
+    "values": [
+     0.2,
+     0.5,
+     0.8,
+     1
+    ],
+    "unit": "1",
+    "status": "Illustrative",
+    "source": "Stated example values, the same for both ions"
+   }
+  }
+ ],
+ "closures": [
+  {
+   "id": "cp2k",
+   "name": "Dehydration with the recorded CP2K first-shell counts",
+   "formula": "ΔG_i = (1 − κ_i) (N_lost,i / n_ref,i) ΔG_1,i, N_lost,i = max(0, n_ref,i − n_i)"
+  },
+  {
+   "id": "shell",
+   "name": "Dehydration with the rigid-shell geometry",
+   "formula": "as cp2k, with n_i = n_ref,i × fraction of a spherical shell of radius r1 that fits inside the water-accessible radius"
+  },
+  {
+   "id": "born",
+   "name": "Dielectric exclusion (Born)",
+   "formula": "ΔG_i = N_A z_i² e² / (8π ε0 a_B,i) (1/ε_p − 1/ε_b)"
+  }
+ ],
+ "conventions": {
+  "free_energy_type": "excess_molar_free_energy",
+  "mean_field_electrostatics_included": false,
+  "geometric_entropy_included": false,
+  "profile": "ΔG_i s(x): a smooth step of width 0.15 nm at each mouth",
+  "concentration_definition": "moles per ion-accessible volume, averaged over the cross-section",
+  "note": "The electrostatics of the rims and of the ions is in Poisson’s equation, not in ΔG, so it is not counted twice."
+ },
+ "supported_domain": {
+  "tubes": [
+   "7,7",
+   "9,9",
+   "11,11"
+  ],
+  "model_steps": [
+   4,
+   5,
+   6
+  ],
+  "voltage_range_V": [
+   -0.2,
+   0.2
+  ],
+  "pressure_difference_range_Pa": [
+   0,
+   0
+  ],
+  "interpolation": "none",
+  "extrapolation": "refuse",
+  "comparison_only": {
+   "tubes": [
+    "6,6"
+   ],
+   "reason": "single-file water: the continuum description is outside its domain; the page computes this tube for comparison only and flags it"
+  }
+ },
+ "uncertainty": {
+  "status": "not_estimated",
+  "uncovered_sources": [
+   "sampling: runs of 0.50–0.75 ps",
+   "reference method: PBE-D3(BJ)",
+   "closure form",
+   "wall recovery κ (stated examples)",
+   "dielectric model",
+   "geometry of a finite pore"
+  ]
+ },
+ "provenance": {
+  "source_artifacts": [
+   {
+    "path": "lab/continuum/ions/data/hydration.json",
+    "sha256": "b6d7d41a8c57a7a59839a9197fa89052a864f8bede48ca8df7f040ea52473092"
+   },
+   {
+    "path": "lab/cnt/data/cnt_6_6.bin",
+    "sha256": "b7f50624bf8a65bd90ba8a945c0813ab6f817bbaa5a66f11a658856fa8b805b2"
+   },
+   {
+    "path": "lab/cnt/data/cnt_7_7.bin",
+    "sha256": "9069212d16e490d5464c9413a2f64906ba7fe4d49259f2d2c30e91ff05e1c06e"
+   },
+   {
+    "path": "lab/cnt/data/cnt_9_9.bin",
+    "sha256": "44c9b0f444ebac14bf03ae59562ceef4aac7d9698f22a6d0bf8bfa5e21607001"
+   },
+   {
+    "path": "lab/cnt/data/cnt_11_11.bin",
+    "sha256": "beef740b3cd64fdbf763acca77b92eb485ca5874b1cc470e8a8d308915162141"
+   }
+  ],
+  "parameters_file": "lab/continuum/ions/params.js",
+  "producer": "tools/continuum/ions/make_closures.js"
+ },
+ "validation": {
+  "numerical_status": "Solver and controller tests I1–I17 and IB1–IB11 (the page’s Validation section)",
+  "physical_status": "not_run",
+  "note": "The recorded-shell and rigid-shell closures give different currents for the same pore; the page computes the ratio for its default settings (“How molecular simulation enters the prediction”). The difference is a sensitivity of the prediction to the closure, not a validation of either."
+ }
+}

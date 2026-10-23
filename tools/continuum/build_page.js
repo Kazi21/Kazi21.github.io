@@ -8,7 +8,7 @@
 const fs = require('fs'), path = require('path');
 const katex = require('katex');
 const ROOT = path.resolve(__dirname, '../..');
-const VERSION = '2026.9.1';
+const VERSION = '2026.10.1';
 const T = (f) => path.join(ROOT, 'tools/continuum', f);
 const readJson = (f) => { try { return JSON.parse(fs.readFileSync(T(f), 'utf8')); } catch (e) { return null; } };
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

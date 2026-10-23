@@ -1,0 +1,125 @@
+{
+ "schema_version": "1.0.0",
+ "artifact_kind": "transport_closure",
+ "id": "cnt-nacl-molecular-closure-proposal",
+ "evidence_status": "proposed",
+ "title": "Proposed molecular closure for low-bias ionic conductance through one CNT pore (not data)",
+ "summary": "The quantities a molecular calculation would have to supply before the ion experiment could make a molecularly calibrated prediction. Every required value is null, so no calculation can use this record.",
+ "execution": {
+  "status": "not_run",
+  "run_ids": [],
+  "completed_at": null
+ },
+ "conditions": {
+  "temperature": {
+   "value": null,
+   "unit": "K"
+  },
+  "reservoir_salt_concentration": {
+   "value": null,
+   "unit": "mol m^-3"
+  },
+  "reference_voltage": {
+   "value": 0,
+   "unit": "V"
+  },
+  "pressure_difference": {
+   "value": 0,
+   "unit": "Pa"
+  },
+  "geometry_id": null,
+  "chemistry_id": null,
+  "molecular_ensemble": null,
+  "molecular_boundary_conditions": null,
+  "continuum_boundary_conditions": {
+   "type": "symmetric_reservoir_dirichlet",
+   "boundary_locations_verified_bulk_like": false
+  }
+ },
+ "geometry": {
+  "axial_coordinate": {
+   "values": null,
+   "unit": "m"
+  },
+  "accessible_area": {
+   "values": null,
+   "unit": "m^2"
+  },
+  "area_convention": null
+ },
+ "species": [
+  {
+   "name": "Na+",
+   "valence": 1,
+   "excess_free_energy": {
+    "values": null,
+    "unit": "J mol^-1"
+   },
+   "axial_diffusivity": {
+    "values": null,
+    "unit": "m^2 s^-1"
+   }
+  },
+  {
+   "name": "Cl-",
+   "valence": -1,
+   "excess_free_energy": {
+    "values": null,
+    "unit": "J mol^-1"
+   },
+   "axial_diffusivity": {
+    "values": null,
+    "unit": "m^2 s^-1"
+   }
+  }
+ ],
+ "conventions": {
+  "free_energy_type": "excess_molar_free_energy",
+  "geometric_entropy_included": false,
+  "mean_field_electrostatics_included": false,
+  "free_energy_reference": "matched_bulk_reservoir",
+  "electrostatic_reference_id": null,
+  "dielectric_model_id": null,
+  "concentration_definition": "moles per declared accessible volume",
+  "note": "A potential of mean force from a line density contains −RT ln(A/A_bulk) and the mean electrostatic term; both must be removed before use with an explicit area and Poisson’s equation, or they are counted twice."
+ },
+ "required_calculations": [
+  "First-shell counts for each tube, sampled until stable across independent replicas (block averages and integrated autocorrelation time; tens of ps of AIMD or MLIP-MD per tube as a pilot; the restraint and coordinate of the ion stated, since a restrained ion samples a conditional distribution)",
+  "Ion-transfer free-energy profile of Na⁺ and of Cl⁻ from the reservoir into the (7,7) tube, with overlap and replica checks",
+  "Axial diffusivities of Na⁺ and Cl⁻ inside the tube, with a position-dependent estimator",
+  "An independent molecular estimate of the low-bias conductance of the same finite pore, under matched conditions"
+ ],
+ "proposed_acceptance": {
+  "observable": "low-bias conductance",
+  "relative_difference_max": 0.2,
+  "against": "an independent matched molecular estimate",
+  "status": "proposed_project_target"
+ },
+ "supported_domain": {
+  "validated_state_ids": [],
+  "voltage_range_V": null,
+  "interpolation": "none",
+  "extrapolation": "refuse"
+ },
+ "uncertainty": {
+  "status": "not_estimated",
+  "uncovered_sources": [
+   "sampling",
+   "reference_model",
+   "MLIP_model",
+   "coarse_graining",
+   "dielectric_model",
+   "geometry"
+  ]
+ },
+ "provenance": {
+  "source_artifacts": [],
+  "basis": "proposal_not_data",
+  "producer": "tools/continuum/ions/make_closures.js"
+ },
+ "validation": {
+  "numerical_status": "not_run",
+  "physical_status": "not_run",
+  "held_out_condition_ids": []
+ }
+}

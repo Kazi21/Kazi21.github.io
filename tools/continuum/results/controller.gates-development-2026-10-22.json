@@ -1,0 +1,1245 @@
+{
+ "id": "controller-gates-development-2026-10-22",
+ "purpose": "Development measurement of the frozen controller gates G1 and G2 (TOLERANCES.md, release 2026.10), before the first official run of I16, I17 or IB11. Kept as the reason for the amendment recorded there.",
+ "date": "2026-10-22T08:25:33.775Z",
+ "environment": "Node v22.22.0",
+ "cases": [
+  {
+   "tube": "6,6",
+   "step": 1,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.4299602732895468e-13,
+    "max_scaled_residual": 1.0087262150755724e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010412559565227854,
+    "net_salt_flux_mol_s": 5.216237053218002e-18,
+    "max_face_to_mean_rel": 3.375506730527553e-14,
+    "scaled_residual": 1.0050322945851946e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 1,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.060487076592142e-13,
+    "max_scaled_residual": 1.9247766563646536e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010412513311023277,
+    "net_salt_flux_mol_s": 5.2162372876759945e-18,
+    "max_face_to_mean_rel": 4.206912140088531e-14,
+    "scaled_residual": 4.484350910072403e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 1,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 6.662062978658832e-13,
+    "max_scaled_residual": 4.928602220384782e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.01041250173155699,
+    "net_salt_flux_mol_s": 5.2162373464307206e-18,
+    "max_face_to_mean_rel": 8.147774408791705e-14,
+    "scaled_residual": 7.483163820905283e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 2,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 6.252766618992288e-12,
+    "max_scaled_residual": 1.1323356687088221e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05869883783268809,
+    "net_salt_flux_mol_s": 4.384559598913756e-19,
+    "max_face_to_mean_rel": 3.1812227965795244e-13,
+    "scaled_residual": 1.488094835175638e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 2,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.355716701817847e-11,
+    "max_scaled_residual": 6.392320499521387e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05870114292170588,
+    "net_salt_flux_mol_s": 4.37400539703017e-19,
+    "max_face_to_mean_rel": 4.4728861596126625e-13,
+    "scaled_residual": 5.617104743650646e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 2,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.162286889403653e-11,
+    "max_scaled_residual": 3.1863677243526974e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05870171883026311,
+    "net_salt_flux_mol_s": 4.371367540842993e-19,
+    "max_face_to_mean_rel": 1.0589366215896333e-12,
+    "scaled_residual": 1.5910816173932807e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 3,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.0304182495583738e-11,
+    "max_scaled_residual": 8.177932141959899e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.059387394575097875,
+    "net_salt_flux_mol_s": 2.1871516069786597e-19,
+    "max_face_to_mean_rel": 5.708149346545229e-13,
+    "scaled_residual": 2.0563811319396441e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 3,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.0814259423312894e-11,
+    "max_scaled_residual": 6.059339880803652e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05938957158331383,
+    "net_salt_flux_mol_s": 2.176158974450877e-19,
+    "max_face_to_mean_rel": 1.082379204542774e-12,
+    "scaled_residual": 9.072490636222795e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 3,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 6.177804137172974e-11,
+    "max_scaled_residual": 2.908295444772998e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05939011526772966,
+    "net_salt_flux_mol_s": 2.173412441811038e-19,
+    "max_face_to_mean_rel": 8.51184124707821e-12,
+    "scaled_residual": 3.926452961297331e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 4,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.0713702945814014e-12,
+    "max_scaled_residual": 2.98064437894939e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.059783341189856135,
+    "net_salt_flux_mol_s": 9.588143867789262e-25,
+    "max_face_to_mean_rel": 4.99005541863798e-8,
+    "scaled_residual": 6.719522243430495e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 4,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.2466738228956468e-12,
+    "max_scaled_residual": 1.315632694869351e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978334120374422,
+    "net_salt_flux_mol_s": 9.547422279784777e-25,
+    "max_face_to_mean_rel": 3.229852604312859e-7,
+    "scaled_residual": 2.9112150296690898e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 4,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 4.149878432663737e-12,
+    "max_scaled_residual": 4.010783542624578e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978334120720764,
+    "net_salt_flux_mol_s": 9.537251558741388e-25,
+    "max_face_to_mean_rel": 6.807201232048902e-7,
+    "scaled_residual": 1.7581870996307004e-11,
+    "solver_flag": false
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 5,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.488959044124085e-13,
+    "max_scaled_residual": 2.2165347192463854e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978334128641863,
+    "net_salt_flux_mol_s": 4.864053113895183e-25,
+    "max_face_to_mean_rel": 3.006822814902896e-7,
+    "scaled_residual": 2.6989474491095777e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 5,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.865979382473715e-12,
+    "max_scaled_residual": 1.413528120033162e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978334129975075,
+    "net_salt_flux_mol_s": 4.8436120601003235e-25,
+    "max_face_to_mean_rel": 2.420537431281494e-7,
+    "scaled_residual": 4.216447438968733e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 5,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 4.74635925239296e-12,
+    "max_scaled_residual": 7.2044180276967116e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978334130307544,
+    "net_salt_flux_mol_s": 4.838506579204267e-25,
+    "max_face_to_mean_rel": 2.692009121100158e-7,
+    "scaled_residual": 7.499697663480545e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 6,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 9.374315422462584e-13,
+    "max_scaled_residual": 6.407629483731377e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05800832271869053,
+    "net_salt_flux_mol_s": 4.598887592582461e-25,
+    "max_face_to_mean_rel": 8.873406604070173e-8,
+    "scaled_residual": 7.985384109397742e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 6,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.530987740498686e-12,
+    "max_scaled_residual": 1.1917202146948882e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.0580097342258844,
+    "net_salt_flux_mol_s": 4.579771423870574e-25,
+    "max_face_to_mean_rel": 4.302248414054562e-7,
+    "scaled_residual": 2.685565644049211e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "6,6",
+   "step": 6,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.9224449288238544e-12,
+    "max_scaled_residual": 9.991532972804882e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05801008783731535,
+    "net_salt_flux_mol_s": 4.57499676885468e-25,
+    "max_face_to_mean_rel": 4.726958829256661e-7,
+    "scaled_residual": 1.4317836733227437e-11,
+    "solver_flag": false
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 1,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.3430558050084983e-13,
+    "max_scaled_residual": 6.344225694126429e-15,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.01046334082560943,
+    "net_salt_flux_mol_s": 8.366249919745088e-18,
+    "max_face_to_mean_rel": 2.5711126619999202e-14,
+    "scaled_residual": 1.695287347007469e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 1,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.602943503658809e-13,
+    "max_scaled_residual": 2.509358828401433e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010463265373292917,
+    "net_salt_flux_mol_s": 8.366250706710161e-18,
+    "max_face_to_mean_rel": 4.105485961207487e-14,
+    "scaled_residual": 6.81509627525079e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 1,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 5.95585480022093e-13,
+    "max_scaled_residual": 5.0296971302685734e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010463246485081106,
+    "net_salt_flux_mol_s": 8.366250903804681e-18,
+    "max_face_to_mean_rel": 9.952693004822498e-14,
+    "scaled_residual": 8.647017396308978e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 2,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 4.373078898839838e-12,
+    "max_scaled_residual": 1.190802082706482e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05808730499685639,
+    "net_salt_flux_mol_s": 1.0779818216268837e-18,
+    "max_face_to_mean_rel": 2.520460540000738e-13,
+    "scaled_residual": 1.8775211390394768e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 2,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.518824651456908e-12,
+    "max_scaled_residual": 3.1718402946785424e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05809051859657017,
+    "net_salt_flux_mol_s": 1.0759965243001914e-18,
+    "max_face_to_mean_rel": 3.2203729891388986e-13,
+    "scaled_residual": 9.334912622335227e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 2,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.67115598521495e-11,
+    "max_scaled_residual": 2.1894162218910873e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.058091321748381226,
+    "net_salt_flux_mol_s": 1.0755001661213375e-18,
+    "max_face_to_mean_rel": 1.7256503879064026e-12,
+    "scaled_residual": 2.4995778623755894e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 3,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 4.474800378235705e-12,
+    "max_scaled_residual": 1.8974272594931578e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.0587653208378568,
+    "net_salt_flux_mol_s": 7.803147555040398e-19,
+    "max_face_to_mean_rel": 2.0285854658820963e-13,
+    "scaled_residual": 3.218358042558809e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 3,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.0668302522515888e-11,
+    "max_scaled_residual": 7.762390355924091e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05876862773458751,
+    "net_salt_flux_mol_s": 7.781226738765657e-19,
+    "max_face_to_mean_rel": 4.138268373853769e-13,
+    "scaled_residual": 2.975123399730193e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 3,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.9507052918637708e-11,
+    "max_scaled_residual": 1.6014491112973851e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05876945419841657,
+    "net_salt_flux_mol_s": 7.7757458708278985e-19,
+    "max_face_to_mean_rel": 8.794092831043205e-13,
+    "scaled_residual": 3.86456201528919e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 4,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.820643505125551e-13,
+    "max_scaled_residual": 5.324009840655463e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.0597828320735936,
+    "net_salt_flux_mol_s": 2.8408370641916885e-22,
+    "max_face_to_mean_rel": 4.31600300837203e-10,
+    "scaled_residual": 1.3829242288387561e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 4,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.392561673115069e-12,
+    "max_scaled_residual": 1.638488470813637e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.059782834312444175,
+    "net_salt_flux_mol_s": 2.832025914409315e-22,
+    "max_face_to_mean_rel": 1.917321314736289e-9,
+    "scaled_residual": 5.760459383605008e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 4,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.746432419922557e-12,
+    "max_scaled_residual": 6.957300086589072e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978283487123037,
+    "net_salt_flux_mol_s": 2.829824130362212e-22,
+    "max_face_to_mean_rel": 3.780544481105932e-9,
+    "scaled_residual": 4.93193413576545e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 5,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 6.583641063814669e-13,
+    "max_scaled_residual": 2.496319153941962e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05978286081411691,
+    "net_salt_flux_mol_s": 1.4471236184737134e-22,
+    "max_face_to_mean_rel": 4.416527069379608e-10,
+    "scaled_residual": 6.484748626887369e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 5,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.12785035824663e-12,
+    "max_scaled_residual": 1.9471059676946578e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.059782862935201415,
+    "net_salt_flux_mol_s": 1.4426849479311318e-22,
+    "max_face_to_mean_rel": 4.594603183696152e-10,
+    "scaled_residual": 4.168536836301026e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 5,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.677238824156897e-12,
+    "max_scaled_residual": 5.146652456424682e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.059782863464577486,
+    "net_salt_flux_mol_s": 1.4415757752558863e-22,
+    "max_face_to_mean_rel": 7.858643494808238e-10,
+    "scaled_residual": 2.1024867390332046e-11,
+    "solver_flag": false
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 6,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 4.4383176143212755e-13,
+    "max_scaled_residual": 3.5226469370861284e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05746022656917483,
+    "net_salt_flux_mol_s": 1.3460831810763812e-22,
+    "max_face_to_mean_rel": 8.586985595828133e-10,
+    "scaled_residual": 8.55694823821736e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 6,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.1970639507463934e-12,
+    "max_scaled_residual": 1.1240538723395748e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05746154691940438,
+    "net_salt_flux_mol_s": 1.3420124135020397e-22,
+    "max_face_to_mean_rel": 1.765453471087756e-9,
+    "scaled_residual": 3.820182786605362e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "7,7",
+   "step": 6,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.5257227377358436e-12,
+    "max_scaled_residual": 7.934059617578835e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05746187765728202,
+    "net_salt_flux_mol_s": 1.3409951580078295e-22,
+    "max_face_to_mean_rel": 4.588940928915392e-9,
+    "scaled_residual": 1.5910254996622113e-11,
+    "solver_flag": false
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 1,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.0199013986487142e-13,
+    "max_scaled_residual": 2.3773771862086242e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010572195395868475,
+    "net_salt_flux_mol_s": 1.6646353149119456e-17,
+    "max_face_to_mean_rel": 1.8341034161471466e-14,
+    "scaled_residual": 1.545175508261974e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 1,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.3750069935534466e-13,
+    "max_scaled_residual": 2.15320090337123e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010572061043290499,
+    "net_salt_flux_mol_s": 1.6646356403964238e-17,
+    "max_face_to_mean_rel": 5.1688358893937384e-14,
+    "scaled_residual": 3.656753433627937e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 1,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.746929633122311e-13,
+    "max_scaled_residual": 4.342129138094158e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010572027408866641,
+    "net_salt_flux_mol_s": 1.6646357218960845e-17,
+    "max_face_to_mean_rel": 1.0441881668554438e-13,
+    "scaled_residual": 1.0952550319082097e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 2,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.856645685754334e-12,
+    "max_scaled_residual": 7.530651879925662e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05584847199140728,
+    "net_salt_flux_mol_s": 4.191305850832569e-18,
+    "max_face_to_mean_rel": 9.622853175567963e-14,
+    "scaled_residual": 3.2915125170943935e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 2,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.4622000350685203e-12,
+    "max_scaled_residual": 5.287235712082641e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05585415066864479,
+    "net_salt_flux_mol_s": 4.186497142821357e-18,
+    "max_face_to_mean_rel": 2.960613327327232e-13,
+    "scaled_residual": 6.27350449827745e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 2,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 6.556200993605944e-12,
+    "max_scaled_residual": 1.0765962381842756e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05585557066018577,
+    "net_salt_flux_mol_s": 4.185294250495774e-18,
+    "max_face_to_mean_rel": 4.675341717419384e-13,
+    "scaled_residual": 3.5154379673145174e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 3,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.3523669950648905e-12,
+    "max_scaled_residual": 1.3265181592511046e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.0564386598017763,
+    "net_salt_flux_mol_s": 3.836696909284748e-18,
+    "max_face_to_mean_rel": 1.2004312401046346e-13,
+    "scaled_residual": 2.9681749360083694e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 3,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 4.017314352444224e-12,
+    "max_scaled_residual": 8.222472109151483e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05644453810557248,
+    "net_salt_flux_mol_s": 3.831529387592297e-18,
+    "max_face_to_mean_rel": 2.4516391947386914e-13,
+    "scaled_residual": 9.876885165777903e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 3,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 8.758402634508278e-12,
+    "max_scaled_residual": 3.650463644205204e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.056446008067907276,
+    "net_salt_flux_mol_s": 3.8302366560832334e-18,
+    "max_face_to_mean_rel": 7.348341871519092e-13,
+    "scaled_residual": 6.0633460027713625e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 4,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.4367564633510247e-12,
+    "max_scaled_residual": 1.728927291982487e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05832912288803697,
+    "net_salt_flux_mol_s": 1.6021801298691909e-18,
+    "max_face_to_mean_rel": 2.452376358835671e-13,
+    "scaled_residual": 5.158078429896655e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 4,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.9657247303227028e-12,
+    "max_scaled_residual": 5.628613316570293e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05833187505700377,
+    "net_salt_flux_mol_s": 1.599851028538316e-18,
+    "max_face_to_mean_rel": 5.708855973523006e-13,
+    "scaled_residual": 1.3870380093821385e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 4,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 5.421636161284947e-12,
+    "max_scaled_residual": 3.3422511883950883e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05833256322709376,
+    "net_salt_flux_mol_s": 1.5992684009639027e-18,
+    "max_face_to_mean_rel": 5.97533093414939e-13,
+    "scaled_residual": 3.16068078629584e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 5,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.874414664666345e-12,
+    "max_scaled_residual": 1.6189935977774657e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.0584310788641831,
+    "net_salt_flux_mol_s": 8.742463488330917e-19,
+    "max_face_to_mean_rel": 1.3319279340470446e-13,
+    "scaled_residual": 4.74461156121329e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 5,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.856175144100086e-12,
+    "max_scaled_residual": 7.001441969918551e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.058433639586663796,
+    "net_salt_flux_mol_s": 8.72982506995844e-19,
+    "max_face_to_mean_rel": 8.061508959465225e-13,
+    "scaled_residual": 7.223189897672027e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 5,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 8.914396970935644e-12,
+    "max_scaled_residual": 1.7318553051525621e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05843427990826084,
+    "net_salt_flux_mol_s": 8.726663375647918e-19,
+    "max_face_to_mean_rel": 6.118828548367904e-13,
+    "scaled_residual": 8.852952809783854e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 6,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.1261217554822052e-12,
+    "max_scaled_residual": 1.0043946680315338e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.055787971057663706,
+    "net_salt_flux_mol_s": 8.066383145278558e-19,
+    "max_face_to_mean_rel": 3.798425247426339e-13,
+    "scaled_residual": 3.741697744769611e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 6,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.2741599708022945e-12,
+    "max_scaled_residual": 8.85170252672188e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05579086621634741,
+    "net_salt_flux_mol_s": 8.054878528813704e-19,
+    "max_face_to_mean_rel": 1.9503819235904343e-13,
+    "scaled_residual": 1.192465592865567e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "9,9",
+   "step": 6,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.2674088899848897e-11,
+    "max_scaled_residual": 2.177607013396102e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05579159046354173,
+    "net_salt_flux_mol_s": 8.052000479410493e-19,
+    "max_face_to_mean_rel": 6.716343907562248e-13,
+    "scaled_residual": 1.146832198197459e-11,
+    "solver_flag": false
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 1,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.5294896969180158e-13,
+    "max_scaled_residual": 7.2423562703651e-15,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.01068535190266933,
+    "net_salt_flux_mol_s": 2.7302715660157554e-17,
+    "max_face_to_mean_rel": 1.791733929747253e-14,
+    "scaled_residual": 2.5574070792522025e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 1,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.3839971921226395e-13,
+    "max_scaled_residual": 4.0453567289732753e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010685164119662251,
+    "net_salt_flux_mol_s": 2.7302723639137427e-17,
+    "max_face_to_mean_rel": 5.0193950029850346e-14,
+    "scaled_residual": 5.401138695854413e-14,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 1,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.083853265139455e-13,
+    "max_scaled_residual": 4.4793238839225094e-14,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": 0.010685117105476781,
+    "net_salt_flux_mol_s": 2.7302725637011847e-17,
+    "max_face_to_mean_rel": 1.3469767883120675e-13,
+    "scaled_residual": 1.0773394491698716e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 2,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.316438056647678e-13,
+    "max_scaled_residual": 1.6239194169873255e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05195275364762895,
+    "net_salt_flux_mol_s": 1.0941643659436958e-17,
+    "max_face_to_mean_rel": 7.800326685328266e-14,
+    "scaled_residual": 5.303153404686368e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 2,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.3441601989728912e-12,
+    "max_scaled_residual": 8.815495679596639e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05196126096244837,
+    "net_salt_flux_mol_s": 1.0933458107227943e-17,
+    "max_face_to_mean_rel": 2.0737113188395723e-13,
+    "scaled_residual": 4.763389338296897e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 2,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.4239985078264823e-12,
+    "max_scaled_residual": 1.6743512359147133e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05196338910903992,
+    "net_salt_flux_mol_s": 1.0931409752010467e-17,
+    "max_face_to_mean_rel": 4.254523199295921e-13,
+    "scaled_residual": 6.3040905459922546e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 3,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 8.121932760510476e-13,
+    "max_scaled_residual": 2.0500863652910142e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.052430653164294634,
+    "net_salt_flux_mol_s": 1.0637352182140361e-17,
+    "max_face_to_mean_rel": 7.110222756333555e-14,
+    "scaled_residual": 1.9779357457928672e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 3,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.139468958629245e-12,
+    "max_scaled_residual": 7.699681350403953e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05243937292948408,
+    "net_salt_flux_mol_s": 1.0628771578886168e-17,
+    "max_face_to_mean_rel": 1.716970849531459e-13,
+    "scaled_residual": 1.0230911884617571e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 3,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.626346175535974e-12,
+    "max_scaled_residual": 3.28255772294571e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05244155426096328,
+    "net_salt_flux_mol_s": 1.0626624298650045e-17,
+    "max_face_to_mean_rel": 3.379132915923412e-13,
+    "scaled_residual": 6.287263315655307e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 4,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 8.121932760510476e-13,
+    "max_scaled_residual": 2.0500863652910142e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.052430653164294634,
+    "net_salt_flux_mol_s": 1.0637352182140361e-17,
+    "max_face_to_mean_rel": 7.110222756333555e-14,
+    "scaled_residual": 1.9779357457928672e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 4,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.139468958629245e-12,
+    "max_scaled_residual": 7.699681350403953e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05243937292948408,
+    "net_salt_flux_mol_s": 1.0628771578886168e-17,
+    "max_face_to_mean_rel": 1.716970849531459e-13,
+    "scaled_residual": 1.0230911884617571e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 4,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.626346175535974e-12,
+    "max_scaled_residual": 3.28255772294571e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05244155426096328,
+    "net_salt_flux_mol_s": 1.0626624298650045e-17,
+    "max_face_to_mean_rel": 3.379132915923412e-13,
+    "scaled_residual": 6.287263315655307e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 5,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 7.451693163070168e-13,
+    "max_scaled_residual": 1.4598279158162607e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.053034164676803074,
+    "net_salt_flux_mol_s": 5.9712377210582525e-18,
+    "max_face_to_mean_rel": 6.623701332939338e-14,
+    "scaled_residual": 2.2707481351367638e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 5,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.2171496179814338e-12,
+    "max_scaled_residual": 4.737675053647679e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05304229027126949,
+    "net_salt_flux_mol_s": 5.966401428817807e-18,
+    "max_face_to_mean_rel": 1.3752413643739857e-13,
+    "scaled_residual": 6.516573594956692e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 5,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 3.607800403238713e-12,
+    "max_scaled_residual": 2.2631082443844233e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05304432303035963,
+    "net_salt_flux_mol_s": 5.965191057496787e-18,
+    "max_face_to_mean_rel": 3.129090824015154e-13,
+    "scaled_residual": 5.8282839998715776e-12,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 6,
+   "level": 1,
+   "current_solves": {
+    "max_face_to_mean_rel": 5.538946335848991e-13,
+    "max_scaled_residual": 1.505478872423455e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05085747659779667,
+    "net_salt_flux_mol_s": 5.560692157277266e-18,
+    "max_face_to_mean_rel": 1.0138758157195197e-13,
+    "scaled_residual": 2.2077806459879714e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 6,
+   "level": 2,
+   "current_solves": {
+    "max_face_to_mean_rel": 1.0896754190046414e-12,
+    "max_scaled_residual": 4.697233985893538e-13,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.05086445778997695,
+    "net_salt_flux_mol_s": 5.556056901443535e-18,
+    "max_face_to_mean_rel": 1.381582571482126e-13,
+    "scaled_residual": 8.732939890577608e-13,
+    "solver_flag": true
+   }
+  },
+  {
+   "tube": "11,11",
+   "step": 6,
+   "level": 3,
+   "current_solves": {
+    "max_face_to_mean_rel": 2.2346594051126214e-12,
+    "max_scaled_residual": 2.8282906386220574e-12,
+    "solver_flag_all": true
+   },
+   "reversal_solve": {
+    "V_rev_V": -0.050866204273999543,
+    "net_salt_flux_mol_s": 5.554896908881424e-18,
+    "max_face_to_mean_rel": 3.2040671781082676e-13,
+    "scaled_residual": 3.4579619989562837e-12,
+    "solver_flag": true
+   }
+  }
+ ],
+ "summary": {
+  "current_max_face_to_mean_rel": 6.177804137172974e-11,
+  "current_max_scaled_residual": 9.991532972804882e-12,
+  "reversal_max_face_to_mean_rel": 6.807201232048902e-7,
+  "reversal_max_scaled_residual": 2.1024867390332046e-11,
+  "reversal_solver_flag_false": [
+   "6,6 step 4 level 3",
+   "6,6 step 6 level 3",
+   "7,7 step 5 level 3",
+   "7,7 step 6 level 3",
+   "9,9 step 6 level 3"
+  ]
+ }
+}

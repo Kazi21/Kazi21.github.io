@@ -150,3 +150,46 @@
   .ion-poster-cta .cl-poster-note { display: none; }
   #ion-guide:not(.is-on) #ion-guide-text { display: none; }
 }
+/* what limits this prediction: numerics (the controller), molecular inputs (the request), physical validation */
+.ion-limits-card { margin-top: var(--space-2); }
+.cl-app > .ion-limits-card { order: 3; } /* directly under the stage (order 2), before the workbench (order 6) */
+.ion-limits-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 0.4rem 1.2rem; }
+.ion-limits-head .cl-card-h { margin: 0; }
+.ion-limits-head .cl-pass { vertical-align: 0.2em; margin-left: 0.3rem; }
+.ion-target-field { min-width: 12rem; }
+.ion-target-field label { font-size: var(--step--1); }
+.ion-limits-lead { margin: 0.4rem 0 0.7rem; max-width: none; }
+.ion-limits { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 0.75rem; align-items: start; }
+.ion-limit-num { grid-column: 1 / -1; }
+.ion-limit { border: 1px solid var(--line); border-radius: var(--radius-s); padding: 0.6rem 0.75rem; background: var(--surface); min-width: 0; }
+.ion-limit-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem; margin: 0 0 0.45rem; max-width: none; }
+.ion-limit-k { font-weight: 600; color: var(--heading); }
+.ion-ctrl-msg { margin: 0 0 0.45rem; max-width: none; }
+.ion-ctrl-table th, .ion-ctrl-table td { font-size: 0.8rem; white-space: nowrap; }
+.ion-ctrl-table td:last-child { white-space: normal; min-width: 12rem; }
+.ion-limit .cl-table-wrap + .cl-small { margin-top: 0.4rem; }
+.ion-request { border-left: 3px solid #E6B66E; background: #FFF8EC; padding: 0.45rem 0.65rem; border-radius: 0 var(--radius-s) var(--radius-s) 0; }
+.ion-request p { margin: 0.2rem 0; max-width: none; }
+.ion-request-h { margin-top: 0 !important; }
+.ion-limits-foot { margin: 0.65rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.8rem; }
+.cl-state.is-warn { background: #FFF1DC; color: #7A4300; border-color: #E6B66E; }
+.ion-app .cl-state.ion-mol-ill { color: #6B2C91; border-color: #C9A6E0; background: #F6EFFB; }
+.ion-app .cl-state.ion-mol-none, .ion-app .cl-state.ion-val-chip { color: var(--muted); border-color: var(--line); background: var(--bg-2); }
+.ion-app .cl-state.ion-live-chip { color: #1F4E79; border-color: #9DBBD9; background: #EEF4FB; }
+.ion-mode-badge { display: inline-block; margin: 0 0 0.45rem; font-size: 0.74rem; font-weight: 600; color: #7A4300; border: 1px solid #E6B66E; background: #FFF1DC; border-radius: 999px; padding: 0.05rem 0.6rem; max-width: none; }
+@media (max-width: 719px) {
+  .ion-limits { grid-template-columns: minmax(0, 1fr); }
+  .ion-target-field { min-width: 0; width: 100%; }
+}
+@media (max-width: 640px) {
+  .ion-limit-num .cl-table-wrap { display: none; }
+  .ion-ctrl-cards li.is-current { border-color: var(--accent); background: var(--accent-tint); }
+}
+
+/* release 2026.10.1: less text and space above the 3D view (the question, one sentence, the provenance label and the
+   primary actions stay above it) */
+.ion-top { padding-top: var(--space-3); }
+.ion-top .cl-subtitle { margin-bottom: 0.4rem; }
+.ion-top .ion-switch { margin-bottom: var(--space-1); }
+.ion-top .cl-lede { max-width: 80ch; margin-bottom: var(--space-1); }
+.ion-top .ion-provenance { margin-bottom: var(--space-2); }

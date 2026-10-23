@@ -68,8 +68,8 @@
     <div class="hero-copy">
       <p class="hero-name"><strong class="hero-person">Kazi Ehsanul Karim</strong><span class="hero-role">Ph.D. candidate, Mechanical Engineering, University of Ulsan</span></p>
       <h1>Molecular physics for nanoscale transport</h1>
-      <p class="lede">I use molecular simulation and statistical mechanics to explain how confinement and interfaces govern transport. My current work develops error-aware interatomic potentials and physics-constrained closures that connect molecular evidence with continuum models.</p>
-      <p class="hero-evidence"><strong>Three first-author articles published in PRE and PCCP.</strong><br><a href="https://doi.org/10.1103/PhysRevE.103.053115">PRE, 2021</a> · <a href="https://doi.org/10.1039/D4CP01068J">PCCP, 2024</a> · <a href="https://doi.org/10.1039/D6CP03099H">PCCP, 2026</a></p>
+      <p class="lede">I study how molecular interactions govern nanoscale transport. I am developing error-aware molecular models and physics-constrained closures that use prediction failures to guide the next calculation.</p>
+      <p class="hero-evidence"><strong>Three first-author articles in PRE and PCCP (two published, one accepted).</strong><br><a href="https://doi.org/10.1103/PhysRevE.103.053115">PRE, 2021</a> · <a href="https://doi.org/10.1039/D4CP01068J">PCCP, 2024</a> · <a href="https://doi.org/10.1039/D6CP03099H">PCCP, 2026</a></p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#research">Explore research</a>
         <a class="btn" href="lab/continuum/">Try the multiscale experiment</a>
@@ -188,13 +188,13 @@
           <dt>My contribution</dt>
           <dd>A first-law energy-balance definition of the flow boundary inside a carbon nanotube, tested against Hagen–Poiseuille limits (<em>Phys. Rev. E</em> 2021); a scale-effects analysis of CNT water transport and the influence of boundary definitions, within a critical review (<em>Phys. Chem. Chem. Phys.</em> 2024); and a study of molecular admission, packing and transport in subnanometre graphene slits (<em>Phys. Chem. Chem. Phys.</em> 2026).</dd>
           <dt>Available evidence</dt>
-          <dd><a href="https://doi.org/10.1103/PhysRevE.103.053115">Phys. Rev. E 103, 053115 (2021)</a> · <a href="https://doi.org/10.1039/D4CP01068J">Phys. Chem. Chem. Phys. 26, 19069 (2024)</a> · <a href="https://doi.org/10.1039/D6CP03099H">Phys. Chem. Chem. Phys. (2026), published online</a></dd>
+          <dd><a href="https://doi.org/10.1103/PhysRevE.103.053115">Phys. Rev. E 103, 053115 (2021)</a> · <a href="https://doi.org/10.1039/D4CP01068J">Phys. Chem. Chem. Phys. 26, 19069 (2024)</a> · <a href="https://doi.org/10.1039/D6CP03099H">Phys. Chem. Chem. Phys. (2026), accepted</a></dd>
         </dl>
         <details class="disclosure">
           <summary>Methods and next development</summary>
           <div class="disclosure-body">
             <p>In <em>Physical Review E</em> (2021) I developed a first-law energy-balance analysis that locates the flow boundary for a simple liquid inside a single-walled carbon nanotube from non-equilibrium and equilibrium molecular dynamics, and tested the resulting boundary against Hagen–Poiseuille limits under controlled wall–fluid interaction. In <em>Physical Chemistry Chemical Physics</em> (2024) I led a critical review of experimental and simulation estimates of water transport in carbon nanotubes, with original simulations and a scale-effects analysis of how boundary definitions enter Hagen–Poiseuille-type estimates. In <em>Physical Chemistry Chemical Physics</em> (2026) I examined how molecular admission and packing govern transport in subnanometre graphene slits.</p>
-            <p><strong>Next development.</strong> Two further manuscripts from this work are in submission: one on finite-time diffusivity and wall–fluid interaction strength, one on hydraulic resistance and the limits of Navier-slip transferability in graphene nanoslits. The <a href="#thesis">seven studies of the doctoral thesis</a> are summarised under Publications, with full titles in the public CV.</p>
+            <p><strong>Next development.</strong> Two further manuscripts from this work are completed or in final preparation: one on finite-time diffusivity and wall–fluid interaction strength (completed; preparing submission), one on hydraulic resistance and the limits of Navier-slip transferability in graphene nanoslits (in final preparation). The <a href="#thesis">seven studies of the doctoral thesis</a> are summarised under Publications, with full titles in the public CV.</p>
           </div>
         </details>
       </article>
@@ -280,13 +280,12 @@
       <div class="lab-card-body">
         <p class="project-kicker">Multiscale experiments · browser solvers</p>
         <h3>The Continuum Lab</h3>
-        <p><span class="status">Live solvers · recorded CP2K hydration · illustrative closure</span></p>
-        <p class="lab-lead">Why does a pore pass one ion and resist another? Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model. Charged rims, ion size, dehydration, confined mobility and electro-osmosis are added one at a time, each compared with the classical Poisson–Nernst–Planck result: molecular evidence, an explicit closure assumption, a transport calculation and the next molecular question.</p>
+        <p><span class="status">Live solvers · numerical controller · recorded CP2K hydration · illustrative closure</span></p>
+        <p class="lab-lead">Why does a pore pass one ion and resist another? Explore how pore charge, hydration and mobility change ion transport through one carbon-nanotube pore. A live continuum solver compares six physical models, checks grid convergence and can name a suggested molecular calculation, marked not run. Inspect the recorded CP2K hydration and the closure assumptions, or switch to water flow through a CNT membrane.</p>
         <ul class="lab-points">
-          <li>A 3D cutaway of the pore shows the computed concentration, potential or current density, with markers moving at the computed mean drift speed.</li>
-          <li>A rule-based panel ranks sensitivity to stated input ranges and identifies molecular calculations that could constrain those inputs; an evidence drawer lists every input with its source and status.</li>
-          <li>Numerically verified against an independent solver and analytical limits (Hall’s access resistance, Goldman–Hodgkin–Katz, Donnan, Onsager reciprocity, van ’t Hoff osmosis); cases and tolerances under Validation.</li>
-          <li>Second experiment: water flow through a membrane of 40 000 nanotubes, with 3D Stokes flow in the chambers.</li>
+          <li>Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model.</li>
+          <li>A rule-based controller checks the prediction on finer grids, refines within its budget and records why it stops; the decision record can be downloaded and reproduced.</li>
+          <li>Numerically verified against an independent solver and analytical limits (Hall, Goldman–Hodgkin–Katz, Donnan, Onsager, van ’t Hoff); a 3D cutaway shows the computed fields.</li>
         </ul>
         <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/">Open the ion experiment</a> <a class="btn btn-small" href="lab/continuum/water.html">Water-flow experiment</a> <a class="lab-more" href="lab/continuum/#validation">Validation</a></p>
       </div>
@@ -448,7 +447,7 @@
       <summary>Ten items with explicit status</summary>
       <div class="disclosure-body">
     <ul class="worklist">
-      <li><span class="status">In progress</span><span>Doctoral thesis: two manuscripts in submission and two in preparation, completing seven studies (<a href="#thesis">overview</a>).</span></li>
+      <li><span class="status">In progress</span><span>Doctoral thesis: two manuscripts completed or in final preparation and two in preparation, completing seven studies (<a href="#thesis">overview</a>).</span></li>
       <li><span class="status">In progress</span><span>CP2K reference data, DP-GEN active learning and DeePMD-kit models for CNT-confined NaCl–water across four tube diameters are complete; the species-specific error and the choice of friction estimator are under analysis (Project 2); methods tooling published as a software demonstration.</span></li>
       <li><span class="status">In progress</span><span>PINN closure for wall friction and flow in nanoconfined water: manuscript in preparation, with models scored on geometries withheld from training (Project 3).</span></li>
       <li><span class="status status-proposed">Planned</span><span>Reproducible reference example: inputs, settings and consistency checks that another group can rerun.</span></li>
@@ -637,7 +636,7 @@
     <h2>Publications and profile</h2>
     <div class="thesis" id="thesis">
       <h3>Doctoral thesis: seven studies, one argument</h3>
-      <p class="thesis-lead">Define the descriptor, gate it, then predict. Three studies are published, two are in submission and two are in preparation; full titles are listed in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>.</p>
+      <p class="thesis-lead">Define the descriptor, gate it, then predict. Three studies are published or accepted, two are completed or in final preparation and two are in preparation; full titles are listed in the <a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>public CV</a>.</p>
       <div class="thesis-parts">
         <div class="thesis-part">
           <p class="project-kicker">Part I · CNTs · argon and water</p>
@@ -651,9 +650,9 @@
           <p class="project-kicker">Part II · graphene slits · argon</p>
           <h4>Who gets in — and how does it move?</h4>
           <ol class="thesis-studies" start="3">
-            <li><span class="thesis-num">3</span><div><b><a href="#paper-pccp-2026">Admission, loading and capacity</a></b><span class="thesis-sys">Slit widths 0.396–3.40 nm</span><span class="status status-live">Published · PCCP 2026</span></div></li>
-            <li><span class="thesis-num">4</span><div><b>Finite-time diffusivity and wall–fluid interaction strength</b><span class="thesis-sys">Equilibrium MD</span><span class="status">In submission</span></div></li>
-            <li><span class="thesis-num">5</span><div><b>Nanoflow in subnanometre slits</b><span class="thesis-sys">Pressure-driven NEMD; slip routes</span><span class="status">In submission</span></div></li>
+            <li><span class="thesis-num">3</span><div><b><a href="#paper-pccp-2026">Admission, loading and capacity</a></b><span class="thesis-sys">Slit widths 0.396–3.40 nm</span><span class="status status-live">Accepted · PCCP 2026</span></div></li>
+            <li><span class="thesis-num">4</span><div><b>Finite-time diffusivity and wall–fluid interaction strength</b><span class="thesis-sys">Equilibrium MD</span><span class="status">Completed · preparing submission</span></div></li>
+            <li><span class="thesis-num">5</span><div><b>Nanoflow in subnanometre slits</b><span class="thesis-sys">Pressure-driven NEMD; slip routes</span><span class="status">In final preparation</span></div></li>
           </ol>
         </div>
         <div class="thesis-part">
@@ -671,7 +670,7 @@
       <div>
         <h3>Selected peer-reviewed articles</h3>
         <ul class="pubs">
-          <li id="paper-pccp-2026"><span class="title">Molecular admission and packing govern transport in subnanometre graphene slits</span> <span class="badge badge-pub">Published online · Oct 2026</span><span class="meta">K. E. Karim and B. Kim, <em>Physical Chemistry Chemical Physics</em> (2026), published online 9 October 2026. <a href="https://doi.org/10.1039/D6CP03099H">doi:10.1039/D6CP03099H</a></span></li>
+          <li id="paper-pccp-2026"><span class="title">Molecular admission and packing govern transport in subnanometre graphene slits</span> <span class="badge badge-pub">Accepted · 2026</span><span class="meta">K. E. Karim and B. Kim, <em>Physical Chemistry Chemical Physics</em>, accepted for publication (2026). <a href="https://doi.org/10.1039/D6CP03099H">doi:10.1039/D6CP03099H</a></span></li>
           <li><span class="title">Estimating water transport in carbon nanotubes: a critical review and inclusion of scale effects</span><span class="meta">K. E. Karim, M. Barisik, C. Bakli and B. Kim, <em>Physical Chemistry Chemical Physics</em> 26, 19069–19082 (2024). <a href="https://doi.org/10.1039/D4CP01068J">doi:10.1039/D4CP01068J</a></span><span class="meta pub-contrib">My contribution: original simulations and the scale-effects analysis of CNT water transport and the influence of boundary definitions, compared with experimental transport measurements.</span></li>
           <li><span class="title">First law of thermodynamics on the boundary for flow through a carbon nanotube</span><span class="meta">K. E. Karim and B. Kim, <em>Physical Review E</em> 103, 053115 (2021). <a href="https://doi.org/10.1103/PhysRevE.103.053115">doi:10.1103/PhysRevE.103.053115</a></span></li>
         </ul>
@@ -692,7 +691,9 @@
 
 <!-- G. Contact -------------------------------------------------------------------------------------- -->
 <section class="section section-band" id="contact">
-  <div class="container">
+  <div class="container contact-grid">
+    <img class="contact-portrait" src="assets/figures/kazi-ehsanul-karim.jpg" width="400" height="400" alt="Kazi Ehsanul Karim" loading="lazy" decoding="async">
+    <div class="contact-body">
     <h2>Discuss a postdoctoral or research-fellow opportunity</h2>
     <p>I am open to positions where molecular simulation, learned potentials and transport questions meet. Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from early 2027. Email is the quickest route; I reply from the address below.</p>
     <div class="contact-row">
@@ -707,6 +708,7 @@
       <li><a href="https://github.com/Kazi21">GitHub</a></li>
       <li><a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>Public CV (PDF)</a></li>
     </ul>
+    </div>
   </div>
 </section>
 
@@ -715,7 +717,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.9.1. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
+      <p class="version">Version 2026.10.1. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>

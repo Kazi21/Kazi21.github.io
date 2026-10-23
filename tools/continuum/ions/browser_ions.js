@@ -1,5 +1,8 @@
-// Browser tests IB1–IB10 for the ion experiment (/lab/continuum/; criteria: tools/continuum/ions/TOLERANCES.md, written
-// before the page existed). WebGL runs on SwiftShader in headless Chromium. Numbers are compared with the Node solver
+// Browser tests IB1–IB12 for the ion experiment (/lab/continuum/; criteria: tools/continuum/ions/TOLERANCES.md, written
+// before the page existed; IB11, the numerical controller, added for release 2026.10 and IB12, the failed-run display, for
+// release 2026.10.1, each before it was run).
+// IB1 procedure amended for release 2026.10 (criterion unchanged): a dedicated worker is also counted through
+// Playwright's 'worker' event, because the 'request' event of the Chromium build used for 2026.10 does not report it. WebGL runs on SwiftShader in headless Chromium. Numbers are compared with the Node solver
 // (lab/continuum/ions/core.js, params.js) run on the same inputs; the page state is read through window.__ionLab.
 // Usage: node tools/continuum/ions/browser_ions.js [base URL]   (serve the repository root first)
 // Writes tools/continuum/results/browser_ions.json; exits 1 if any test fails.
@@ -11,6 +14,7 @@ const EXE = process.env.CHROMIUM || '/opt/pw-browsers/chromium_headless_shell-11
 const SITE = path.resolve(__dirname, '../../..');
 const Core = require(path.join(SITE, 'lab/continuum/ions/core.js'));
 const Pm = require(path.join(SITE, 'lab/continuum/ions/params.js'));
+const Ctl = require(path.join(SITE, 'lab/continuum/ions/controller.js'));
 const URL0 = BASE + 'lab/continuum/', URLW = BASE + 'lab/continuum/water.html';
 const GL = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
 const items = [];
@@ -18,7 +22,7 @@ const rec = (id, name, pass, detail) => { items.push({ id, name, verdict: pass ?
 const rel = (a, b) => (a === b ? 0 : Math.abs(a - b) / Math.max(Math.abs(a), Math.abs(b)));
 const e2 = (x) => Number(x).toExponential(2);
 const f3pA = (I) => { const v = I * 1e12; return (Math.abs(v) >= 1e4 || (Math.abs(v) < 1e-3 && v !== 0) ? null : Number(v.toPrecision(3)).toString()) + ' pA'; };
-const SOLVER = /ions\/(core|params|worker|charts|ions3d)\.js|ions\/data\/hydration\.json|vendor\/three/;
+const SOLVER = /ions\/(core|params|controller|worker|charts|ions3d)\.js|ions\/data\/hydration\.json|vendor\/three/;   // controller.js added in 2026.10
 
 const state = (p) => p.evaluate(() => { const S = window.__ionLab.state(); return { req: S.req, done: !!S.res.done, opts: S.res.main && S.res.main.opts, I: S.res.main && S.res.main.model.I, ok: S.res.main && S.res.main.model.ok }; });
 async function runDone(p, req0, timeout) {
@@ -37,6 +41,7 @@ const req = (p) => p.evaluate(() => (window.__ionLab ? window.__ionLab.state().r
   const p = await ctx.newPage();
   p.on('pageerror', (e) => allErrors.push('desktop: ' + e.message));
   const reqs = []; p.on('request', (r) => reqs.push({ url: r.url(), t: Date.now() }));
+  p.on('worker', (w) => reqs.push({ url: w.url(), t: Date.now(), worker: true }));   // IB1 procedure, release 2026.10
   await p.goto(URL0, { waitUntil: 'networkidle' });
   await p.waitForTimeout(1500);
   const before = reqs.filter((r) => SOLVER.test(r.url)).map((r) => r.url.replace(BASE, ''));
@@ -45,7 +50,7 @@ const req = (p) => p.evaluate(() => (window.__ionLab ? window.__ionLab.state().r
   await runDone(p, 0);
   await p.waitForFunction(() => window.__ionLab.view() && window.__ionLab.view().stats().frames > 2, null, { timeout: 60000 });
   const after = [...new Set(reqs.filter((r) => SOLVER.test(r.url) && r.t >= tStart).map((r) => r.url.replace(BASE, '')))];
-  const need = ['ions/core.js', 'ions/params.js', 'ions/worker.js', 'ions/charts.js', 'ions/ions3d.js', 'vendor/three.module.min.js'];
+  const need = ['ions/core.js', 'ions/params.js', 'ions/controller.js', 'ions/worker.js', 'ions/charts.js', 'ions/ions3d.js', 'vendor/three.module.min.js'];
   const ib1 = before.length === 0 && need.every((n) => after.some((u) => u.endsWith(n)));
   rec('IB1', 'Lazy start', ib1, `requested during load + 1.5 s: ${before.length ? before.join(', ') : 'none of the solver, worker, chart, data or 3D files'}; after Start: ${after.map((u) => u.split('/').slice(-2).join('/')).join(', ')}`);
 
@@ -235,11 +240,102 @@ const req = (p) => p.evaluate(() => (window.__ionLab ? window.__ionLab.state().r
   const switchesOK = sw1.length === 2 && sw1[1].cur === 'page' && sw2.length === 2 && sw2[0].cur === 'page' && atIon && atWater;
   rec('IB10', 'Water experiment', wQ > 0 && switchesOK && external.length === 0 && ew.length === 0, `water.html converged, Q = ${e2(wQ)} m³ s⁻¹; switch on the water page marks it current and leads to the ion page: ${atIon}; switch on the ion page leads back: ${atWater}; external requests from both pages: ${external.length ? external.join(', ') : 'none'}; page errors ${ew.length}`);
 
+  // ===================================================== IB11 the numerical controller in the page (release 2026.10)
+  {
+    const cc = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+    const pc = await cc.newPage(); const ec = [], creq = [];
+    pc.on('pageerror', (e) => ec.push(e.message)); pc.on('request', (r) => creq.push(r.url()));
+    await pc.goto(URL0, { waitUntil: 'networkidle' });
+    await pc.click('.ion-poster-run'); await runDone(pc, 0);
+    const read = () => pc.evaluate(() => { const S = window.__ionLab.state(); return { opts: S.res.opts, n: S.res.ctrl && S.res.ctrl.numerical, rec: S.res.decision && S.res.decision.record, chip: document.getElementById('ion-state').textContent, ctrlChip: document.getElementById('ion-ctrl-chip').textContent, rows: document.querySelectorAll('.ion-ctrl-table tbody tr').length, tile: document.getElementById('ion-I').textContent, ptile: document.getElementById('ion-P').textContent, request: document.getElementById('ion-request').textContent, hyd: [...document.querySelectorAll('.ion-mode-badge')].map((b) => b.closest('section') && b.closest('section').querySelector('#ion-hyd') ? b.textContent : '').join('') }; });
+    const det = []; let ok = true;
+    const compare = (pg, target) => {
+      const q = Object.assign({}, pg.opts), node = Ctl.run(q), out = node.outcome;
+      const levelsOk = pg.n.levels.length === node.levels.length && pg.n.levels.every((e, i) => e.decision === node.levels[i].decision && e.rule === node.levels[i].rule && rel(e.I_A, node.levels[i].I_A) <= 1e-12 && rel(e.V_rev_V, node.levels[i].V_rev_V) <= 1e-12);
+      const statusOk = pg.n.outcome.status === out.status && pg.chip === Ctl.STATUS_TEXT[out.status] && pg.ctrlChip === Ctl.STATUS_TEXT[out.status];
+      const repOk = pg.n.outcome.reported_level === out.reported_level && rel(pg.n.outcome.I_A, out.I_A) <= 1e-12 && rel(pg.n.outcome.V_rev_V, out.V_rev_V) <= 1e-12;
+      const tileOk = out.I_A === null || pg.tile.includes(Number((out.I_A * 1e12).toPrecision(3)).toString());
+      const rowsOk = pg.rows === node.levels.length;
+      det.push(target + ': page “' + pg.chip + '”, levels ' + pg.n.levels.map((e) => e.level + ' ' + e.decision).join(', ') + ', reported level ' + pg.n.outcome.reported_level + ' (' + pg.tile + '); Node ' + out.status + ', reported level ' + out.reported_level + '; levels and decisions equal: ' + levelsOk + ', status and chips: ' + statusOk + ', reported values: ' + repOk + ', tile: ' + tileOk + ', table rows: ' + rowsOk);
+      return levelsOk && statusOk && repOk && tileOk && rowsOk;
+    };
+    const p0 = await read();
+    ok = ok && p0.chip === 'Numerical tolerance reached' && p0.n.levels.length === 2 && compare(p0, '0.5 %');
+    // calculation request against an independent ranking (same procedure as IB6)
+    const base = Core.solve(Pm.build(Object.assign({}, p0.opts, { V: 0.1 })).s);
+    const top = Pm.sensitivityInputs(p0.opts).map((inp) => { const lo = Core.solve(Pm.build(Object.assign({}, p0.opts, inp.lo, { V: 0.1 })).s, { prev: base.state }), hi = Core.solve(Pm.build(Object.assign({}, p0.opts, inp.hi, { V: 0.1 })).s, { prev: base.state }); return { id: inp.id, name: inp.name, f: Math.max(Math.abs(hi.I), Math.abs(lo.I)) / Math.min(Math.abs(hi.I), Math.abs(lo.I)) }; }).sort((a, b) => b.f - a.f)[0];
+    const reqOk = !!p0.rec.request && p0.rec.request.input_id === top.id && p0.request.includes(top.name) && /not run/.test(p0.request) && /nothing is submitted/.test(p0.request);
+    det.push('request names ' + (p0.rec.request ? p0.rec.request.input_id : 'none') + ' (independent ranking: ' + top.id + ' ×' + top.f.toPrecision(3) + '), states not run and nothing submitted: ' + reqOk);
+    const hydOk = /Recorded CP2K data/.test(p0.hyd) && /not recalculated at the selected voltage/.test(p0.hyd);
+    det.push('hydration card label: “' + p0.hyd.trim() + '”');
+    // download: the decision record inside the result validates and reproduces
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ions-ctl-'));
+    const [dl] = await Promise.all([pc.waitForEvent('download'), pc.click('.ion-dl-json')]);
+    const fj = path.join(tmp, dl.suggestedFilename()); await dl.saveAs(fj);
+    const j = JSON.parse(fs.readFileSync(fj, 'utf8')), vrec = j.decision ? Ctl.validate(j.decision) : { valid: false, errors: ['no decision record'] };
+    let outR = '', codeR = 0;
+    try { outR = cp.execFileSync('node', [path.join(__dirname, 'reproduce_ions.js'), fj], { encoding: 'utf8' }); } catch (e) { codeR = e.status || 1; outR = String(e.stdout || '') + String(e.stderr || ''); }
+    det.push('download: decision record present and valid: ' + vrec.valid + '; reproduce_ions.js: ' + outR.trim().split('\n').slice(-1)[0] + ' (exit ' + codeR + ')');
+    // the two other targets, chosen in the select
+    let tOk = true;
+    for (const [val, label] of [['fine', '0.1 %'], ['strict', '0.02 %']]) {
+      const r0 = await req(pc); await pc.selectOption('#ion-target', val); await runDone(pc, r0);
+      const pg = await read(); tOk = tOk && pg.opts.target === val && compare(pg, label);
+    }
+    // keyboard: focus the target control and press ArrowUp (strict → fine)
+    const r1 = await req(pc); await pc.focus('#ion-target'); await pc.keyboard.press('ArrowUp'); await runDone(pc, r1);
+    const kb = await read(); const kbOk = kb.opts.target === 'fine' && compare(kb, 'keyboard ↑ (0.1 %)');
+    await cc.close();
+    const external = [...new Set(creq.filter((u) => !u.startsWith(BASE) && !u.startsWith('data:') && !u.startsWith('blob:')))];
+    det.push('target control by keyboard: ' + kbOk + '; external requests: ' + (external.length ? external.join(', ') : 'none') + '; page errors ' + ec.length);
+    ok = ok && reqOk && hydOk && vrec.valid && codeR === 0 && tOk && kbOk && external.length === 0 && ec.length === 0;
+    rec('IB11', 'Controller in the page', ok, det.join('; '));
+  }
+
+  // ===================================================== IB12 failed-run display (release 2026.10.1)
+  // The controller's messages for a failed run are computed here in Node with controller.js and a solver forced to fail
+  // gate G1 at grid level 2, then delivered to the page through its own worker message handler (nothing is changed in
+  // the page's files).
+  {
+    const cf = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+    const pf = await cf.newPage(); const ef = [];
+    pf.on('pageerror', (e) => ef.push(e.message));
+    await pf.goto(URL0, { waitUntil: 'networkidle' });
+    await pf.click('.ion-poster-run'); await runDone(pf, 0);
+    const pg0 = await pf.evaluate(() => { const S = window.__ionLab.state(); return { opts: S.res.opts, version: S.res.decision && S.res.decision.record.website_version }; });
+    const real = Ctl.defaultSolver();
+    const failing = { current: (o, l) => { const r = real.current(o, l); return l === 2 ? Object.assign({}, r, { ok: false, residual: 1e-6 }) : r; }, reversal: (o, l) => real.reversal(o, l) };
+    const nF = Ctl.run(pg0.opts, { solver: failing });
+    const rF = Ctl.record(nF, Ctl.ranking(pg0.opts), { websiteVersion: pg0.version || '' });
+    await pf.evaluate(([num, recd]) => {
+      const S = window.__ionLab.state(), id = S.req;
+      S.worker.onmessage({ data: { id, stage: 'ctrl', data: { numerical: num, ms: 0 } } });
+      S.worker.onmessage({ data: { id, stage: 'decision', data: { record: recd } } });
+    }, [nF, rF]);
+    await pf.waitForTimeout(300);
+    const v = await pf.evaluate(() => ({
+      chip: document.getElementById('ion-ctrl-chip').textContent, state: document.getElementById('ion-state').textContent,
+      msg: (document.querySelector('#ion-ctrl .ion-ctrl-msg') || {}).textContent || '', Is: document.getElementById('ion-I-s').textContent,
+      Gs: document.getElementById('ion-G-s').textContent, reqText: document.getElementById('ion-request').textContent, reqBox: !!document.querySelector('#ion-request .ion-request'),
+    }));
+    const tmpF = fs.mkdtempSync(path.join(os.tmpdir(), 'ions-fail-'));
+    const [dlF] = await Promise.all([pf.waitForEvent('download'), pf.click('.ion-dl-decision')]);
+    const fF = path.join(tmpF, dlF.suggestedFilename()); await dlF.saveAs(fF);
+    const dF = JSON.parse(fs.readFileSync(fF, 'utf8')), vF = Ctl.validate(dF);
+    const chipsOk = v.chip === 'Not converged' && v.state === 'Not converged', msgOk = /gate G1/.test(v.msg), tilesOk = /not certified/.test(v.Is) && /not certified/.test(v.Gs);
+    const recOk = vF.valid && dF.outcome.status === 'not_converged' && dF.outcome.reported_level === null && dF.outcome.I_A === null && dF.request === null;
+    rec('IB12', 'Failed-run display', chipsOk && msgOk && tilesOk && !v.reqBox && recOk && ef.length === 0,
+      'Node record: ' + nF.outcome.status + ', levels ' + nF.levels.map((e) => e.level + ' ' + (e.failed_gate ? 'failed ' + e.failed_gate : 'passed')).join(', ') + '; chips “' + v.chip + '” / “' + v.state + '”: ' + chipsOk +
+      '; message “' + v.msg.trim() + '”: names G1 ' + msgOk + '; tiles “' + v.Is.trim() + '” and “' + v.Gs.trim() + '”: ' + tilesOk + '; request box shown: ' + v.reqBox + ' (“' + v.reqText.trim().slice(0, 80) + '”)' +
+      '; download ' + dlF.suggestedFilename() + ': valid ' + vF.valid + ', status ' + dF.outcome.status + ', certified result ' + dF.outcome.reported_level + ', request ' + dF.request + '; page errors ' + ef.length);
+    await cf.close();
+  }
+
   await browser.close();
-  const order = ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10'];
+  const order = ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10', 'IB11', 'IB12'];
   items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   const pass = items.length === order.length && items.every((i) => i.verdict === 'PASS') && allErrors.length === 0;
-  const res = { id: 'browser_ions', name: 'Ion experiment browser tests IB1–IB10', verdict: pass ? 'PASS' : 'FAIL', chromium: version, items, pageErrors: allErrors,
+  const res = { id: 'browser_ions', name: 'Ion experiment browser tests IB1–IB12', verdict: pass ? 'PASS' : 'FAIL', chromium: version, items, pageErrors: allErrors,
     environment: 'Chromium ' + version + ' (headless shell, Playwright, SwiftShader WebGL) on ' + os.cpus()[0].model + ' (' + os.cpus().length + ' cores); local static server; no Safari, Firefox, real phones or GPUs', date: new Date().toISOString() };
   fs.writeFileSync(process.env.OUT || path.join(SITE, 'tools/continuum/results/browser_ions.json'), JSON.stringify(res, null, 1) + '\n');
   console.log('verdict', res.verdict, allErrors.length ? 'page errors: ' + allErrors.join(' | ') : '');

@@ -40,6 +40,15 @@ double layers), a rule-based ranking of sensitivity to stated input ranges with 
 constrain each input (one-at-a-time sensitivity, not an optimal decision), an evidence drawer (value, units, source, conditions, status of every input), a 3D cutaway
 (three.js, loaded with the view) and a reproducible download (JSON and CSV; `node tools/continuum/ions/reproduce_ions.js`).
 
+Since release 2026.10 a **numerical controller** (`lab/continuum/ions/controller.js`; deterministic rules frozen in
+`tools/continuum/ions/TOLERANCES.md`) checks the current and the reversal potential of every run on finer grids: it
+compares the screening grid (level 1) with a twice-finer grid, refines up to level 3 when the visitor's grid-convergence
+target (0.5 %, 0.1 % or 0.02 %) asks for it, and stops with "Numerical tolerance reached", "Refinement budget exhausted",
+"Not converged" or "Numerical check failed" (queries outside the supported domain are refused). After the numerics it may
+name one molecular calculation as a request (not run, nothing submitted) for the top input of the one-at-a-time
+ranking. Every solve and decision of the controller is recorded ("Decision record (JSON)") and reproduced by
+`reproduce_ions.js`. The ladder, the current–voltage curves, the profiles and the ranking stay on the screening grid.
+
 ## Numerics
 
 Finite volumes (447 nodes; 0.0125 nm at the mouths, 0.025 nm in the pore, growth 1.08 out to 300 nm), Scharfetter–Gummel
@@ -55,21 +64,29 @@ RT/F and 10⁻⁹ m² s⁻¹.
 | `lab/continuum/index.html` | Page (built from `tools/continuum/ions/page.template.html` by `tools/continuum/ions/build_ions_page.js`) |
 | `lab/continuum/ions/core.js` | Solver (UMD: page worker and Node tests) |
 | `lab/continuum/ions/params.js` | Parameter registry with sources and statuses, tube presets, closures, scenario builder, rule-based sensitivity inputs |
+| `lab/continuum/ions/controller.js` | Numerical controller (release 2026.10): domain check, grid comparison and refinement within levels 1–3, stop rules, one-at-a-time ranking, decision record with its strict schema, calculation request, closure-contract check (UMD: page worker, Node tests, reproduce script) |
+| `lab/continuum/ions/data/closure-illustrative.json`, `closure-molecular-template.json` | Closure contracts: the illustrative solvation closure in use, and the proposed molecular closure (null values; blocked) |
 | `lab/continuum/ions/worker.js`, `app.js`, `charts.js`, `ions3d.js`, `ions.css` | Worker protocol, page logic, SVG charts, 3D view, layout |
 | `lab/continuum/ions/data/hydration.json` | First-shell counts of the four CP2K runs with caveats and file hashes |
-| `tools/continuum/ions/TOLERANCES.md` | Acceptance criteria I1–I15 and IB1–IB10 (frozen before evaluation; I15 added for 2026.9.1), how they are applied, record of runs |
+| `tools/continuum/ions/TOLERANCES.md` | Acceptance criteria I1–I18 and IB1–IB12 (frozen before evaluation; I15 added for 2026.9.1; I16, I17, IB11 and the controller rules for 2026.10, with the one amendment of the controller's gates before the first official run), I18, IB12 and the finite-value amendment of gates G2 and G3 for 2026.10.1; how they are applied, record of runs |
 | `tools/continuum/ions/t_ions.js`, `browser_ions.js` | Solver tests (Node) and browser tests (Chromium) |
 | `tools/continuum/ions/ref_pnp.py` | Independent SciPy (solve_bvp) reference for I8; no shared code |
 | `tools/continuum/ions/make_hydration.py` | Recomputes the first-shell counts from the public trajectories (`--check` verifies the JSON) |
-| `tools/continuum/ions/reproduce_ions.js` | Recomputes a downloaded result |
+| `tools/continuum/ions/reproduce_ions.js` | Recomputes a downloaded result and repeats the controller's decisions (also accepts a decision record alone) |
+| `tools/continuum/ions/make_closures.js` | Writes the two closure contracts from `params.js` and `hydration.json` (`--check` verifies the files) |
+| `tools/continuum/ions/probe_controller_guards.js` | Nine regression probes of the controller (test I18): non-finite diagnostics, an almost empty "validated" closure, equilibrium, the published contracts, a tampered record |
+| `tools/continuum/ions/bench_ions.js` | Run times of the default experiment in headless Chromium (a record, not a test); writes `tools/continuum/results/benchmark_ions.json`, which the page quotes |
 
 ## Reproduce the ion checks
 
 ```
 python3 tools/continuum/ions/make_hydration.py --check   # first-shell counts from lab/cnt/data
-node tools/continuum/ions/t_ions.js                       # I1-I15 (about 20 s; I8 calls ref_pnp.py: numpy, scipy)
+node tools/continuum/ions/make_closures.js --check        # closure contracts reproduce from params.js and hydration.json
+node tools/continuum/ions/t_ions.js                       # I1-I18 (about 75 s; I8 calls ref_pnp.py: numpy, scipy)
 python3 -m http.server 8765 &                             # from the repository root, then:
-node tools/continuum/ions/browser_ions.js                 # IB1-IB10 (Playwright + Chromium; WebGL via SwiftShader)
+node tools/continuum/ions/browser_ions.js                 # IB1-IB12 (Playwright + Chromium; WebGL via SwiftShader)
+node tools/continuum/ions/probe_controller_guards.js --site .   # the nine guard probes alone (also run inside I18)
+node tools/continuum/ions/bench_ions.js http://127.0.0.1:8765/   # run times (three fresh page loads per target), quoted on the page
 NODE_PATH=<katex> node tools/continuum/ions/build_ions_page.js
 ```
 
@@ -81,6 +98,10 @@ NODE_PATH=<katex> node tools/continuum/ions/build_ions_page.js
 - The first-shell counts come from 0.50–0.75 ps runs and are not converged; κ, ε in the pore, D in the pore, slip,
   ion size, rim charge and pore length are stated examples.
 - NaCl only.
+- The numerical controller checks grid convergence only, of two numbers (the current and the reversal potential): the
+  change to a finer grid indicates the discretisation error but does not bound it, the access-region length and the
+  solver tolerances are not varied, and nothing about the physical validity of the model follows from it. Its
+  calculation request ranks one-at-a-time sensitivity, not expected information gain or cost.
 
 # Part 2. Water flow through a nanotube membrane (`lab/continuum/water.html`)
 
@@ -183,9 +204,9 @@ NODE_PATH=<katex> node tools/continuum/build_page.js    # rebuild the page with 
 <!-- BEGIN:results (written by tools/continuum/make_qa_report.py --readme) -->
 ## Results of this release (generated)
 
-75 PASS, 3 FAIL, 0 NOT_RUN of 78 acceptance checks (both experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
+80 PASS, 3 FAIL, 0 NOT_RUN of 83 acceptance checks (both experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
 
-- Ion experiment: solver I1–I15 15 of 15 PASS, browser IB1–IB10 10 of 10 PASS; independent SciPy reference: b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3. Earlier failing solver runs kept (`results/t_ions.run1.json`: I5; `results/t_ions.run2.json`: I14).
+- Ion experiment: solver I1–I18 18 of 18 PASS, browser IB1–IB12 12 of 12 PASS; independent SciPy reference: b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3. Earlier failing runs kept (`results/t_ions.run1.json`: I5; `results/t_ions.run2.json`: I14; `results/browser_ions.2026-10-22-baseline.json`: IB1, the unchanged suite under Chromium 131, before the procedure amendment).
 - F1 Developed duct: **PASS** — relative Q difference 4.07 × 10⁻¹¹, velocity normalised L2 4.30 × 10⁻¹¹.
 - F2 Uniform resistance interface (porousBafflePressure): **FAIL** — relative Q difference 0.0212, velocity normalised L2 0.0843.
 - F3 Closed strip: **FAIL** — relative Q difference 0.0197, velocity normalised L2 0.0844.

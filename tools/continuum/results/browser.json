@@ -2,7 +2,7 @@
  "id": "browser",
  "name": "Browser and regression B1-B16, R1",
  "verdict": "PASS",
- "chromium": "141.0.7390.37",
+ "chromium": "131.0.6778.0",
  "items": [
   {
    "id": "B1",
@@ -44,13 +44,13 @@
    "id": "B7",
    "name": "Export",
    "verdict": "PASS",
-   "detail": "153024 bytes; all required files present; node reproduce.js exit 0: PASS Q: recomputed 1.53599002050e-16 m^3/s, exported 1.53599002050e-16 m^3/s, relative difference 0.00e+0 (tolerance 1e-9)"
+   "detail": "153023 bytes; all required files present; node reproduce.js exit 0: PASS Q: recomputed 1.53599002050e-16 m^3/s, exported 1.53599002050e-16 m^3/s, relative difference 0.00e+0 (tolerance 1e-9)"
   },
   {
    "id": "B9",
    "name": "Stale results",
    "verdict": "PASS",
-   "detail": "10 changes in 160 ms; displayed result revision 20 = current revision 20, ΔP 3.3 MPa (last input 3.3 MPa); strip “1.32 × 10⁻¹⁶ m³/s”; stale results discarded: 0"
+   "detail": "10 changes in 165 ms; displayed result revision 20 = current revision 20, ΔP 3.3 MPa (last input 3.3 MPa); strip “1.32 × 10⁻¹⁶ m³/s”; stale results discarded: 0"
   },
   {
    "id": "B8",
@@ -62,7 +62,7 @@
    "id": "B10",
    "name": "Layout",
    "verdict": "PASS",
-   "detail": "horizontal overflow (px) before/after a run with all panels open: 360 px 0/0, 390 px 0/0, 768 px 0/0, 1440 px 0/0; uncaught page errors: none; reduced motion: tracers disabled true, molecule not auto-playing (Play), view switch without camera animation in 73 ms"
+   "detail": "horizontal overflow (px) before/after a run with all panels open: 360 px 0/0, 390 px 0/0, 768 px 0/0, 1440 px 0/0; uncaught page errors: none; reduced motion: tracers disabled true, molecule not auto-playing (Play), view switch without camera animation in 82 ms"
   },
   {
    "id": "B11",
@@ -86,7 +86,7 @@
    "id": "B14",
    "name": "3D pore view",
    "verdict": "PASS",
-   "detail": "3D library requested before the view was opened: 0 (after: lab/continuum/pores3d.js, lab/continuum/vendor/three.module.min.js); frame: 315 colour classes, 69.4 % non-background (phone 306, 67.4 %); tubes reported 25, rendered 25; true geometry and lattice positions true (pitch 10.00 nm, length 2.4595 nm, carbon-centre radius 0.4069 nm); speed = q_i × factor, worst relative deviation 0.00e+0 (factor 5.400034e+20 nm s⁻¹ per m³ s⁻¹, 1 s shown = 60.037 ns); at 4 MPa factor unchanged true, speed ratios 4.00000000000–4.00000000000; patch closed: 25 blocked markers on 25 tubes, all speeds 0 true; reduced motion: still before Play true, moving after Play true; page errors: none"
+   "detail": "3D library requested before the view was opened: 0 (after: lab/continuum/pores3d.js, lab/continuum/vendor/three.module.min.js); frame: 309 colour classes, 69.4 % non-background (phone 312, 67.4 %); tubes reported 25, rendered 25; true geometry and lattice positions true (pitch 10.00 nm, length 2.4595 nm, carbon-centre radius 0.4069 nm); speed = q_i × factor, worst relative deviation 0.00e+0 (factor 5.400034e+20 nm s⁻¹ per m³ s⁻¹, 1 s shown = 60.037 ns); at 4 MPa factor unchanged true, speed ratios 4.00000000000–4.00000000000; patch closed: 25 blocked markers on 25 tubes, all speeds 0 true; reduced motion: still before Play true, moving after Play true; page errors: none"
   },
   {
    "id": "B15",
@@ -104,8 +104,8 @@
    "id": "R1",
    "name": "Regression",
    "verdict": "PASS",
-   "detail": "home page and Continuum Lab link present; CV assets/cv/Kazi_Ehsanul_Karim_CV.pdf HTTP 200 (application/pdf); Water Lab ran to step 10; CNT inspector time t = 82 fs → t = 90 fs after Play; evidence page “Error-aware MLIPs: methods and software demonstration — Kazi Ehsanul Karim”; page errors: none"
+   "detail": "home page and Continuum Lab link present; CV assets/cv/Kazi_Ehsanul_Karim_CV.pdf HTTP 200 (application/pdf); Water Lab ran to step 10; CNT inspector time t = 74 fs → t = 86 fs after Play; evidence page “Error-aware MLIPs: methods and software demonstration — Kazi Ehsanul Karim”; page errors: none"
   }
  ],
- "environment": "Chromium 141.0.7390.37 (headless shell, Playwright) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox or real phones"
+ "environment": "Chromium 131.0.6778.0 (headless shell, Playwright) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox or real phones"
 }

@@ -1,6 +1,6 @@
 {
  "id": "ions",
- "name": "Ion experiment solver I1–I15",
+ "name": "Ion experiment solver and controller I1–I18",
  "verdict": "PASS",
  "items": [
   {
@@ -49,7 +49,7 @@
    "id": "I8",
    "name": "Independent reference",
    "verdict": "PASS",
-   "detail": "a +100 mV (classical (7,7)): I 7.21605 vs 7.21605 pA (2.65e-8), Na⁺ 2.65e-8, Cl⁻ 2.65e-8; a −100 mV (classical (7,7)): I -7.21605 vs -7.21605 pA (2.65e-8), Na⁺ 2.65e-8, Cl⁻ 2.65e-8; b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3; b −100 mV ((9,9), rims + molecular solvation + confined mobility): I -7.87565 vs -7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3 (SciPy 1.17.1 solve_bvp, tol 1e-7)"
+   "detail": "a +100 mV (classical (7,7)): I 7.21605 vs 7.21605 pA (2.65e-8), Na⁺ 2.65e-8, Cl⁻ 2.65e-8; a −100 mV (classical (7,7)): I -7.21605 vs -7.21605 pA (2.65e-8), Na⁺ 2.65e-8, Cl⁻ 2.65e-8; b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3; b −100 mV ((9,9), rims + molecular solvation + confined mobility): I -7.87565 vs -7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3 (SciPy 1.18.1 solve_bvp, tol 1e-7)"
   },
   {
    "id": "I9",
@@ -92,8 +92,26 @@
    "name": "Selectivity classification",
    "verdict": "PASS",
    "detail": "20 probes: step 6 10 µV inside the Na⁺ limit → above_limit; step 6 at the Na⁺ limit → nernst_na; step 6 0.5 nV beyond the Na⁺ limit → nernst_na; step 6 10 µV beyond the Na⁺ limit → invalid; step 6 10 µV inside the Cl⁻ limit → below_limit; step 6 at the Cl⁻ limit → nernst_cl; step 6 0.5 nV beyond the Cl⁻ limit → nernst_cl; step 6 10 µV beyond the Cl⁻ limit → invalid; step 2 10 µV inside the Na⁺ limit → above_limit; step 2 at the Na⁺ limit → nernst_na; step 2 0.5 nV beyond the Na⁺ limit → nernst_na; step 2 10 µV beyond the Na⁺ limit → invalid; step 2 10 µV inside the Cl⁻ limit → below_limit; step 2 at the Cl⁻ limit → nernst_cl; step 2 0.5 nV beyond the Cl⁻ limit → nernst_cl; step 2 10 µV beyond the Cl⁻ limit → invalid; step 6 at −70 mV → invalid; step 6 at +70 mV → invalid; no reversal potential → not_found; classical (7,7) V_rev 10.46 mV → finite; raw ratios kept: −70 mV -30.73, +70 mV -0.03254; classical ratio 0.608 (independent 0.607692, relative difference 0.00e+0)"
+  },
+  {
+   "id": "I16",
+   "name": "Numerical controller",
+   "verdict": "PASS",
+   "detail": "(a) standard: tolerance_reached, reported level 1, levels 1 compare, 2 stop (0.134 %, 0.00132 mV); fine: tolerance_reached, reported level 2, levels 1 compare, 2 refine (0.134 %, 0.00132 mV), 3 stop (0.0336 %, 0.000331 mV); strict: budget_exhausted, reported level 3, levels 1 compare, 2 refine (0.134 %, 0.00132 mV), 3 stop (0.0336 %, 0.000331 mV); (b) logged I, V_rev, nodes and residuals equal independent solves to 10⁻¹², logged changes recomputed, decisions equal the independent rules: true; (c) 96 records (72 at the standard target, 24 at the fine and strict targets): every record follows rules 1–6 and none states tolerance reached above its target: true; statuses {\"standard tolerance_reached\":72,\"fine tolerance_reached\":12,\"strict tolerance_reached\":8,\"strict budget_exhausted\":4}; absolute current floor at V = 0 in 24 of 24; (d) {\"V\":0.3} → refused [VOLTAGE_OUT_OF_RANGE]; {\"preset\":\"8,8\"} → refused [TUBE_UNSUPPORTED]; {\"c\":5000} → refused [CONCENTRATION_UNSUPPORTED]; {\"target\":\"extreme\"} → refused [TARGET_UNKNOWN]; {\"solvation\":\"pmf\"} → refused [CLOSURE_UNKNOWN]; solves attempted: 0; (e) same query twice gives the same record apart from timing: true; (f) injected solver failing at level 2 → not_converged, certified result null, request null; solver calls in the sweeps (memoised): 208"
+  },
+  {
+   "id": "I17",
+   "name": "Decision record, calculation request and closure contract",
+   "verdict": "PASS",
+   "detail": "(a) 106 records validate: true; statuses present: tolerance_reached, budget_exhausted, refused, not_converged, check_failed; 27 of 27 corrupted copies rejected; (b) requests issued in 79 records and withheld in 27, each as rule 7 says against an independent ranking: true; default experiment: rimN ×3.62, not run, approval required, not submitted; (c) 126 contract values against params.js and hydration.json: largest relative difference 4.81e-15; SHA-256 of hydration.json matches, of the four trajectories match; template: blocked with 13 required values null, usable as calibrated false; illustrative contract: illustrative, usable as calibrated false; make_closures.js --check exit 0"
+  },
+  {
+   "id": "I18",
+   "name": "Controller guards",
+   "verdict": "PASS",
+   "detail": "9 of 9 probes hold: nonfinite_packing → check_failed (G3); nonfinite_flux_diagnostic → check_failed (G2); nonfinite_current → check_failed (G3); nonfinite_reversal_packing → check_failed (G3); empty_molecular_contract → not_calibrated; zero_voltage_remains_supported → tolerance_reached; closure-illustrative.json → illustrative; closure-molecular-template.json → blocked; tampered_passed_record → rejected; exit 0"
   }
  ],
- "environment": "Node v22.22.2, linux x64, 17.0 s",
- "date": "2026-10-21T11:14:56.761Z"
+ "environment": "Node v22.22.0, linux x64, 140.3 s",
+ "date": "2026-10-22T20:49:39.990Z"
 }

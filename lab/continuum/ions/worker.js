@@ -1,13 +1,16 @@
-/* Continuum Lab — ion experiment worker: runs the solver off the page's main thread.
-   Loads only this site's files (core.js, params.js). One request at a time; a newer request makes the worker skip the
-   remaining stages of the older one. Stages are posted as they finish so the page can show results early:
-     main   — the selected model at the displayed voltage (solved from the drive-free start, as in the Node tests)
-     iv     — current–voltage curves of the selected model and of the classical reference, −200 … +200 mV
-     sel    — reversal potential and P_Na/P_Cl under the 10:1 gradient, for the model and the reference
-     sens   — rule-based ranking of the illustrative inputs by their effect on the current at +100 mV
-     done   — end of the request */
-/* global importScripts, IonCore, IonParams */
-importScripts('core.js', 'params.js');
+/* Continuum Lab — ion experiment worker: runs the solver and the numerical controller off the page's main thread.
+   Loads only this site's files (core.js, params.js, controller.js). One request at a time; a newer request makes the
+   worker skip the remaining stages of the older one. Stages are posted as they finish so the page can show results early:
+     main       — the selected model at the displayed voltage on the screening grid (level 1), and all six steps
+     iv         — current–voltage curves of the selected model and of the classical reference, −200 … +200 mV
+     sel        — reversal potential and GHK-equivalent selectivity under the 10:1 gradient, model and reference
+     ctrl-level — one grid level checked by the numerical controller (rules: tools/continuum/ions/TOLERANCES.md)
+     ctrl       — the controller's outcome: tolerance reached, budget exhausted, not converged, check failed or refused
+     sens       — one-at-a-time sensitivity ranking of the illustrative inputs at +100 mV (screening grid)
+     decision   — the decision record: numerics, the calculation request if rule 7 issues one, physical validation
+     done       — end of the request */
+/* global importScripts, IonCore, IonParams, IonController */
+importScripts('core.js', 'params.js', 'controller.js');
 let latest = 0;
 const VS = []; for (let v = -200; v <= 200; v += 25) VS.push(v / 1000);
 
@@ -33,11 +36,20 @@ self.onmessage = async function (ev) {
   const m = ev.data || {};
   if (m.type !== 'run') return;
   const id = m.id; latest = id;
-  const o = Object.assign({}, IonParams.DEFAULTS, m.opts || {});
+  const query = m.opts || {}, meta = { websiteVersion: m.version || '' };
+  const o = Object.assign({}, IonParams.DEFAULTS, { target: 'standard' }, query);
   const stale = () => latest !== id;
   const post = (stage, data) => self.postMessage({ id, stage, data });
   try {
     const t0 = Date.now();
+    // rule 1 of the controller first: a query outside the supported domain is refused and nothing is solved
+    if (!IonController.checkDomain(query).supported) {
+      const numerical = IonController.run(query);
+      post('ctrl', { numerical, ms: 0 });
+      post('decision', { record: IonController.record(numerical, null, meta) });
+      post('done', { ms: Date.now() - t0 });
+      return;
+    }
     const b = IonParams.build(o), main = IonCore.solve(b.s);
     const ref = IonCore.solve(IonParams.build(Object.assign({}, o, { step: 1 })).s);
     // all six steps at the set voltage (same geometry and settings): the comparison table and "why did this change?"
@@ -60,16 +72,18 @@ self.onmessage = async function (ev) {
       ms: Date.now() - t2,
     });
     await yieldNow(); if (stale()) return;
-    const t3 = Date.now(), base = IonCore.solve(IonParams.build(Object.assign({}, o, { V: 0.1 })).s), rows = [];
-    for (const inp of IonParams.sensitivityInputs(o)) {
-      await yieldNow(); if (stale()) return;
-      const lo = IonCore.solve(IonParams.build(Object.assign({}, o, inp.lo, { V: 0.1 })).s, { prev: base.state });
-      const hi = IonCore.solve(IonParams.build(Object.assign({}, o, inp.hi, { V: 0.1 })).s, { prev: base.state });
-      rows.push({ id: inp.id, name: inp.name, range: inp.range, calc: inp.calc, Ilo: lo.I, Ihi: hi.I, I0: base.I, ok: lo.ok && hi.ok,
-        factor: Math.max(Math.abs(hi.I), Math.abs(lo.I)) / Math.max(1e-300, Math.min(Math.abs(hi.I), Math.abs(lo.I))) });
-    }
-    rows.sort((p, q) => q.factor - p.factor);
-    post('sens', { rows, I0: base.I, ms: Date.now() - t3 });
+    // numerical controller: level 1 is the screening result above; finer levels are solved here, one at a time
+    const t25 = Date.now(), gen = IonController.steps(query, { pre: { 1: { current: main, reversal: rvM } } });
+    let it;
+    while (!(it = gen.next()).done) { post('ctrl-level', { entry: it.value }); await yieldNow(); if (stale()) return; }
+    const numerical = it.value;
+    post('ctrl', { numerical, ms: Date.now() - t25 });
+    await yieldNow(); if (stale()) return;
+    const t3 = Date.now(), rg = IonController.rankingSteps(o);
+    while (!(it = rg.next()).done) { await yieldNow(); if (stale()) return; }
+    const rank = it.value;
+    post('sens', { rows: rank.rows, I0: rank.I0, ms: Date.now() - t3 });
+    post('decision', { record: IonController.record(numerical, rank, meta) });
     post('done', { ms: Date.now() - t0 });
   } catch (e) {
     post('error', { message: String((e && e.message) || e) });

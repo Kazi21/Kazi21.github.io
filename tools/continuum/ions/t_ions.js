@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-/* Ion experiment (Continuum Lab 2026.9.1): solver tests I1–I15 against the criteria frozen in TOLERANCES.md (I15 added for release 2026.9.1).
+/* Ion experiment (Continuum Lab 2026.10.1): solver and controller tests I1–I18 against the criteria frozen in TOLERANCES.md
+   (I15 added for release 2026.9.1; I16 and I17, the numerical controller, for release 2026.10; I18, the controller's guards
+   against invalid diagnostics and incomplete molecular records, for release 2026.10.1).
    Usage: node tools/continuum/ions/t_ions.js [--quick]
    Writes tools/continuum/results/t_ions.json. I8 runs the independent SciPy program ref_pnp.py (python3 with numpy and
    scipy must be available); if it cannot run, I8 is reported NOT_RUN, never PASS. */
@@ -342,10 +344,220 @@ const gammas = (st) => { const vv = st >= 3 ? 6.02214076e23 * Math.pow(0.45e-9, 
   record('I15', 'Selectivity classification', ok, lines.length + ' probes: ' + lines.join('; ') + '; raw ratios kept: −70 mV ' + m70.ratio.toPrecision(4) + ', +70 mV ' + p70.ratio.toPrecision(4) + '; classical ratio ' + cls.text + ' (independent ' + Number(ind.r).toPrecision(6) + ', relative difference ' + e2(rel(cls.ratio, ind.r)) + ')');
 }
 
-const order = ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15'];
+/* ---------------------------------------------------------------- I16 numerical controller, I17 record, request, contract (release 2026.10) */
+const Ctl = require(path.join(SITE, 'lab/continuum/ions/controller.js'));
+const crypto = require('crypto');
+const TGT = { standard: 5e-3, fine: 1e-3, strict: 2e-4 };
+const noMs = (rec) => JSON.parse(JSON.stringify(rec, (k, v) => (k === 'ms' ? undefined : v)));
+/* independent implementation of rules 2–6 and the amended gates, applied to the logged numbers */
+function rules(levels, target, V) {
+  const T = TGT[target], tolV = 0.04 * T, floor = 1e-16, dec = [];
+  let status = null, reported = null;
+  const found1 = levels.length ? levels[0].reversal.found : null;
+  for (let i = 0; i < levels.length; i++) {
+    const e = levels[i], c = e.current, v = e.reversal;
+    const g1 = c.residual !== null && c.residual <= 1e-10 && (!v.found || (v.residual !== null && v.residual <= 1e-10));
+    const g2 = V === 0 ? c.conservation_max_rel === null : c.conservation_max_rel !== null && c.conservation_max_rel <= 1e-9;
+    const g3 = c.positive && c.packing_max < 1 && (!v.found || (v.positive && v.packing_max < 1));
+    const g4 = v.found === found1;
+    if (!g1) { dec.push('stop'); status = 'not_converged'; break; }
+    if (!(g2 && g3 && g4)) { dec.push('stop'); status = 'check_failed'; break; }
+    if (i === 0) { dec.push('compare'); continue; }
+    const a = levels[i - 1], dI = Math.abs(e.I_A - a.I_A), small = Math.abs(a.I_A) < floor && Math.abs(e.I_A) < floor;
+    const okI = small ? dI <= floor : e.I_A !== 0 && dI / Math.abs(e.I_A) <= T;
+    const dV = a.V_rev_V !== null && e.V_rev_V !== null ? Math.abs(e.V_rev_V - a.V_rev_V) : null;
+    const okV = dV === null || dV <= tolV;
+    if (okI && okV) { dec.push('stop'); status = 'tolerance_reached'; reported = e.level - 1; break; }
+    if (e.level < 3) { dec.push('refine'); continue; }
+    dec.push('stop'); status = 'budget_exhausted'; reported = 3; break;
+  }
+  return { dec, status, reported };
+}
+function followsRules(n, target, V) {
+  const want = rules(n.levels, target, V), got = n.levels.map((e) => e.decision);
+  const sameDec = want.dec.length === got.length && want.dec.every((d, i) => d === got[i]);
+  const last = n.levels[n.levels.length - 1];
+  const changesOk = n.levels.every((e, i) => {
+    if (!e.change) return i === 0 || !e.gates_passed;
+    const a = n.levels[i - 1], dI = Math.abs(e.I_A - a.I_A);
+    const relOk = e.change.mode === 'absolute_floor' ? e.change.current_rel === null : rel(e.change.current_rel, dI / Math.abs(e.I_A)) <= 1e-12;
+    const dVok = e.change.V_rev_V === null ? (a.V_rev_V === null || e.V_rev_V === null) : rel(e.change.V_rev_V, Math.abs(e.V_rev_V - a.V_rev_V)) <= 1e-12;
+    return relOk && dVok && rel(e.change.current_abs_A, dI) <= 1e-12;
+  });
+  const noFalseReach = !(n.outcome.status === 'tolerance_reached' && last && last.change && !(last.change.mode === 'absolute_floor' ? last.change.current_abs_A <= 1e-16 : last.change.current_rel <= TGT[target]));
+  return { ok: sameDec && want.status === n.outcome.status && want.reported === n.outcome.reported_level && changesOk && noFalseReach, want, sameDec, changesOk, noFalseReach };
+}
+/* memoising solver for the sweeps: each (query, level) is solved once; the values are those of the real solver */
+function memoSolver() {
+  const base = Ctl.defaultSolver(), cache = new Map(); let calls = 0;
+  const key = (kind, o, level) => kind + '|' + level + '|' + JSON.stringify(['preset', 'step', 'V', 'c', 'solvation', 'lining', 'epsP', 'rimN', 'Dratio', 'slip'].map((k) => (kind === 'rev' && k === 'V' ? 0 : o[k])));
+  const get = (kind, o, level) => { const k = key(kind, o, level); if (!cache.has(k)) { calls++; cache.set(k, kind === 'cur' ? base.current(o, level) : base.reversal(o, level)); } return cache.get(k); };
+  return { current: (o, l) => get('cur', o, l), reversal: (o, l) => get('rev', o, l), calls: () => calls };
+}
+/* independent one-at-a-time ranking (same procedure as the page, written here again) */
+function indepRanking(o0) {
+  const o = Object.assign({}, Pm.DEFAULTS, o0, { level: 1 });
+  const base = Core.solve(Pm.build(Object.assign({}, o, { V: 0.1 })).s);
+  return Pm.sensitivityInputs(o).map((inp) => {
+    const lo = Core.solve(Pm.build(Object.assign({}, o, inp.lo, { V: 0.1 })).s, { prev: base.state }), hi = Core.solve(Pm.build(Object.assign({}, o, inp.hi, { V: 0.1 })).s, { prev: base.state });
+    return { id: inp.id, ok: lo.ok && hi.ok, factor: Math.max(Math.abs(hi.I), Math.abs(lo.I)) / Math.min(Math.abs(hi.I), Math.abs(lo.I)) };
+  }).sort((a, b) => b.factor - a.factor);
+}
+const records = [];                                                    // every full record built in I16, for I17
+{
+  const det = [], okParts = {};
+  // (a) and (b): default experiment, three targets, fresh solves; independent solves at every logged level
+  const D = { preset: '7,7', step: 6, V: 0.1, c: 100 }, rankD = Ctl.ranking(D);
+  let bOk = true, aOk = true; const aTxt = [];
+  for (const target of ['standard', 'fine', 'strict']) {
+    const n = Ctl.run(Object.assign({}, D, { target }));
+    records.push({ tag: 'default ' + target, rec: Ctl.record(n, rankD, { websiteVersion: 'test' }), V: D.V, step: 6, query: Object.assign({}, D, { target }) });
+    const fr = followsRules(n, target, D.V);
+    for (const e of n.levels) {
+      const o = Object.assign({}, Pm.DEFAULTS, D, { level: e.level });
+      const r = Core.solve(Pm.build(o).s), rv = Core.reversal(Pm.build(Object.assign({}, o, { cL: o.c, cR: o.c / o.gradient })).s);
+      bOk = bOk && rel(e.I_A, r.I) <= 1e-12 && rel(e.V_rev_V, rv.V) <= 1e-12 && e.nodes === r.x.length && rel(e.current.residual, r.residual) <= 1e-12 && rel(e.reversal.residual, rv.result.residual) <= 1e-12;
+    }
+    bOk = bOk && fr.ok;
+    if (target === 'standard') aOk = aOk && n.outcome.status === 'tolerance_reached' && n.outcome.reported_level === 1 && n.levels.length === 2;
+    aTxt.push(target + ': ' + n.outcome.status + ', reported level ' + n.outcome.reported_level + ', levels ' + n.levels.map((e) => e.level + ' ' + e.decision + (e.change ? ' (' + (e.change.mode === 'absolute_floor' ? 'abs ' + e2(e.change.current_abs_A) : (100 * e.change.current_rel).toPrecision(3) + ' %') + ', ' + (e.change.V_rev_V === null ? '–' : (1e3 * e.change.V_rev_V).toPrecision(3) + ' mV') + ')' : '')).join(', '));
+  }
+  okParts.a = aOk; okParts.b = bOk;
+  det.push('(a) ' + aTxt.join('; ')); det.push('(b) logged I, V_rev, nodes and residuals equal independent solves to 10⁻¹², logged changes recomputed, decisions equal the independent rules: ' + bOk);
+  // (c) sweeps with a memoising solver
+  const solver = memoSolver(), rankCache = new Map();
+  const rankFor = (pr, st) => { const k = pr + '|' + st; if (!rankCache.has(k)) rankCache.set(k, Ctl.ranking({ preset: pr, step: st })); return rankCache.get(k); };
+  let cOk = true, nC = 0, floorUsed = 0, floorCases = 0; const statusCount = {};
+  const sweep = [];
+  for (const pr of PRESETS) for (const st of STEPS) for (const V of [-0.2, 0, 0.1]) sweep.push({ preset: pr, step: st, V, target: 'standard' });
+  for (const target of ['fine', 'strict']) for (const pr of PRESETS) for (const st of [1, 4, 6]) sweep.push({ preset: pr, step: st, V: 0.1, target });
+  for (const q of sweep) {
+    const n = Ctl.run(q, { solver }), fr = followsRules(n, q.target, q.V); nC++;
+    statusCount[q.target + ' ' + n.outcome.status] = (statusCount[q.target + ' ' + n.outcome.status] || 0) + 1;
+    if (q.V === 0) { floorCases++; const L = n.levels[1]; if (L && L.change && L.change.mode === 'absolute_floor') floorUsed++; }
+    cOk = cOk && fr.ok;
+    if (!fr.ok) det.push('rule mismatch: ' + JSON.stringify(q) + ' got ' + n.outcome.status + ' want ' + fr.want.status);
+    records.push({ tag: JSON.stringify(q), rec: Ctl.record(n, rankFor(q.preset, q.step), { websiteVersion: 'test' }), V: q.V, step: q.step, query: q });
+  }
+  okParts.c = cOk && floorUsed === floorCases;
+  det.push('(c) ' + nC + ' records (72 at the standard target, 24 at the fine and strict targets): every record follows rules 1–6 and none states tolerance reached above its target: ' + cOk + '; statuses ' + JSON.stringify(statusCount) + '; absolute current floor at V = 0 in ' + floorUsed + ' of ' + floorCases);
+  // (d) refusals without any solve
+  const counting = { n: 0, current: () => { counting.n++; throw new Error('solved'); }, reversal: () => { counting.n++; throw new Error('solved'); } };
+  const bad = [[{ V: 0.3 }, 'VOLTAGE_OUT_OF_RANGE'], [{ preset: '8,8' }, 'TUBE_UNSUPPORTED'], [{ c: 5000 }, 'CONCENTRATION_UNSUPPORTED'], [{ target: 'extreme' }, 'TARGET_UNKNOWN'], [{ solvation: 'pmf' }, 'CLOSURE_UNKNOWN']];
+  let dOk = true; const dTxt = [];
+  for (const [q, code] of bad) {
+    const n = Ctl.run(q, { solver: counting });
+    const ok = n.outcome.status === 'refused' && n.domain.reasons.includes(code) && n.levels.length === 0;
+    dOk = dOk && ok; dTxt.push(JSON.stringify(q) + ' → ' + n.outcome.status + ' [' + n.domain.reasons.join(', ') + ']');
+    records.push({ tag: 'refused ' + JSON.stringify(q), rec: Ctl.record(n, null, { websiteVersion: 'test' }), V: q.V, step: 6, query: q });
+  }
+  okParts.d = dOk && counting.n === 0;
+  det.push('(d) ' + dTxt.join('; ') + '; solves attempted: ' + counting.n);
+  // (e) determinism
+  const r1 = noMs(Ctl.record(Ctl.run(D), rankD, { websiteVersion: 'test' })), r2 = noMs(Ctl.record(Ctl.run(D), Ctl.ranking(D), { websiteVersion: 'test' }));
+  okParts.e = JSON.stringify(r1) === JSON.stringify(r2);
+  det.push('(e) same query twice gives the same record apart from timing: ' + okParts.e);
+  // (f) an injected solver that fails at level 2
+  const real = Ctl.defaultSolver();
+  const failing = { current: (o, l) => { const r = real.current(o, l); return l === 2 ? Object.assign({}, r, { ok: false, residual: 1e-6 }) : r; }, reversal: (o, l) => real.reversal(o, l) };
+  const nf = Ctl.run(D, { solver: failing }), rf = Ctl.record(nf, rankD, { websiteVersion: 'test' });
+  okParts.f = nf.outcome.status === 'not_converged' && nf.outcome.reported_level === null && nf.outcome.I_A === null && rf.request === null;
+  records.push({ tag: 'injected failure at level 2', rec: rf, V: D.V, step: 6, query: D });
+  det.push('(f) injected solver failing at level 2 → ' + nf.outcome.status + ', certified result ' + nf.outcome.reported_level + ', request ' + rf.request);
+  // a check-failed record for I17 (gate G2 forced at level 2)
+  const g2 = { current: (o, l) => { const r = real.current(o, l); return l === 2 ? Object.assign({}, r, { Jdev: [1e-6, 1e-6] }) : r; }, reversal: (o, l) => real.reversal(o, l) };
+  const ng = Ctl.run(D, { solver: g2 });
+  records.push({ tag: 'injected conservation failure at level 2', rec: Ctl.record(ng, rankD, { websiteVersion: 'test' }), V: D.V, step: 6, query: D, kind: ng.outcome.status });
+  record('I16', 'Numerical controller', Object.values(okParts).every(Boolean), det.join('; ') + '; solver calls in the sweeps (memoised): ' + solver.calls());
+}
+{
+  const det = [], okParts = {};
+  // (a) schema and consistency of every record, and rejection of corrupted copies
+  const invalid = records.filter((r) => !Ctl.validate(r.rec).valid);
+  const kinds = {}; records.forEach((r) => { kinds[r.rec.outcome.status] = kinds[r.rec.outcome.status] || r.rec; });
+  const corrupt = [];
+  const mut = (rec, f, name) => { const c = JSON.parse(JSON.stringify(rec)); f(c); corrupt.push({ name, rejected: !Ctl.validate(c).valid }); };
+  for (const [st, rec] of Object.entries(kinds)) {
+    mut(rec, (c) => { c.extra_field = 1; }, st + ': unknown top-level field');
+    mut(rec, (c) => { c.policy.language_model_used = true; }, st + ': language model claimed');
+    mut(rec, (c) => { c.outcome.status = st === 'tolerance_reached' ? 'budget_exhausted' : 'tolerance_reached'; }, st + ': status changed');
+    if (rec.levels.length) mut(rec, (c) => { c.levels[0].unknown = 0; }, st + ': unknown level field');
+    if (st === 'refused') mut(rec, (c) => { c.levels.push(JSON.parse(JSON.stringify(kinds.tolerance_reached.levels[0]))); }, 'refused: a level added');
+    if (st === 'not_converged' || st === 'check_failed') mut(rec, (c) => { c.outcome.reported_level = 1; c.outcome.I_A = c.levels[0].I_A; }, st + ': a certified result added');
+    if (st === 'tolerance_reached' && rec.levels.length > 2) mut(rec, (c) => { c.levels[1].decision = 'stop'; }, st + ': stop before the last level');
+  }
+  const withReq = records.find((r) => r.rec.request);
+  if (withReq) {
+    mut(withReq.rec, (c) => { c.request.submitted = true; }, 'request marked submitted');
+    mut(withReq.rec, (c) => { c.request.execution_status = 'completed'; }, 'request marked completed');
+    mut(withReq.rec, (c) => { c.request.expected_variance_reduction = 0.5; }, 'variance reduction claimed');
+    mut(withReq.rec, (c) => { c.request.input_id = 'slip'; }, 'request names another input');
+  }
+  const budget = records.find((r) => r.rec.outcome.status === 'budget_exhausted');
+  if (budget) mut(budget.rec, (c) => { c.outcome.status = 'tolerance_reached'; c.outcome.certified_by_level = 3; c.outcome.reported_level = 2; }, 'budget exhausted relabelled as reached');
+  okParts.a = invalid.length === 0 && corrupt.every((c) => c.rejected) && ['tolerance_reached', 'budget_exhausted', 'not_converged', 'check_failed', 'refused'].every((k) => kinds[k]);
+  det.push('(a) ' + records.length + ' records validate: ' + (invalid.length === 0) + (invalid.length ? ' (' + invalid.map((r) => r.tag + ': ' + Ctl.validate(r.rec).errors.slice(0, 2).join('; ')).slice(0, 3).join(' | ') + ')' : '') + '; statuses present: ' + Object.keys(kinds).join(', ') + '; ' + corrupt.filter((c) => c.rejected).length + ' of ' + corrupt.length + ' corrupted copies rejected' + (corrupt.every((c) => c.rejected) ? '' : ' (accepted: ' + corrupt.filter((c) => !c.rejected).map((c) => c.name).join(', ') + ')'));
+  // (b) rule 7 against an independent ranking
+  const indep = new Map(); let bOk = true, issued = 0, notIssued = 0; const bad = [];
+  for (const r of records) {
+    const rec = r.rec, q = rec.query, st = rec.outcome.status;
+    if (st === 'refused') { if (rec.request !== null) { bOk = false; bad.push(r.tag); } notIssued++; continue; }
+    const k = q.preset + '|' + q.step;
+    if (!indep.has(k)) indep.set(k, indepRanking({ preset: q.preset, step: q.step }));
+    const rows = indep.get(k), top = rows[0];
+    const L = rec.levels[rec.levels.length - 1], last = L && L.change ? (L.change.mode === 'absolute_floor' ? 0 : L.change.current_rel) : null;
+    const want = ['tolerance_reached', 'budget_exhausted'].includes(st) && q.step >= 2 && !!top && rows.every((x) => x.ok) && last !== null && top.factor - 1 >= 10 * last;
+    const got = rec.request !== null;
+    const fieldsOk = !got || (rec.request.input_id === top.id && rel(rec.request.sensitivity_factor, top.factor) <= 1e-9 && rec.request.execution_status === 'not_run' && rec.request.human_approval_required === true && rec.request.approved === false && rec.request.submitted === false && rec.request.expected_variance_reduction === null && rec.request.cost_estimate === null && rec.policy.language_model_used === false);
+    if (want !== got || !fieldsOk) { bOk = false; bad.push(r.tag); }
+    if (got) issued++; else notIssued++;
+  }
+  okParts.b = bOk;
+  const dReq = records.find((r) => r.tag === 'default standard').rec.request;
+  det.push('(b) requests issued in ' + issued + ' records and withheld in ' + notIssued + ', each as rule 7 says against an independent ranking: ' + bOk + (bad.length ? ' (mismatch: ' + bad.slice(0, 3).join(' | ') + ')' : '') + '; default experiment: ' + (dReq ? dReq.input_id + ' ×' + dReq.sensitivity_factor.toPrecision(3) + ', not run, approval required, not submitted' : 'none'));
+  // (c) closure contracts
+  const dataDir = path.join(SITE, 'lab/continuum/ions/data');
+  const ill = JSON.parse(fs.readFileSync(path.join(dataDir, 'closure-illustrative.json'), 'utf8')), tpl = JSON.parse(fs.readFileSync(path.join(dataDir, 'closure-molecular-template.json'), 'utf8'));
+  const hydBytes = fs.readFileSync(path.join(dataDir, 'hydration.json')), hyd = JSON.parse(hydBytes);
+  const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
+  let worst = 0, n = 0; const cmpv = (a, b) => { n++; worst = Math.max(worst, rel(a, b)); };
+  for (const [sp, key, hk] of [[ill.species[0], 'Na', 'Na+'], [ill.species[1], 'Cl', 'Cl-']]) {
+    cmpv(sp.hydration_gibbs_energy.value, Pm.MARCUS[key] * 1000); cmpv(sp.born_radius.value, Pm.R_BORN[key] * 1e-9); cmpv(sp.first_shell_radius.value, Pm.R_SHELL[key] * 1e-9);
+    cmpv(sp.first_shell_share_of_hydration_energy.value, Pm.G1[key] * 1000); cmpv(sp.reference_shell_count.value, Pm.REF['n' + key]); cmpv(sp.bulk_diffusivity.value, Pm.DT[key]);
+    for (const p of Pm.PRESETS) {
+      cmpv(sp.first_shell_count.values[p.id], p['n' + key]); cmpv(sp.first_shell_count.values[p.id], hyd.tubes.find((t) => t.n === p.n).ions[hk].mean_count);
+      for (const l of Object.keys(Pm.LININGS)) { cmpv(sp.excess_free_energy_in_pore.dehydration_recorded_shells[p.id][l], Pm.solvation({ preset: p.id, solvation: 'cp2k', lining: l })[key] * 1000); cmpv(sp.excess_free_energy_in_pore.dehydration_rigid_shell[p.id][l], Pm.solvation({ preset: p.id, solvation: 'shell', lining: l })[key] * 1000); }
+      for (const e of [10, 20, 30, 50]) cmpv(sp.excess_free_energy_in_pore.born_exclusion[p.id]['epsP_' + e], Pm.solvation({ preset: p.id, solvation: 'born', epsP: e })[key] * 1000);
+    }
+    for (const l of Object.keys(Pm.LININGS)) cmpv(sp.wall_recovery_kappa.values[l], Pm.LININGS[l]['k' + key]);
+  }
+  for (const t of ill.geometry.tubes) { const g = Pm.geometry(Pm.presetOf(t.id)); cmpv(t.carbon_centre_radius.value, g.Rc * 1e-9); cmpv(t.ion_accessible_radius.value, g.a * 1e-9); cmpv(t.water_accessible_radius.value, g.Rw * 1e-9); }
+  const hydSha = ill.provenance.source_artifacts[0].sha256 === sha(hydBytes);
+  const trajSha = ill.provenance.source_artifacts.slice(1).every((a) => fs.existsSync(path.join(SITE, a.path)) && sha(fs.readFileSync(path.join(SITE, a.path))) === a.sha256);
+  const ci = Ctl.checkClosure(ill), ct = Ctl.checkClosure(tpl);
+  const tplNull = tpl.species.every((x) => x.excess_free_energy.values === null && x.axial_diffusivity.values === null) && tpl.geometry.axial_coordinate.values === null && tpl.geometry.accessible_area.values === null;
+  let regen = 0; try { cp.execFileSync('node', [path.join(__dirname, 'make_closures.js'), '--check'], { encoding: 'utf8' }); } catch (e) { regen = e.status || 1; }
+  okParts.c = worst <= 1e-12 && hydSha && trajSha && ct.status === 'blocked' && !ct.usable_as_calibrated && tplNull && !ci.usable_as_calibrated && regen === 0;
+  det.push('(c) ' + n + ' contract values against params.js and hydration.json: largest relative difference ' + e2(worst) + '; SHA-256 of hydration.json ' + (hydSha ? 'matches' : 'differs') + ', of the four trajectories ' + (trajSha ? 'match' : 'differ') + '; template: ' + ct.status + ' with ' + ct.null_paths.length + ' required values null, usable as calibrated ' + ct.usable_as_calibrated + '; illustrative contract: ' + ci.status + ', usable as calibrated ' + ci.usable_as_calibrated + '; make_closures.js --check exit ' + regen);
+  record('I17', 'Decision record, calculation request and closure contract', Object.values(okParts).every(Boolean), det.join('; '));
+}
+
+/* ---------------------------------------------------------------- I18 controller guards (release 2026.10.1): the nine probes of
+   probe_controller_guards.js, run as a separate process on this repository; its report is kept in results/controller.guards.json */
+{
+  const outFile = path.join(SITE, 'tools/continuum/results/controller.guards.json');
+  let code = 0;
+  try { cp.execFileSync('node', [path.join(__dirname, 'probe_controller_guards.js'), '--site', SITE, '--out', outFile], { encoding: 'utf8' }); } catch (e) { code = e.status || 1; }
+  let rep = null; try { rep = JSON.parse(fs.readFileSync(outFile, 'utf8')); } catch (e) { rep = null; }
+  const rows = rep ? rep.rows : [];
+  const ok = code === 0 && !!rep && rep.pass === true && rows.length === 9 && rows.every((r) => r.pass);
+  record('I18', 'Controller guards', ok, (rep ? rep.passed + ' of ' + rep.total + ' probes hold: ' : 'no report; ') + rows.map((r) => r.id + ' → ' + r.observed + (r.gate ? ' (' + r.gate + ')' : '') + (r.pass ? '' : ' FAIL')).join('; ') + '; exit ' + code);
+}
+
+const order = ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18'];
 items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 const verdict = items.every((i) => i.verdict === 'PASS') ? 'PASS' : (items.some((i) => i.verdict === 'FAIL') ? 'FAIL' : 'INCOMPLETE');
-const out = { id: 'ions', name: 'Ion experiment solver I1–I15', verdict, items, environment: 'Node ' + process.version + ', ' + os.platform() + ' ' + os.arch() + ', ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s', date: new Date().toISOString() };
+const out = { id: 'ions', name: 'Ion experiment solver and controller I1–I18', verdict, items, environment: 'Node ' + process.version + ', ' + os.platform() + ' ' + os.arch() + ', ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s', date: new Date().toISOString() };
 fs.writeFileSync(path.join(SITE, 'tools/continuum/results/t_ions.json'), JSON.stringify(out, null, 1) + '\n');
 console.log('verdict', verdict, out.environment);
 process.exit(verdict === 'PASS' ? 0 : 1);

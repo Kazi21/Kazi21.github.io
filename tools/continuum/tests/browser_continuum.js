@@ -34,6 +34,7 @@ async function setDp(p, mpa) { await p.evaluate((v) => { const r = document.getE
   const p = await ctx.newPage();
   p.on('pageerror', (e) => allErrors.push('desktop: ' + e.message));
   const reqs = []; p.on('request', (r) => reqs.push({ url: r.url(), t: Date.now() }));
+  p.on('worker', (w) => reqs.push({ url: w.url(), t: Date.now(), worker: true }));   // B1 procedure, release 2026.10: Chromium 131 does not report a dedicated worker's script as a request
   await p.goto(URL0, { waitUntil: 'networkidle' });
   await p.waitForTimeout(1500);
   const early = reqs.filter((r) => /worker\.js|core\/solver\.js|core\/experiment\.js/.test(r.url)).map((r) => r.url.replace(BASE, ''));

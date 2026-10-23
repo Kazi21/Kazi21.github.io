@@ -1,14 +1,14 @@
 {
  "id": "browser_ions",
- "name": "Ion experiment browser tests IB1–IB10",
+ "name": "Ion experiment browser tests IB1–IB12",
  "verdict": "PASS",
- "chromium": "141.0.7390.37",
+ "chromium": "131.0.6778.0",
  "items": [
   {
    "id": "IB1",
    "name": "Lazy start",
    "verdict": "PASS",
-   "detail": "requested during load + 1.5 s: none of the solver, worker, chart, data or 3D files; after Start: ions/core.js, ions/params.js, ions/charts.js, data/hydration.json, ions/worker.js, ions/ions3d.js, vendor/three.module.min.js"
+   "detail": "requested during load + 1.5 s: none of the solver, worker, chart, data or 3D files; after Start: ions/core.js, ions/params.js, ions/controller.js, ions/charts.js, data/hydration.json, ions/ions3d.js, ions/worker.js, vendor/three.module.min.js"
   },
   {
    "id": "IB2",
@@ -44,7 +44,7 @@
    "id": "IB7",
    "name": "3D view",
    "verdict": "PASS",
-   "detail": "three.js requested only after Start (IB1); frame non-blank: 64.2 % non-background pixels, 77 colour classes; overlays one at a time with a legend: true (phi: “Electric potential (mV)”; flux: “Current density |I| / A(x) (A m⁻²)”; conc: “Na⁺ concentration relative to its reservoir (c / c_res)”); at 100 mV markers moved 10.66 nm (Na⁺, towards the permeate) and -12.60 nm (Cl⁻, towards the feed) in 2 s; reduced motion: still before Play true, moving after Play true; without WebGL: fallback shown true (“The 3D view needs WebGL, which this browser does not provide. The expe…”), result 3.76 pA converged true, three.js requested false; page errors 0"
+   "detail": "three.js requested only after Start (IB1); frame non-blank: 64.1 % non-background pixels, 74 colour classes; overlays one at a time with a legend: true (phi: “Electric potential (mV)”; flux: “Current density |I| / A(x) (A m⁻²)”; conc: “Na⁺ concentration relative to its reservoir (c / c_res)”); at 100 mV markers moved 2.46 nm (Na⁺, towards the permeate) and -3.73 nm (Cl⁻, towards the feed) in 2 s; reduced motion: still before Play true, moving after Play true; without WebGL: fallback shown true (“The 3D view needs WebGL, which this browser does not provide. The expe…”), result 3.76 pA converged true, three.js requested false; page errors 0"
   },
   {
    "id": "IB8",
@@ -56,16 +56,28 @@
    "id": "IB9",
    "name": "Export",
    "verdict": "PASS",
-   "detail": "continuum-ions-7-7-step6.json and continuum-ions-profiles-7-7-step6.csv downloaded; solver-file hashes recorded: true; reproduce_ions.js: 56 checks, 0 failed; largest relative difference 1.07e-15 (exit 0)"
+   "detail": "continuum-ions-7-7-step6.json and continuum-ions-profiles-7-7-step6.csv downloaded; solver-file hashes recorded: true; reproduce_ions.js: 82 checks, 0 failed; largest relative difference 1.07e-15 (exit 0)"
   },
   {
    "id": "IB10",
    "name": "Water experiment",
    "verdict": "PASS",
    "detail": "water.html converged, Q = 4.00e-17 m³ s⁻¹; switch on the water page marks it current and leads to the ion page: true; switch on the ion page leads back: true; external requests from both pages: none; page errors 0"
+  },
+  {
+   "id": "IB11",
+   "name": "Controller in the page",
+   "verdict": "PASS",
+   "detail": "0.5 %: page “Numerical tolerance reached”, levels 1 compare, 2 stop, reported level 1 (3.76 pA); Node tolerance_reached, reported level 1; levels and decisions equal: true, status and chips: true, reported values: true, tile: true, table rows: true; request names rimN (independent ranking: rimN ×3.62), states not run and nothing submitted: true; hydration card label: “Recorded CP2K data · not recalculated at the selected voltage”; download: decision record present and valid: true; reproduce_ions.js: 81 checks, 0 failed; largest relative difference 0.00e+0 (exit 0); 0.1 %: page “Numerical tolerance reached”, levels 1 compare, 2 refine, 3 stop, reported level 2 (3.76 pA); Node tolerance_reached, reported level 2; levels and decisions equal: true, status and chips: true, reported values: true, tile: true, table rows: true; 0.02 %: page “Refinement budget exhausted”, levels 1 compare, 2 refine, 3 stop, reported level 3 (3.76 pA); Node budget_exhausted, reported level 3; levels and decisions equal: true, status and chips: true, reported values: true, tile: true, table rows: true; keyboard ↑ (0.1 %): page “Numerical tolerance reached”, levels 1 compare, 2 refine, 3 stop, reported level 2 (3.76 pA); Node tolerance_reached, reported level 2; levels and decisions equal: true, status and chips: true, reported values: true, tile: true, table rows: true; target control by keyboard: true; external requests: none; page errors 0"
+  },
+  {
+   "id": "IB12",
+   "name": "Failed-run display",
+   "verdict": "PASS",
+   "detail": "Node record: not_converged, levels 1 passed, 2 failed G1; chips “Not converged” / “Not converged”: true; message “At grid level 2: gate G1 failed (Newton’s scaled residual is above 10⁻¹⁰). No result is certified.”: names G1 true; tiles “screening grid, not certified: not converged” and “screening grid, not certified: not converged”: true; request box shown: false (“Not issued: the numerical problem comes first. Largest sensitivity: Charged grou”); download continuum-ions-decision-7-7-step6-standard.json: valid true, status not_converged, certified result null, request null; page errors 0"
   }
  ],
  "pageErrors": [],
- "environment": "Chromium 141.0.7390.37 (headless shell, Playwright, SwiftShader WebGL) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox, real phones or GPUs",
- "date": "2026-10-21T11:19:22.934Z"
+ "environment": "Chromium 131.0.6778.0 (headless shell, Playwright, SwiftShader WebGL) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox, real phones or GPUs",
+ "date": "2026-10-22T20:58:44.444Z"
 }

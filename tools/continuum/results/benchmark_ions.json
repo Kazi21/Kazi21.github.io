@@ -1,0 +1,72 @@
+{
+ "id": "benchmark_ions",
+ "chromium": "131.0.6778.0",
+ "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+ "cores": 2,
+ "date": "2026-10-22T21:06:39.410Z",
+ "method": "default experiment ((7,7), step 6, +100 mV, 0.100 M); each run on a fresh page load from a local static server, 1440 x 1000 px, headless Chromium with software WebGL (SwiftShader); time from the click on Run experiment to the first displayed current and to the end of the run (decision record available); median of 3 runs per target",
+ "rows": [
+  {
+   "target": "standard",
+   "label": "0.5 %",
+   "first_result_s": 1.517,
+   "whole_run_s": 5.374,
+   "status": [
+    "Numerical tolerance reached",
+    "Numerical tolerance reached",
+    "Numerical tolerance reached"
+   ],
+   "grid_levels_solved": [
+    2,
+    2,
+    2
+   ],
+   "page_errors": 0,
+   "samples_s": [
+    {
+     "first": 1.912,
+     "whole": 6.188
+    },
+    {
+     "first": 1.517,
+     "whole": 5.374
+    },
+    {
+     "first": 1.391,
+     "whole": 5.059
+    }
+   ]
+  },
+  {
+   "target": "fine",
+   "label": "0.1 %",
+   "first_result_s": 1.387,
+   "whole_run_s": 15.178,
+   "status": [
+    "Numerical tolerance reached",
+    "Numerical tolerance reached",
+    "Numerical tolerance reached"
+   ],
+   "grid_levels_solved": [
+    3,
+    3,
+    3
+   ],
+   "page_errors": 0,
+   "samples_s": [
+    {
+     "first": 1.568,
+     "whole": 17.534
+    },
+    {
+     "first": 1.169,
+     "whole": 14.281
+    },
+    {
+     "first": 1.387,
+     "whole": 15.178
+    }
+   ]
+  }
+ ]
+}

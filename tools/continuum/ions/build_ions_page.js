@@ -9,9 +9,10 @@
 const fs = require('fs'), path = require('path');
 const katex = require('katex');
 const ROOT = path.resolve(__dirname, '../../..');
-const VERSION = '2026.9.1';
+const VERSION = '2026.10.1';
 const Core = require(path.join(ROOT, 'lab/continuum/ions/core.js'));
 const Pm = require(path.join(ROOT, 'lab/continuum/ions/params.js'));
+const Ctl = require(path.join(ROOT, 'lab/continuum/ions/controller.js'));
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const readJson = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; } };
 const f3 = (x) => Number(x).toPrecision(3);
@@ -82,10 +83,13 @@ function criteria(file) {
 function validationHtml() {
   const crit = criteria(path.join(ROOT, 'tools/continuum/ions/TOLERANCES.md'));
   const groups = [
-    { title: 'Solver (Node)', short: 'solver', ids: ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15'], res: readJson(path.join(ROOT, 'tools/continuum/results/t_ions.json')), cmd: 'node tools/continuum/ions/t_ions.js' },
-    { title: 'Browser (Chromium)', short: 'browser', ids: ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10'], res: readJson(path.join(ROOT, 'tools/continuum/results/browser_ions.json')), cmd: 'node tools/continuum/ions/browser_ions.js' },
+    { title: 'Solver and controller (Node)', short: 'solver and controller', ids: ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18'], res: readJson(path.join(ROOT, 'tools/continuum/results/t_ions.json')), cmd: 'node tools/continuum/ions/t_ions.js' },
+    { title: 'Browser (Chromium)', short: 'browser', ids: ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10', 'IB11', 'IB12'], res: readJson(path.join(ROOT, 'tools/continuum/results/browser_ions.json')), cmd: 'node tools/continuum/ions/browser_ions.js' },
   ];
-  const amended = { I14: 'applied after run 2 to the displayed value, run 2 kept; since release 2026.9.1 the displayed status is also compared with an independent classification (beyond the display range, Nernst band, invalid)' };
+  const amended = {
+    I14: { label: 'PASS (applied as clarified)', note: 'applied after run 2 to the displayed value, run 2 kept; since release 2026.9.1 the displayed status is also compared with an independent classification (beyond the display range, Nernst band, invalid)' },
+    IB1: { label: 'PASS (procedure amended)', note: 'since release 2026.10 the worker is detected with Playwright’s worker event, because the request event of the Chromium build used for this release does not report a dedicated worker’s script; criterion unchanged; the failing run is kept (results/browser_ions.2026-10-22-baseline.json)' },
+  };
   let html = '', total = 0, passed = 0, failed = 0, notrun = 0;
   const stats = [];
   for (const g of groups) {
@@ -97,8 +101,8 @@ function validationHtml() {
       const v = it ? it.verdict : 'NOT_RUN';
       total++; if (v === 'PASS') { passed++; gp++; } else if (v === 'NOT_RUN') notrun++; else failed++;
       const cls = v === 'PASS' ? 'cl-verdict-pass' : v === 'NOT_RUN' ? 'cl-verdict-notrun' : 'cl-verdict-fail';
-      const label = v === 'PASS' && amended[id] ? 'PASS (applied as clarified)' : v.replace('_', ' ');
-      html += '<tr><td>' + id + '</td><th scope="row">' + esc(c.name) + '</th><td>' + esc(c.criterion) + '</td><td>' + esc(it ? it.detail : 'not run in this build') + (amended[id] && it ? '. Note: ' + esc(amended[id]) : '') + '</td><td><span class="cl-verdict ' + cls + '">' + esc(label) + '</span></td></tr>\n';
+      const label = v === 'PASS' && amended[id] ? amended[id].label : v.replace('_', ' ');
+      html += '<tr><td>' + id + '</td><th scope="row">' + esc(c.name) + '</th><td>' + esc(c.criterion) + '</td><td>' + esc(it ? it.detail : 'not run in this build') + (amended[id] && it ? '. Note: ' + esc(amended[id].note) : '') + '</td><td><span class="cl-verdict ' + cls + '">' + esc(label) + '</span></td></tr>\n';
     }
     html += '</tbody></table></div>\n';
     if (g.res && g.res.environment) html += '<p class="cl-small">' + esc(g.res.environment) + '</p>\n';
@@ -110,8 +114,8 @@ function validationHtml() {
   const vals = mb ? [+mb[1], +mb[2], +mb[3]] : [], kmax = vals.indexOf(Math.max(...vals));
   const scope = mb ? 'Numerically verified against an independent solver and analytical limits. The SciPy comparison (I8) covers selected cases without the finite-size and electro-osmotic terms; its largest difference, ' + f3(100 * vals[kmax]) + ' % in ' + ['the total current', 'the Na⁺ part of the current', 'the small Cl⁻ part of the current'][kmax] + ', is a numerical comparison in those cases, not a guarantee of physical accuracy for every setting. ' : '';
   return '<p><b>' + passed + ' of ' + total + ' checks pass</b>' + (failed ? ', ' + failed + ' fail' : '') + (notrun ? ', ' + notrun + ' not run' : '') + ': ' + stats.join('; ') + '. ' + scope +
-    'The criteria were written in <code>tools/continuum/ions/TOLERANCES.md</code> before the solver existed; I15 was added for release 2026.9.1 before it was run. Two earlier solver runs failed and are kept (<code>results/t_ions.run1.json</code>: I5, fixed by a change to the solver; <code>results/t_ions.run2.json</code>: I14, criterion applied to the displayed value as recorded in TOLERANCES.md). ' +
-    'The solver tests run the same <code>ions/core.js</code> and <code>ions/params.js</code> as this page. The water experiment has its own validation on <a href="water.html#validation">its page</a>; none of its tests validates this electrolyte solver.</p>\n' + html;
+    'The criteria were written in <code>tools/continuum/ions/TOLERANCES.md</code> before the solver existed; I15 was added for release 2026.9.1, I16, I17 and IB11 for release 2026.10 (the numerical controller) and I18 and IB12 for release 2026.10.1 (the controller’s guards and the failed-run display), each before it was run here. The controller’s gates G1 and G2 were amended once, after a development run and before the first official run, and G2 and G3 once more for 2026.10.1, to require finite diagnostics after an external review found by fault injection that non-finite values could pass; <code>TOLERANCES.md</code> keeps the original wording and the measurements. Two earlier solver runs failed and are kept (<code>results/t_ions.run1.json</code>: I5, fixed by a change to the solver; <code>results/t_ions.run2.json</code>: I14, criterion applied to the displayed value as recorded in TOLERANCES.md). ' +
+    'The solver tests run the same <code>ions/core.js</code>, <code>ions/params.js</code> and <code>ions/controller.js</code> as this page. The water experiment has its own validation on <a href="water.html#validation">its page</a>; none of its tests validates this electrolyte solver.</p>\n' + html;
 }
 
 function ladderHtml() {
@@ -138,6 +142,32 @@ function registryHtml() {
     '\n</tbody></table></div>';
 }
 
+function targetOptions() {
+  return Object.values(Ctl.TARGETS).map((t) => '<option value="' + t.id + '"' + (t.id === 'standard' ? ' selected' : '') + '>' + t.label + (t.id === 'standard' ? ' (standard)' : '') + '</option>').join('');
+}
+function controllerTargets() {
+  const rows = Object.values(Ctl.TARGETS).map((t) => '<tr><th scope="row">' + t.label + (t.id === 'standard' ? ' (standard, default)' : '') + '</th><td>' + esc(String(t.t)) + '</td><td>' + f3(Ctl.V_PER_T * t.t * 1000) + ' mV</td></tr>').join('');
+  return '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">Target</th><th scope="col">Largest allowed relative change of the current between grid levels (relative to the finer level)</th><th scope="col">Largest allowed change of the reversal potential between grid levels</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p class="cl-small">The standard target equals the mesh-convergence criterion of test I7. When both currents are below 10⁻¹⁶ A (equilibrium at 0 mV), the current criterion is an absolute change of at most 10⁻¹⁶ A.</p>';
+}
+function levelNodes() {
+  return [1, 2, 3].map((lv) => Core.setup(Pm.build({ level: lv }).s).n).join(', ').replace(/, (\d+)$/, ' and $1');
+}
+function closureContractHtml() {
+  const dir = path.join(ROOT, 'lab/continuum/ions/data');
+  const ill = readJson(path.join(dir, 'closure-illustrative.json')), tpl = readJson(path.join(dir, 'closure-molecular-template.json'));
+  if (!ill || !tpl) throw new Error('closure contracts missing: run node tools/continuum/ions/make_closures.js');
+  const ci = Ctl.checkClosure(ill), ct = Ctl.checkClosure(tpl);
+  const counts = {}; const walk = (x) => { if (x && typeof x === 'object') { if (typeof x.status === 'string' && ('value' in x || 'values' in x)) counts[x.status] = (counts[x.status] || 0) + 1; Object.values(x).forEach(walk); } };
+  walk(ill.species); walk(ill.geometry); walk(ill.conditions);
+  const statusList = Object.keys(counts).sort().map((k) => k + ' ' + counts[k]).join(', ');
+  return '<p>The solvation closure is published as a machine-readable contract, generated from the solver’s parameter file and the recorded hydration data, so its values cannot drift from what the page computes. Its counterpart describes the molecular closure that would be needed for a calibrated prediction; every required value in it is null, so no calculation can use it.</p>' +
+    '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">Record</th><th scope="col">Evidence status</th><th scope="col">Contents</th><th scope="col">Validator</th></tr></thead><tbody>' +
+    '<tr><th scope="row"><a href="ions/data/closure-illustrative.json">closure-illustrative.json</a></th><td>' + esc(ill.evidence_status) + ' (in use, steps 4–6)</td><td>Inputs by status: ' + esc(statusList) + '; three closure forms; conventions (no mean-field electrostatics, no geometric entropy); supported domain; uncertainty ' + esc(ill.uncertainty.status.replace('_', ' ')) + '; SHA-256 of the hydration data and of the four trajectories</td><td>' + esc(ci.status) + '; usable as a calibrated closure: ' + (ci.usable_as_calibrated ? 'yes' : 'no') + '</td></tr>' +
+    '<tr><th scope="row"><a href="ions/data/closure-molecular-template.json">closure-molecular-template.json</a></th><td>' + esc(tpl.evidence_status) + ' (not data)</td><td>Free-energy profiles and axial diffusivities of Na⁺ and Cl⁻, the axial coordinate, accessible area and area convention, and the molecular conditions (temperature, concentration, geometry, chemistry, ensemble, boundary conditions), all null; conventions that avoid counting geometry or electrostatics twice; the four calculations it needs; a proposed acceptance target (conductance within ' + Math.round(100 * tpl.proposed_acceptance.relative_difference_max) + ' % of an independent matched molecular estimate)</td><td>' + esc(ct.status) + ' (' + ct.null_paths.length + ' required values null); usable: ' + (ct.usable_as_calibrated ? 'yes' : 'no') + '</td></tr>' +
+    '</tbody></table></div>';
+}
+
 let html = fs.readFileSync(path.join(__dirname, 'page.template.html'), 'utf8');
 for (const [k, tex] of Object.entries(EQ)) html = html.split('{{' + k + '}}').join(katex.renderToString(tex, { displayMode: true, throwOnError: true, output: 'htmlAndMathml' }));
 const cp = cp2kHtml();
@@ -157,8 +187,20 @@ const shellRatio = (() => {
   return 'In the (7,7) tube the recorded shells hold ' + f3(a[0]) + ' (Na⁺) and ' + f3(a[1]) + ' (Cl⁻) times the water the rigid shell allows, in the (6,6) tube ' + f3(b[0]) + ' and ' + f3(b[1]) + ' times: the waters rearrange along the axis instead of being cut off.';
 })();
 const P = Core.setup(Pm.build({}).s);
+function runTimes() {
+  // Quoted from the stored record written by bench_ions.js (no number typed by hand).
+  const b = readJson(path.join(ROOT, 'tools/continuum/results/benchmark_ions.json'));
+  const r = b && b.rows ? Object.fromEntries(b.rows.map((x) => [x.target, x])) : {};
+  if (!r.standard || !r.fine) return 'Run times are not recorded for this build.';
+  const f = (x) => (x < 1 ? x.toFixed(1) : x.toPrecision(2));
+  const ghz = (String(b.cpu).match(/@\s*([\d.]+)\s*GHz/) || [])[1];
+  return 'In headless Chromium ' + String(b.chromium).split('.')[0] + ' with software WebGL on the build machine (' + b.cores + ' cores' + (ghz ? ' at ' + (+ghz).toFixed(1) + ' GHz' : '') +
+    '; medians of ' + r.standard.samples_s.length + ' runs, each after a fresh page load; record <code>tools/continuum/results/benchmark_ions.json</code>) the first result appears after about ' +
+    f(r.standard.first_result_s) + ' s, and the whole run takes about ' + f(r.standard.whole_run_s) + ' s at the standard target and about ' + f(r.fine.whole_run_s) + ' s when level 3 is needed.';
+}
 html = html.split('{{LADDER}}').join(ladderHtml()).split('{{PRESET_OPTIONS}}').join(presetHtml()).split('{{CP2K_TABLE}}').join(cp.table).split('{{CP2K_CAVEATS}}').join(cp.caveats)
-  .split('{{REGISTRY_TABLE}}').join(registryHtml()).split('{{VALIDATION}}').join(validationHtml()).split('{{NODES}}').join(String(P.n)).split('{{C_FEED}}').join('the set concentration').split('{{CLOSURE_CMP}}').join(closureCmp).split('{{SHELL_RATIO}}').join(shellRatio).split('{{VERSION}}').join(VERSION);
+  .split('{{REGISTRY_TABLE}}').join(registryHtml()).split('{{VALIDATION}}').join(validationHtml())
+  .split('{{TARGET_OPTIONS}}').join(targetOptions()).split('{{CONTROLLER_TARGETS}}').join(controllerTargets()).split('{{LEVEL_NODES}}').join(levelNodes()).split('{{CLOSURE_CONTRACT}}').join(closureContractHtml()).split('{{NODES}}').join(String(P.n)).split('{{C_FEED}}').join('the set concentration').split('{{CLOSURE_CMP}}').join(closureCmp).split('{{SHELL_RATIO}}').join(shellRatio).split('{{VERSION}}').join(VERSION).split('{{RUN_TIMES}}').join(runTimes());
 // numbered references
 const order = [];
 html = html.replace(/\{\{R:([a-z0-9]+)\}\}/g, (m, key) => {

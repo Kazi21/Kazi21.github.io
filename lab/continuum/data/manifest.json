@@ -1,6 +1,6 @@
 {
   "format": "continuum-manifest-1",
-  "release": "2026.9.1",
+  "release": "2026.10.1",
   "contracts": "tools/continuum/CONTRACTS.md",
   "fluid": {
     "id": "water",
