@@ -97,11 +97,13 @@
             <button type="button" class="btn btn-small ion-play" aria-pressed="true" disabled>Pause</button>
             <button type="button" class="btn btn-small ion-reset-view" disabled>Reset view</button>
             <span class="cl-small ion-key"><span class="ion-dot ion-dot-na" aria-hidden="true"></span>Na⁺ <span class="ion-dot ion-dot-cl" aria-hidden="true"></span>Cl⁻ <span class="ion-dot ion-dot-o" aria-hidden="true"></span>shell water</span>
-            <p class="cl-small ion-markers-note">Markers show mean transport, not molecular trajectories · 1 s on screen = 100 ns</p>
+            <p class="cl-small ion-markers-note"><b>Molecular motion meets continuum transport.</b> Ion markers follow the computed mean drift (1 s on screen = 100 ns); the water configurations around them are reconstructed from recorded CP2K trajectories (1 s = 0.1 ps). The two motions use separate display clocks.</p>
           </div>
-          <details class="cl-more cl-help-more"><summary>How to read this view</summary><div class="cl-help ion-help">
+          <details class="cl-more cl-help-more"><summary>How this visualization works</summary><div class="cl-help ion-help">
             <p>The back half of the membrane and of the nanotube is drawn; the colour is the computed field on the section through the pore axis, inside the pore and in the two access regions of the reduced model (cones of slope 4/π, which reproduce Hall’s access resistance). Drag to rotate, scroll or pinch to zoom, double-click to reset; with the view focused, arrow keys rotate.</p>
-            <p>Markers are not a recorded trajectory. They are placed with the computed line density N<sub>A</sub>c(x)A(x) and move at the mean drift speed J/(N<sub>A</sub>cA) of the computed flux, so their density and their crossing rate follow the solution; thermal motion is not drawn. One second on screen is 100 ns. At equilibrium the markers stop: the net drift is zero, while the ions keep moving thermally. The drawing follows the model step: point ions, then spheres of the crowding size, then ions with the first-shell waters the dehydration closure assumes (fewer inside the pore).</p>
+            <p>The ion markers are not a recorded trajectory. They are placed with the computed line density N<sub>A</sub>c(x)A(x) and move along the pore at the mean drift speed J/(cA), where J is the computed molar flow (mol s<sup>−1</sup>) and c the concentration (mol m<sup>−3</sup>), so their density and their crossing rate follow the solution; one second on screen is 100 ns. At equilibrium the drift stops. The drawing follows the model step: point ions, then spheres of the crowding size, then ions with the first-shell waters the dehydration closure assumes (fewer inside the pore).</p>
+            <p>From the solvation step on, the scene is a composite. The water configurations around each ion are reconstructed from the recorded CP2K runs (the runs themselves are in the <a href="../cnt/">trajectory inspector</a>): their positions relative to the ion come from the run of the selected tube inside the pore and from the (11,11) run outside it, cross-faded at the mouths, interpolated between stored frames 4 fs apart and turned about the tube axis. Inside the pore the ion keeps its recorded distance from the axis. Each marker follows one recorded ion of its species from its own starting point, played forward and backward as a display loop, not as additional simulated time, so the shell keeps moving at equilibrium.</p>
+            <p>The shell runs on its own clock, one second on screen per 0.1 ps, a million times slower than the drift, so the animation shows no correlation between shell rearrangement and the passage of an ion. The drawn sizes represent the closure’s mean hydration, not the number of waters coordinated in a given frame: each water is drawn at a weight that falls smoothly with its distance from the ion, and the weights add up to the closure’s count. Outside the pore the shell is the reference shell of the confined (11,11) run, not bulk water. The runs are 0.5–0.75 ps long, so the motion shown is the recorded thermal motion over that time, not converged dynamics.</p>
           </div></details>
         </div>
 
@@ -235,7 +237,7 @@
             <text x="568" y="100" text-anchor="middle">+ Stokes flow with slip</text>
             <text x="568" y="124" text-anchor="middle">access cones (Hall, Sampson)</text>
             <text x="568" y="142" text-anchor="middle">Newton, Float64, in the browser</text>
-            <text x="568" y="166" text-anchor="middle" fill="#526477">tests I1–I18, IB1–IB12</text>
+            <text x="568" y="166" text-anchor="middle" fill="#526477">tests I1–I19, IB1–IB13</text>
             <rect x="698" y="34" width="194" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
             <text x="795" y="57" text-anchor="middle" font-weight="600" fill="#16324F">Prediction</text>
             <text x="795" y="80" text-anchor="middle">current, Na⁺ / Cl⁻ split</text>
@@ -280,7 +282,7 @@
             <text x="160" y="482" text-anchor="middle">+ Stokes flow with slip</text>
             <text x="160" y="506" text-anchor="middle">access cones (Hall, Sampson)</text>
             <text x="160" y="524" text-anchor="middle">Newton, Float64, in the browser</text>
-            <text x="160" y="548" text-anchor="middle" fill="#526477">tests I1–I18, IB1–IB12</text>
+            <text x="160" y="548" text-anchor="middle" fill="#526477">tests I1–I19, IB1–IB13</text>
             <line x1="160" y1="568" x2="160" y2="592" stroke="#16324F" stroke-width="2" marker-end="url(#ionArrowV)"/>
             <rect x="10" y="596" width="300" height="150" rx="8" fill="#FFFFFF" stroke="#D9E2E8"/>
             <text x="160" y="619" text-anchor="middle" font-weight="600" fill="#16324F">Prediction</text>

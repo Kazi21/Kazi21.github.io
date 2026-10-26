@@ -1,6 +1,6 @@
 {
  "id": "ions",
- "name": "Ion experiment solver and controller I1–I18",
+ "name": "Ion experiment solver and controller I1–I19",
  "verdict": "PASS",
  "items": [
   {
@@ -110,8 +110,14 @@
    "name": "Controller guards",
    "verdict": "PASS",
    "detail": "9 of 9 probes hold: nonfinite_packing → check_failed (G3); nonfinite_flux_diagnostic → check_failed (G2); nonfinite_current → check_failed (G3); nonfinite_reversal_packing → check_failed (G3); empty_molecular_contract → not_calibrated; zero_voltage_remains_supported → tolerance_reached; closure-illustrative.json → illustrative; closure-molecular-template.json → blocked; tampered_passed_record → rejected; exit 0"
+  },
+  {
+   "id": "I19",
+   "name": "Recorded shell data for the 3D view",
+   "verdict": "PASS",
+   "detail": "(a) make_shells.py --check: shells.json and 4 shell files reproduce; trajectory SHA-256 equal the manifest: true; (b) first-shell counts, trajectory against stored waters, 12 ions: (6,6) 2 ions × 188 frames: 376 of 376 counts equal; (7,7) 2 ions × 126 frames: 252 of 252 counts equal; (9,9) 4 ions × 126 frames: 504 of 504 counts equal; (11,11) 4 ions × 126 frames: 504 of 504 counts equal; (c) largest position differences: oxygen 1.00e-5 nm, hydrogen 1.00e-5 nm, ion across the tube 5.00e-5 nm (criterion 1e-4 nm); (d) stored O–H distances outside [0.080 nm, the manifest largest + 0.0005 nm] or not two per water: 0; (e) ion positions outside the accessible radius: 0"
   }
  ],
- "environment": "Node v22.22.0, linux x64, 140.3 s",
- "date": "2026-10-22T20:49:39.990Z"
+ "environment": "Node v22.22.0, linux x64, 101.3 s",
+ "date": "2026-10-26T09:59:08.561Z"
 }

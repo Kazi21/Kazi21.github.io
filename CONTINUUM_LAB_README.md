@@ -68,10 +68,11 @@ RT/F and 10⁻⁹ m² s⁻¹.
 | `lab/continuum/ions/data/closure-illustrative.json`, `closure-molecular-template.json` | Closure contracts: the illustrative solvation closure in use, and the proposed molecular closure (null values; blocked) |
 | `lab/continuum/ions/worker.js`, `app.js`, `charts.js`, `ions3d.js`, `ions.css` | Worker protocol, page logic, SVG charts, 3D view, layout |
 | `lab/continuum/ions/data/hydration.json` | First-shell counts of the four CP2K runs with caveats and file hashes |
-| `tools/continuum/ions/TOLERANCES.md` | Acceptance criteria I1–I18 and IB1–IB12 (frozen before evaluation; I15 added for 2026.9.1; I16, I17, IB11 and the controller rules for 2026.10, with the one amendment of the controller's gates before the first official run), I18, IB12 and the finite-value amendment of gates G2 and G3 for 2026.10.1; how they are applied, record of runs |
+| `tools/continuum/ions/TOLERANCES.md` | Acceptance criteria I1–I19 and IB1–IB13 (frozen before evaluation; I15 added for 2026.9.1; I16, I17, IB11 and the controller rules for 2026.10, with the one amendment of the controller's gates before the first official run), I18, IB12 and the finite-value amendment of gates G2 and G3 for 2026.10.1, I19, IB13 and the recorded-shell drawing for 2026.10.2; how they are applied, record of runs |
 | `tools/continuum/ions/t_ions.js`, `browser_ions.js` | Solver tests (Node) and browser tests (Chromium) |
 | `tools/continuum/ions/ref_pnp.py` | Independent SciPy (solve_bvp) reference for I8; no shared code |
 | `tools/continuum/ions/make_hydration.py` | Recomputes the first-shell counts from the public trajectories (`--check` verifies the JSON) |
+| `tools/continuum/ions/make_shells.py` | Writes the first-shell water positions relative to each ion, every 4 fs, that the 3D view replays (`lab/continuum/ions/data/shells.json`, `shells-n-n.bin`; `--check` regenerates them byte for byte; test I19) |
 | `tools/continuum/ions/reproduce_ions.js` | Recomputes a downloaded result and repeats the controller's decisions (also accepts a decision record alone) |
 | `tools/continuum/ions/make_closures.js` | Writes the two closure contracts from `params.js` and `hydration.json` (`--check` verifies the files) |
 | `tools/continuum/ions/probe_controller_guards.js` | Nine regression probes of the controller (test I18): non-finite diagnostics, an almost empty "validated" closure, equilibrium, the published contracts, a tampered record |
@@ -81,10 +82,11 @@ RT/F and 10⁻⁹ m² s⁻¹.
 
 ```
 python3 tools/continuum/ions/make_hydration.py --check   # first-shell counts from lab/cnt/data
+python3 tools/continuum/ions/make_shells.py --check       # recorded shell positions for the 3D view, from lab/cnt/data
 node tools/continuum/ions/make_closures.js --check        # closure contracts reproduce from params.js and hydration.json
-node tools/continuum/ions/t_ions.js                       # I1-I18 (about 75 s; I8 calls ref_pnp.py: numpy, scipy)
+node tools/continuum/ions/t_ions.js                       # I1-I19 (75-150 s; I8 calls ref_pnp.py: numpy, scipy)
 python3 -m http.server 8765 &                             # from the repository root, then:
-node tools/continuum/ions/browser_ions.js                 # IB1-IB12 (Playwright + Chromium; WebGL via SwiftShader)
+node tools/continuum/ions/browser_ions.js                 # IB1-IB13 (Playwright + Chromium; WebGL via SwiftShader)
 node tools/continuum/ions/probe_controller_guards.js --site .   # the nine guard probes alone (also run inside I18)
 node tools/continuum/ions/bench_ions.js http://127.0.0.1:8765/   # run times (three fresh page loads per target), quoted on the page
 NODE_PATH=<katex> node tools/continuum/ions/build_ions_page.js
@@ -204,9 +206,9 @@ NODE_PATH=<katex> node tools/continuum/build_page.js    # rebuild the page with 
 <!-- BEGIN:results (written by tools/continuum/make_qa_report.py --readme) -->
 ## Results of this release (generated)
 
-80 PASS, 3 FAIL, 0 NOT_RUN of 83 acceptance checks (both experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
+82 PASS, 3 FAIL, 0 NOT_RUN of 85 acceptance checks (both experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
 
-- Ion experiment: solver I1–I18 18 of 18 PASS, browser IB1–IB12 12 of 12 PASS; independent SciPy reference: b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3. Earlier failing runs kept (`results/t_ions.run1.json`: I5; `results/t_ions.run2.json`: I14; `results/browser_ions.2026-10-22-baseline.json`: IB1, the unchanged suite under Chromium 131, before the procedure amendment).
+- Ion experiment: solver I1–I19 19 of 19 PASS, browser IB1–IB13 13 of 13 PASS; independent SciPy reference: b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3. Earlier failing runs kept (`results/t_ions.run1.json`: I5; `results/t_ions.run2.json`: I14; `results/browser_ions.2026-10-22-baseline.json`: IB1, the unchanged suite under Chromium 131, before the procedure amendment).
 - F1 Developed duct: **PASS** — relative Q difference 4.07 × 10⁻¹¹, velocity normalised L2 4.30 × 10⁻¹¹.
 - F2 Uniform resistance interface (porousBafflePressure): **FAIL** — relative Q difference 0.0212, velocity normalised L2 0.0843.
 - F3 Closed strip: **FAIL** — relative Q difference 0.0197, velocity normalised L2 0.0844.

@@ -249,3 +249,10 @@ alone and from the intact-membrane table for a modified membrane.
   the end; the log is kept as `results/browser.2026.10.1-run2-stalled.log`. Run 3, with a 1500 s limit and nothing else
   running, completed in about 3.5 min: 17 of 17 PASS (`results/browser.json`; R1 again downloads the public CV, HTTP 200).
 
+- 26 Oct 2026 (release 2026.10.2; written before the run): the home page changed (the Continuum Lab card moved below the
+  Live Water Lab and trajectory inspector cards, and the section's opening sentence lists the experiments in that order);
+  the water page changed only in its version number. No criterion changed. The 2026.10.1 run-3 record is kept as
+  `results/browser.2026.10.1-run3.json`.
+  Run 1 of 2026.10.2, with nothing else running: 17 of 17 PASS (`results/browser.json`; R1 finds the home page and its
+  Continuum Lab link, and downloads the public CV, HTTP 200).
+

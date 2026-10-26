@@ -1,6 +1,6 @@
-// Browser tests IB1–IB12 for the ion experiment (/lab/continuum/; criteria: tools/continuum/ions/TOLERANCES.md, written
-// before the page existed; IB11, the numerical controller, added for release 2026.10 and IB12, the failed-run display, for
-// release 2026.10.1, each before it was run).
+// Browser tests IB1–IB13 for the ion experiment (/lab/continuum/; criteria: tools/continuum/ions/TOLERANCES.md, written
+// before the page existed; IB11, the numerical controller, added for release 2026.10, IB12, the failed-run display, for
+// release 2026.10.1 and IB13, the recorded shell motion, for release 2026.10.2, each before it was run).
 // IB1 procedure amended for release 2026.10 (criterion unchanged): a dedicated worker is also counted through
 // Playwright's 'worker' event, because the 'request' event of the Chromium build used for 2026.10 does not report it. WebGL runs on SwiftShader in headless Chromium. Numbers are compared with the Node solver
 // (lab/continuum/ions/core.js, params.js) run on the same inputs; the page state is read through window.__ionLab.
@@ -331,11 +331,152 @@ const req = (p) => p.evaluate(() => (window.__ionLab ? window.__ionLab.state().r
     await cf.close();
   }
 
+  // ===================================================== IB13 recorded shell motion in the 3D view (release 2026.10.2)
+  // The drawn shells are compared with the stored CP2K positions, decoded here independently of the page.
+  {
+    const det = [], okp = {};
+    const IDX = JSON.parse(fs.readFileSync(path.join(SITE, 'lab/continuum/ions/data/shells.json'), 'utf8'));
+    const HYD = JSON.parse(fs.readFileSync(path.join(SITE, 'lab/continuum/ions/data/hydration.json'), 'utf8'));
+    const hydCount = (n, s) => HYD.tubes.find((t) => t.n === n).ions[s === 0 ? 'Na+' : 'Cl-'].mean_count;
+    const decode = (n) => {
+      const t = IDX.tubes.find((u) => u.n === n), b = fs.readFileSync(path.join(SITE, 'lab/continuum/ions/data', t.file)), ions = [[], []];
+      for (const io of t.ions) {
+        const W = io.n_waters, F = t.frames, o0 = io.offset_bytes, wb = o0 + F * 4;
+        ions[io.species === 'Na+' ? 0 : 1].push({ W, yz: (f, c) => b.readInt16LE(o0 + (f * 2 + c) * 2) / 10000, w: (f, k, at, c) => b.readInt16LE(wb + (((f * W + k) * 3 + at) * 3 + c) * 2) / 10000 });
+      }
+      return { F: t.frames, dt: t.frame_spacing_fs, D: (t.frames - 1) * t.frame_spacing_fs, ions };
+    };
+    const TB = { 7: decode(7), 11: decode(11) };
+    const pp = (tau, D) => { const u = tau % (2 * D); return u <= D ? u : 2 * D - u; };
+    const at = (tb, t) => { const fi = t / tb.dt, i0 = Math.min(tb.F - 2, Math.floor(fi)); return [i0, fi - i0]; };
+    const op = (v, flip, phi) => { let x = v[0], y = v[1]; const z = v[2]; if (flip < 0) { x = -x; y = -y; } const c = Math.cos(phi), sn = Math.sin(phi); return [x, y * c - z * sn, y * sn + z * c]; };
+    const md = (u, v) => Math.max(Math.abs(u[0] - v[0]), Math.abs(u[1] - v[1]), Math.abs(u[2] - v[2]));
+    // (b) and (c) on one probe; counts: [inside count, outside count] per species
+    function checkProbe(P, counts) {
+      const r = { nIn: 0, nOut: 0, worstPos: 0, worstIon: 0, worstT: 0, incomplete: 0, worstSum: 0, worstCount: 0, markers: P.markers.length };
+      for (const mk of P.markers) {
+        let sum = 0; for (const w of mk.waters) sum += w.w;
+        r.worstSum = Math.max(r.worstSum, Math.abs(sum - mk.m));
+        const inside = mk.win === 1, outside = mk.win === 0;
+        if (inside) r.worstCount = Math.max(r.worstCount, Math.abs(mk.m - counts[mk.s][0]));
+        if (outside) r.worstCount = Math.max(r.worstCount, Math.abs(mk.m - counts[mk.s][1]));
+        if (!(inside && r.nIn < 3) && !(outside && r.nOut < 3)) continue;
+        if (inside) r.nIn++; else r.nOut++;
+        const src = inside ? mk.inside : mk.outside, tb = TB[src.tube], rec = tb.ions[mk.s][src.ion], t = pp(mk.tau, tb.D);
+        r.worstT = Math.max(r.worstT, Math.abs(t - (inside ? mk.tIn : mk.tOut)));
+        const ws = mk.waters.filter((w) => w.src === (inside ? 'in' : 'out'));
+        if (ws.length !== rec.W || mk.waters.length !== rec.W) r.incomplete++;
+        const [i0, f] = at(tb, t);
+        for (const w of ws) {
+          const exp = [0, 1, 2].map((a) => op([0, 1, 2].map((c) => (1 - f) * rec.w(i0, w.idx, a, c) + f * rec.w(i0 + 1, w.idx, a, c)), src.flip, src.phi));
+          r.worstPos = Math.max(r.worstPos, md(exp[0], w.O), md(exp[1], w.H1), md(exp[2], w.H2));
+        }
+        if (inside) {
+          const y = (1 - f) * rec.yz(i0, 0) + f * rec.yz(i0 + 1, 0), z = (1 - f) * rec.yz(i0, 1) + f * rec.yz(i0 + 1, 1), e = op([0, y, z], src.flip, src.phi);
+          const shiftOk = mk.shift === 0 || (e[2] < 0.02 && Math.abs(mk.ion[2] - 0.02) < 1e-12);
+          r.worstIon = Math.max(r.worstIon, Math.abs(mk.ion[1] - e[1]), Math.abs(mk.ion[2] - (e[2] + mk.shift)), shiftOk ? 0 : 1);
+        }
+      }
+      return r;
+    }
+    const fmt = (r) => r.markers + ' markers; inside ' + r.nIn + ', outside ' + r.nOut + ' compared: largest water position difference ' + e2(r.worstPos) + ' nm, ion ' + e2(r.worstIon) +
+      ' nm, replay time ' + e2(r.worstT) + ' fs, incomplete sources ' + r.incomplete + '; weight sums within ' + e2(r.worstSum) + ' of the count, counts within ' + e2(r.worstCount) + ' of the closure';
+    const probeOk = (r) => r.nIn >= 1 && r.nOut >= 1 && r.worstPos <= 1e-6 && r.worstIon <= 1e-6 && r.worstT <= 1e-9 && r.incomplete === 0 && r.worstSum <= 1e-6 && r.worstCount <= 1e-9;
+    const probe = (pg) => pg.evaluate(() => window.__ionLab.view().shellProbe());
+    // In the default experiment ions rarely sit in the pore (Cl⁻ hardly enters the charged (7,7) pore): if no marker of a
+    // species is wholly inside, the test moves that species' first marker to the pore centre (x = 0) and reports it.
+    const probePlaced = (pg) => pg.evaluate(() => {
+      const v = window.__ionLab.view(), moved = [];
+      for (let s = 0; s < 2; s++) { const ps = v.particles[s]; if (ps.length && !ps.some((m) => v.insideWeight(m.x) === 1)) { ps[0].x = 0; moved.push(s === 0 ? 'Na⁺' : 'Cl⁻'); } }
+      v.placeMarkers(); v.needs = true;
+      const P = v.shellProbe(); P.moved = moved; return P;
+    });
+    const waitReady = (pg) => pg.waitForFunction(() => { const v = window.__ionLab.view(); return v && v.stats().shellReplay.ready && v.shellProbe(1).markers.length > 0; }, null, { timeout: 60000 });
+    const clickRadio = (pg, sel) => pg.evaluate((q) => document.querySelector(q).click(), sel);
+
+    const c13 = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+    const q = await c13.newPage(); const e13 = []; q.on('pageerror', (e) => e13.push(e.message));
+    const sreq = []; q.on('request', (r) => { if (/ions\/data\/shells/.test(r.url())) sreq.push({ url: r.url().replace(BASE, ''), t: Date.now() }); });
+    await q.goto(URL0, { waitUntil: 'networkidle' }); await q.waitForTimeout(1500);
+    const nBefore = sreq.length, tS = Date.now();
+    await q.click('.ion-poster-run'); await runDone(q, 0); await waitReady(q);
+    const o13 = await q.evaluate(() => { const o = window.__ionLab.state().res.main.opts; return { preset: o.preset, step: o.step, solvation: o.solvation }; });
+    // (a)
+    const after = [...new Set(sreq.filter((r) => r.t >= tS).map((r) => r.url))];
+    okp.a = nBefore === 0 && ['shells.json', 'shells-7-7.bin', 'shells-11-11.bin'].every((n) => after.some((u) => u.endsWith('ions/data/' + n))) && after.every((u) => /ions\/data\/(shells\.json|shells-7-7\.bin|shells-11-11\.bin)$/.test(u));
+    det.push('default experiment ' + o13.preset + ', step ' + o13.step + ', closure ' + o13.solvation + '; (a) shell files before Start: ' + nBefore + ', after: ' + after.map((u) => u.split('/').pop()).join(', '));
+    // (b), (c) recorded-CP2K closure
+    const P1 = await probePlaced(q);
+    const cp2k = [[hydCount(7, 0), hydCount(11, 0)], [hydCount(7, 1), hydCount(11, 1)]];
+    const r1 = checkProbe(P1, cp2k);
+    okp.b1 = probeOk(r1);
+    det.push('(b, c) recorded-CP2K closure (moved to the pore centre by the test: ' + (P1.moved.length ? P1.moved.join(', ') : 'none') + '): ' + fmt(r1));
+    // (d), (e) motion and clock over at least 1 s of playing time
+    await q.waitForFunction((t) => window.__ionLab.view().stats().playTime_s >= t + 1.0, P1.playTime_s, { timeout: 90000 });
+    const P2 = await probe(q);
+    const dt = P2.playTime_s - P1.playTime_s, byId = new Map(P2.markers.map((m) => [m.id, m]));
+    let sO = 0, sH = 0, nO = 0, nHh = 0, nMk = 0, worstClock = 0;
+    for (const m1 of P1.markers) {
+      const m2 = byId.get(m1.id); if (!m2) continue;
+      worstClock = Math.max(worstClock, Math.abs((m2.tau - m1.tau) / dt - 100));
+      if (!((m1.win === 1 && m2.win === 1) || (m1.win === 0 && m2.win === 0))) continue;
+      nMk++;
+      const w2 = new Map(m2.waters.map((w) => [w.src + w.idx, w]));
+      for (const a of m1.waters) {
+        const b = w2.get(a.src + a.idx); if (!b || a.w <= 0.5 || b.w <= 0.5) continue;
+        sO += (a.O[0] - b.O[0]) ** 2 + (a.O[1] - b.O[1]) ** 2 + (a.O[2] - b.O[2]) ** 2; nO++;
+        for (const h of ['H1', 'H2']) { sH += (a[h][0] - b[h][0]) ** 2 + (a[h][1] - b[h][1]) ** 2 + (a[h][2] - b[h][2]) ** 2; nHh++; }
+      }
+    }
+    const rmsO = nO ? Math.sqrt(sO / nO) : 0, rmsH = nHh ? Math.sqrt(sH / nHh) : 0;
+    okp.d = nO > 0 && rmsO >= 0.005 && rmsH >= 0.005;
+    // the measured magnitudes are not published (they are statistics of the trajectories; website evidence policy)
+    det.push('(d) over ' + dt.toFixed(2) + ' s of playing (' + (100 * dt).toFixed(0) + ' fs of the run), ' + nMk + ' markers, ' + nO + ' waters: RMS change of the ion-relative oxygen positions at least 0.005 nm ' + (rmsO >= 0.005) + ', of the hydrogen positions at least 0.005 nm ' + (rmsH >= 0.005));
+    // pause
+    await q.click('.ion-play');
+    const Pa = await probe(q); await q.waitForTimeout(1000); const Pb = await probe(q);
+    const byB = new Map(Pb.markers.map((m) => [m.id, m]));
+    const pausedOk = Pa.playTime_s === Pb.playTime_s && Pa.markers.length > 0 && Pa.markers.every((m) => byB.has(m.id) && byB.get(m.id).tau === m.tau);
+    // rigid-shell closure (still paused): counts of that closure
+    const r0 = await req(q); await clickRadio(q, 'input[name="ion-closure"][value="shell"]'); await runDone(q, r0); await waitReady(q);
+    const oS = await q.evaluate(() => window.__ionLab.state().res.main.opts);
+    const svS = Pm.build(oS).solvation.detail;
+    const PS = await probePlaced(q), rS = checkProbe(PS, [[svS.nNa, Pm.REF.nNa], [svS.nCl, Pm.REF.nCl]]);
+    okp.b2 = oS.solvation === 'shell' && probeOk(rS);
+    det.push('(b, c) rigid-shell closure (inside ' + svS.nNa.toFixed(4) + ' Na⁺, ' + svS.nCl.toFixed(4) + ' Cl⁻; moved: ' + (PS.moved.length ? PS.moved.join(', ') : 'none') + '): ' + fmt(rS));
+    // (f) Born closure and step 3
+    const r1b = await req(q); await clickRadio(q, 'input[name="ion-closure"][value="born"]'); await runDone(q, r1b); await q.waitForTimeout(500);
+    const fB = await q.evaluate(() => { const v = window.__ionLab.view(), st = v.stats(); return { waters: st.shellWaters, on: st.shellReplay.on, n: v.shellProbe().markers.length, solv: window.__ionLab.state().res.main.opts.solvation }; });
+    const r3 = await req(q); await q.click('input[name="ion-step"][value="3"]'); await runDone(q, r3); await q.waitForTimeout(500);
+    const f3 = await q.evaluate(() => { const v = window.__ionLab.view(), st = v.stats(); return { waters: st.shellWaters, on: st.shellReplay.on, n: v.shellProbe().markers.length, step: window.__ionLab.state().res.main.opts.step }; });
+    okp.f = fB.solv === 'born' && fB.waters === 0 && !fB.on && fB.n === 0 && f3.step === 3 && f3.waters === 0 && !f3.on && f3.n === 0;
+    det.push('(f) Born closure: ' + fB.waters + ' shell waters drawn; step 3: ' + f3.waters);
+    await c13.close();
+    // reduced motion
+    const crm = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+    const qr = await crm.newPage(); qr.on('pageerror', (e) => e13.push('reduced motion: ' + e.message));
+    await qr.goto(URL0, { waitUntil: 'networkidle' }); await qr.click('.ion-poster-run'); await runDone(qr, 0); await waitReady(qr);
+    const R1 = await probe(qr); await qr.waitForTimeout(1500); const R2 = await probe(qr);
+    const byR = new Map(R2.markers.map((m) => [m.id, m]));
+    const stillOk = R1.playTime_s === 0 && R2.playTime_s === 0 && R1.markers.length > 0 && R1.markers.every((m) => byR.has(m.id) && byR.get(m.id).tau === m.tau);
+    await qr.click('.ion-play');
+    await qr.waitForFunction(() => window.__ionLab.view().stats().playTime_s >= 0.5, null, { timeout: 90000 });
+    const R3 = await probe(qr), byR3 = new Map(R3.markers.map((m) => [m.id, m]));
+    let rmClock = 0, rmN = 0;
+    for (const m of R1.markers) { const m3 = byR3.get(m.id); if (!m3) continue; rmN++; rmClock = Math.max(rmClock, Math.abs((m3.tau - m.tau) / R3.playTime_s - 100)); }
+    await crm.close();
+    okp.e = worstClock <= 1e-6 && pausedOk && stillOk && rmN > 0 && rmClock <= 1e-6;
+    det.push('(e) replay clock: largest deviation from 100 fs per second of playing ' + e2(Math.max(worstClock, rmClock)) + ' fs s⁻¹; paused: no advance ' + pausedOk + '; reduced motion: no advance before Play ' + stillOk + ', advances after Play (' + rmN + ' markers)');
+    okp.g = e13.length === 0;
+    det.push('(g) page errors ' + e13.length + (e13.length ? ' (' + e13.join(' | ') + ')' : ''));
+    rec('IB13', 'Recorded shell motion in the 3D view', okp.a && okp.b1 && okp.b2 && okp.d && okp.e && okp.f && okp.g, det.join('; '));
+  }
+
   await browser.close();
-  const order = ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10', 'IB11', 'IB12'];
+  const order = ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10', 'IB11', 'IB12', 'IB13'];
   items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   const pass = items.length === order.length && items.every((i) => i.verdict === 'PASS') && allErrors.length === 0;
-  const res = { id: 'browser_ions', name: 'Ion experiment browser tests IB1–IB12', verdict: pass ? 'PASS' : 'FAIL', chromium: version, items, pageErrors: allErrors,
+  const res = { id: 'browser_ions', name: 'Ion experiment browser tests IB1–IB13', verdict: pass ? 'PASS' : 'FAIL', chromium: version, items, pageErrors: allErrors,
     environment: 'Chromium ' + version + ' (headless shell, Playwright, SwiftShader WebGL) on ' + os.cpus()[0].model + ' (' + os.cpus().length + ' cores); local static server; no Safari, Firefox, real phones or GPUs', date: new Date().toISOString() };
   fs.writeFileSync(process.env.OUT || path.join(SITE, 'tools/continuum/results/browser_ions.json'), JSON.stringify(res, null, 1) + '\n');
   console.log('verdict', res.verdict, allErrors.length ? 'page errors: ' + allErrors.join(' | ') : '');

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-/* Ion experiment (Continuum Lab 2026.10.1): solver and controller tests I1–I18 against the criteria frozen in TOLERANCES.md
+/* Ion experiment (Continuum Lab 2026.10.2): solver and controller tests I1–I19 against the criteria frozen in TOLERANCES.md
    (I15 added for release 2026.9.1; I16 and I17, the numerical controller, for release 2026.10; I18, the controller's guards
-   against invalid diagnostics and incomplete molecular records, for release 2026.10.1).
+   against invalid diagnostics and incomplete molecular records, for release 2026.10.1; I19, the recorded shell data of the
+   3D view, for release 2026.10.2).
    Usage: node tools/continuum/ions/t_ions.js [--quick]
    Writes tools/continuum/results/t_ions.json. I8 runs the independent SciPy program ref_pnp.py (python3 with numpy and
    scipy must be available); if it cannot run, I8 is reported NOT_RUN, never PASS. */
@@ -554,10 +555,83 @@ const records = [];                                                    // every 
   record('I18', 'Controller guards', ok, (rep ? rep.passed + ' of ' + rep.total + ' probes hold: ' : 'no report; ') + rows.map((r) => r.id + ' → ' + r.observed + (r.gate ? ' (' + r.gate + ')' : '') + (r.pass ? '' : ' FAIL')).join('; ') + '; exit ' + code);
 }
 
-const order = ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18'];
+/* ---------------------------------------------------------------- I19 recorded shell data (release 2026.10.2): an independent reader of
+   the inspector trajectories (lab/cnt/data) checks the shell files that the 3D view replays (lab/continuum/ions/data/shells*) */
+{
+  const crypto = require('crypto'), det = [], okp = {};
+  let regen = 0, regenMsg = '';
+  try { regenMsg = cp.execFileSync('python3', [path.join(__dirname, 'make_shells.py'), '--check'], { encoding: 'utf8' }).trim(); } catch (e) { regen = e.status || 1; regenMsg = String(e.stdout || e.message).trim(); }
+  const man = JSON.parse(fs.readFileSync(path.join(SITE, 'lab/cnt/data/manifest.json'), 'utf8'));
+  const idx = JSON.parse(fs.readFileSync(path.join(SITE, 'lab/continuum/ions/data/shells.json'), 'utf8'));
+  const traj = {}; let shaOk = true;
+  for (const t of man.tubes) { const b = fs.readFileSync(path.join(SITE, 'lab/cnt/data', t.file)); if (crypto.createHash('sha256').update(b).digest('hex') !== t.sha256) shaOk = false; traj[t.n] = { t, b }; }
+  okp.a = regen === 0 && shaOk && idx.tubes.length === 4 && idx.tubes.every((e) => !!traj[e.n]);
+  det.push('(a) make_shells.py --check: ' + (regen === 0 ? regenMsg : 'exit ' + regen + ' (' + regenMsg + ')') + '; trajectory SHA-256 equal the manifest: ' + shaOk);
+  const mic = (d, L) => d - L * Math.round(d / L);
+  let frames = 0, mism = 0, worstO = 0, worstH = 0, worstIon = 0, ohLo = Infinity, ohHi = 0, ohBad = 0, ionOut = 0, nIons = 0, maxRatio = 0;
+  const perTube = [];
+  for (const e of idx.tubes) {
+    const { t, b } = traj[e.n], F = t.n_frames, N = t.n_atoms, spc = t.species.split(''), L = t.cell_A;
+    const nH = spc.filter((c) => c === 'H').length, P = (f, a, c) => b.readInt16LE(((f * N + a) * 3 + c) * 2) / 1000;   // angstrom
+    const own = (f, k) => b.readInt16LE(F * N * 6 + (f * nH + k) * 2);
+    const C = [], O = [], H = []; spc.forEach((c, i) => { if (c === 'C') C.push(i); else if (c === 'O') O.push(i); else if (c === 'H') H.push(i); });
+    const sb = fs.readFileSync(path.join(SITE, 'lab/continuum/ions/data', e.file)), Fs = e.frames, stride = e.source_frame_stride;
+    const a = t.diameter_nm / 2 - 0.170;
+    let tubeMism = 0, tubeFrames = 0;
+    for (const io of e.ions) {
+      nIons++;
+      const ion = io.atom_index, cut = io.species === 'Na+' ? 3.2 : 3.8, W = io.n_waters, o0 = io.offset_bytes, wb = o0 + Fs * 4;
+      const yz = (g, c) => sb.readInt16LE(o0 + (g * 2 + c) * 2) / 10000;                                         // nm
+      const sw = (g, k, at, c) => sb.readInt16LE(wb + (((g * W + k) * 3 + at) * 3 + c) * 2) / 10000;          // nm, view axes (x along the tube)
+      for (let g = 0; g < Fs; g++) {
+        const f = g * stride;
+        // (b) first-shell count from the trajectory (all waters) and from the stored waters
+        let nT = 0;
+        for (const oa of O) { let r2 = 0; for (let c = 0; c < 3; c++) { const d = mic(P(f, oa, c) - P(f, ion, c), L[c]); r2 += d * d; } if (Math.sqrt(r2) < cut) nT++; }
+        let nS = 0;
+        for (let k = 0; k < W; k++) if (Math.hypot(sw(g, k, 0, 0), sw(g, k, 0, 1), sw(g, k, 0, 2)) < cut / 10) nS++;
+        frames++; tubeFrames++; if (nT !== nS) { mism++; tubeMism++; }
+        // (c) positions: stored waters against the trajectory (view x, y, z = trajectory z, x, y)
+        io.water_oxygen_atoms.forEach((oa, k) => {
+          const rel = [0, 1, 2].map((c) => mic(P(f, oa, c) - P(f, ion, c), L[c]));
+          const viewO = [rel[2], rel[0], rel[1]].map((v) => v / 10);
+          for (let c = 0; c < 3; c++) worstO = Math.max(worstO, Math.abs(viewO[c] - sw(g, k, 0, c)));
+          const hs = []; for (let j = 0; j < nH; j++) if (own(f, j) === oa) hs.push(H[j]);
+          hs.forEach((ha, j) => {
+            const hr = [0, 1, 2].map((c) => rel[c] + mic(P(f, ha, c) - P(f, oa, c), L[c])), vH = [hr[2], hr[0], hr[1]].map((v) => v / 10);
+            for (let c = 0; c < 3; c++) worstH = Math.max(worstH, Math.abs(vH[c] - sw(g, k, 1 + j, c)));
+            // (d) O–H distance from the stored values
+            const oh = Math.hypot(sw(g, k, 1 + j, 0) - sw(g, k, 0, 0), sw(g, k, 1 + j, 1) - sw(g, k, 0, 1), sw(g, k, 1 + j, 2) - sw(g, k, 0, 2));
+            ohLo = Math.min(ohLo, oh); ohHi = Math.max(ohHi, oh); if (oh < 0.080 || oh > t.max_oh_nm + 0.0005) ohBad++;
+          });
+          if (hs.length !== 2) ohBad++;
+        });
+        // ion across the tube relative to the axis (mean carbon position, carbons relative to the first carbon)
+        const ax = [0, 1].map((c) => { let sum = 0; for (const ca of C) sum += mic(P(f, ca, c) - P(f, C[0], c), L[c]); return P(f, C[0], c) + sum / C.length; });
+        const iy = mic(P(f, ion, 0) - ax[0], L[0]) / 10, iz = mic(P(f, ion, 1) - ax[1], L[1]) / 10;
+        worstIon = Math.max(worstIon, Math.abs(iy - yz(g, 0)), Math.abs(iz - yz(g, 1)));
+        // (e) inside the accessible radius
+        const rr = Math.hypot(yz(g, 0), yz(g, 1)); maxRatio = Math.max(maxRatio, rr / a); if (rr > a) ionOut++;
+      }
+    }
+    perTube.push(e.label + ' ' + e.ions.length + ' ions × ' + Fs + ' frames: ' + (tubeFrames - tubeMism) + ' of ' + tubeFrames + ' counts equal');
+  }
+  okp.b = mism === 0 && frames > 0;
+  okp.c = worstO <= 1e-4 && worstH <= 1e-4 && worstIon <= 1e-4;
+  okp.d = ohBad === 0;
+  okp.e = ionOut === 0;
+  det.push('(b) first-shell counts, trajectory against stored waters, ' + nIons + ' ions: ' + perTube.join('; '));
+  det.push('(c) largest position differences: oxygen ' + e2(worstO) + ' nm, hydrogen ' + e2(worstH) + ' nm, ion across the tube ' + e2(worstIon) + ' nm (criterion 1e-4 nm)');
+  // (d) and (e) report counts only: summary statistics of the trajectories are not published (website evidence policy)
+  det.push('(d) stored O–H distances outside [0.080 nm, the manifest largest + 0.0005 nm] or not two per water: ' + ohBad);
+  det.push('(e) ion positions outside the accessible radius: ' + ionOut);
+  record('I19', 'Recorded shell data for the 3D view', Object.values(okp).every(Boolean), det.join('; '));
+}
+
+const order = ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18', 'I19'];
 items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 const verdict = items.every((i) => i.verdict === 'PASS') ? 'PASS' : (items.some((i) => i.verdict === 'FAIL') ? 'FAIL' : 'INCOMPLETE');
-const out = { id: 'ions', name: 'Ion experiment solver and controller I1–I18', verdict, items, environment: 'Node ' + process.version + ', ' + os.platform() + ' ' + os.arch() + ', ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s', date: new Date().toISOString() };
+const out = { id: 'ions', name: 'Ion experiment solver and controller I1–I19', verdict, items, environment: 'Node ' + process.version + ', ' + os.platform() + ' ' + os.arch() + ', ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s', date: new Date().toISOString() };
 fs.writeFileSync(path.join(SITE, 'tools/continuum/results/t_ions.json'), JSON.stringify(out, null, 1) + '\n');
 console.log('verdict', verdict, out.environment);
 process.exit(verdict === 'PASS' ? 0 : 1);

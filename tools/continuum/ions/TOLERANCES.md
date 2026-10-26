@@ -34,6 +34,7 @@ Newton's method, Float64.
 | I16 | Numerical controller (added 22 Oct 2026, release 2026.10, before it was run) | Rules 1–6 of the controller section below, on the shared `lab/continuum/ions/controller.js`. (a) Default experiment ((7,7), step 6, +100 mV, 0.100 M): with the standard target the status is "tolerance reached", reported level 1, after exactly one comparison; with the fine and strict targets the statuses, levels and reported values follow rules 4–6 from the computed changes. (b) For the default experiment at all three targets, every logged current, reversal potential, node count and residual equals an independent solve at that level to relative 10⁻¹², every logged change equals the change recomputed from the logged values, and every decision equals that of an independent implementation of rules 1–6 in the test. (c) All four tubes × six steps × V ∈ {−200, 0, +100} mV at the standard target, and the four tubes × steps {1, 4, 6} at +100 mV at the fine and strict targets: every record follows rules 1–6, no record states "tolerance reached" with a last change above its target, and at V = 0 the absolute current floor is applied. (d) Queries outside the domain (V = 0.3 V, an unknown tube, c = 5000 mol m⁻³, an unknown target, an unknown closure) are refused with reason codes and without any solve. (e) The same query gives the same record twice, except for timing fields. (f) With an injected solver that fails at level 2, the status is "not converged", no result is certified and no calculation request is issued |
 | I17 | Decision record, calculation request and closure contract (added 22 Oct 2026, release 2026.10, before it was run) | (a) Every record produced in I16 validates against the strict schema of `controller.js` (unknown fields rejected; refused ⇒ no levels; not converged or check failed ⇒ no certified result and no request; tolerance reached ⇒ last change within the target; budget exhausted ⇒ last level 3 and last change above the target), and a deliberately corrupted copy of each kind is rejected. (b) A calculation request is issued exactly when rule 7 says so; it names the top-ranked input of an independent recomputation of the one-at-a-time ranking, and states execution status not run, human approval required, nothing submitted, no expected variance reduction and no language model. (c) The published closure contract `lab/continuum/ions/data/closure-illustrative.json` gives every closure input with the same value as `params.js` and `data/hydration.json` (relative 10⁻¹²) and the SHA-256 of `hydration.json`; the proposed molecular-closure template `closure-molecular-template.json` is reported by the validator as blocked, with its required values null, and is never accepted as a calibrated closure |
 | I18 | Controller guards against invalid diagnostics and incomplete molecular records (added 23 Oct 2026, release 2026.10.1, before it was run in this repository) | Nine deterministic probes of `controller.js` in `tools/continuum/ions/probe_controller_guards.js` (taken from the external review of 22 Oct 2026, which ran them on a copy): (a) for the default query with a solver that returns a non-finite packing fraction, a non-finite flux deviation, a non-finite current, or a non-finite packing fraction in the reversal-potential solve, the status is "check failed", no current is reported and no request is issued (four probes); (b) an almost empty record with evidence status "validated", an estimated uncertainty and a passed physical validation is not usable as a calibrated closure; (c) the default query at V = 0 still ends with "tolerance reached"; (d) the published illustrative contract is reported as illustrative and the molecular template as blocked, neither usable as calibrated (two probes); (e) a valid record whose level-1 packing fraction is replaced by null is rejected by the validator. All nine must hold. The same probes are run first on the unpatched 2026.10 controller and kept as `../results/controller.guards-2026.10-original.json` |
+| I19 | Recorded shell data for the 3D view (added 26 Oct 2026, release 2026.10.2, before it was run) | (a) `make_shells.py --check` regenerates `lab/continuum/ions/data/shells.json` and the four `shells-n-n.bin` files byte for byte from the trajectories in `lab/cnt/data`, and the SHA-256 of each trajectory equals the inspector manifest; (b) an independent reader in `t_ions.js` counts, for every Na⁺ and Cl⁻ of every run at every stored frame (every second recorded frame, 4 fs apart), the water oxygens within the first-shell radius (0.32 nm Na⁺, 0.38 nm Cl⁻; minimum image in all three cell directions) in the trajectory, and the stored waters of that ion within the same radius number the same at every frame; (c) every stored oxygen and hydrogen position relative to its ion, and every stored ion position relative to the tube axis, equals the position computed from the trajectory to 0.0001 nm; (d) every stored O–H distance lies between 0.080 nm and the manifest's largest O–H distance plus 0.0005 nm; (e) every stored ion position across the tube lies within the accessible radius a = R_c − 0.170 nm of its tube |
 
 ## Browser (`tools/continuum/ions/browser_ions.js`; Chromium headless, software WebGL)
 
@@ -51,6 +52,7 @@ Newton's method, Float64.
 | IB10 | Water experiment | The water-flow experiment runs at its new address, both experiment switches link correctly, and no page makes an external request |
 | IB11 | Controller in the page (added 22 Oct 2026, release 2026.10, before it was run) | After Start with the default settings the status chip reads "Numerical tolerance reached" and the controller panel lists levels 1 and 2 with the same currents, reversal potentials and decisions as the Node controller for the same inputs (relative 10⁻¹²); choosing the 0.1 % and the 0.02 % target reruns the experiment and the page shows the Node controller's status, levels and reported values for each; the calculation request names the same input as the Node ranking and states that it was not run and that nothing is submitted; the hydration card is labelled as recorded data, not recalculated at the selected voltage; the downloaded result contains the decision record, which validates against the schema and which `reproduce_ions.js` recomputes (numbers to relative 10⁻¹², identical decisions); the target control works by keyboard; no page errors and no external requests |
 | IB12 | Failed-run display (added 23 Oct 2026, release 2026.10.1, before it was run) | After a default run, the page receives the controller's messages for a failed run through its worker message handler: the numerical record and the decision record are computed in Node with `controller.js` and a solver forced to fail gate G1 at grid level 2. The status chips read "Not converged"; the numerics message names gate G1; the current and conductance tiles are marked "not certified"; no calculation request is shown; the "Decision record (JSON)" download validates against the schema with status "not converged", no certified result and no request; no page errors |
+| IB13 | Recorded shell motion in the 3D view (added 26 Oct 2026, release 2026.10.2, before it was run) | Default experiment ((7,7), step 6, recorded-CP2K closure) in a fresh page: (a) no shell file is requested before Start; after Start the shell index and the shell data of the (7,7) and (11,11) tubes are requested, and no other shell file; (b) for up to three markers wholly inside the pore and up to three wholly outside (mouth-blend weight within 10⁻⁹ of 1 or 0), every drawn water's oxygen and hydrogen positions relative to the ion equal the stored positions of the marker's recorded ion at its replay time (linear interpolation between neighbouring stored frames; forward-and-backward play) after the marker's reported rotation and flip, to 10⁻⁶ nm, and for the markers inside, the ion's position across the pore equals the stored one after the same operation and the reported shift, to 10⁻⁶ nm; (c) for every marker with shells the drawn weights add up to the closure count at its position to 10⁻⁶, and that count equals the recorded (7,7) count inside the pore and the (11,11) count outside to 10⁻⁹; the same holds with the rigid-shell closure and its counts; (d) the waters move relative to their ion: between two readings at least 1 s of playing time apart, for the wholly-inside or wholly-outside markers present in both readings and the waters drawn with weight above 0.5 in both, the root-mean-square change of the ion-relative oxygen positions is at least 0.005 nm and that of the hydrogen positions at least 0.005 nm; (e) each marker's replay time advances by 100 fs per second of the view's playing time (to 10⁻⁶ fs s⁻¹), does not advance while paused and, with reduced motion, does not advance before Play; (f) steps 1–3 and the Born closure draw no shell water; (g) no page errors |
 
 ## How the criteria are applied (written before the first test run, 21 Oct 2026)
 Development runs of the solver preceded these notes; no criterion value was changed.
@@ -288,4 +290,106 @@ badge and every "not run" label stay visible.
 - **Browser run 1 of 2026.10.1 (23 Oct 2026): 12 PASS** (`../results/browser_ions.json`, IB1–IB12), on the released page;
   `reproduce_ions.js` reported 0 failed checks (82 in IB9, 81 in IB11); IB12 showed "Not converged", gate G1 named,
   both tiles marked not certified, no request, and a valid not-converged decision record.
+
+## Release 2026.10.2 (26 Oct 2026; written before the shell-replay code, its data files or its tests existed)
+Request (Ehsan, 26 Oct 2026): the first-shell waters drawn around each ion moved rigidly with it; they should move as
+in the recorded CP2K runs. Nothing in the model, the controller or the closure counts changes, and the drift of the
+markers along the axis (1 s on screen = 100 ns) is unchanged. New criteria: I19 and IB13 in the tables above.
+
+**Data.** `tools/continuum/ions/make_shells.py` reads the four public trajectories in `lab/cnt/data` (the files the
+inspector and `make_hydration.py` read) and writes `lab/continuum/ions/data/shells.json` and one `shells-n-n.bin` per
+tube. For every Na⁺ and Cl⁻ of each run (all ions; none is selected) and every second recorded frame (4 fs apart) it
+stores the ion's position across the tube relative to the tube axis (the mean carbon position in that frame) and the
+O, H, H positions relative to the ion (minimum image; each H relative to its own oxygen) of every water whose oxygen
+comes within the first-shell radius plus 0.06 nm (0.38 nm for Na⁺, 0.44 nm for Cl⁻) of that ion in at least one stored
+frame. Integers in milli-ångström as in the inspector files; x along the tube axis. The index holds metadata only.
+
+**Drawing (steps 4–6 with the recorded-CP2K or the rigid-shell closure).** Each ion marker replays one recorded ion of
+its species (markers cycle through the ions of the run): inside the pore from the run of the selected tube, outside from
+the (11,11) run, which is the model's reference shell. Across each mouth the two are blended with the weight already
+used for the drawn count (tanh, width 0.15 nm), the k-th nearest water of one run paired with the k-th nearest of the
+other.
+- **Count.** The closure's count m(x) is kept: at every replay frame each water is weighted by a logistic step in its
+  oxygen distance (width 0.01 nm), placed so that the weights add up to m(x); a water's drawn size is its weight.
+- **Position across the pore.** Inside the pore the ion's position across the pore is the recorded one; outside, the
+  marker keeps its schematic position as before.
+- **Symmetry operations per marker.** A rotation about the tube axis (inside the pore chosen so that the recorded ion's
+  mean position faces the viewer, plus up to ±0.5 rad), an optional 180° turn about an axis across the tube, and, if the
+  ion would sit behind the section plane, a shift towards the viewer; all three are reported to the checks.
+- **Clock.** Each marker starts at its own random time and plays the run forward and backward at 1 s on screen = 0.1 ps,
+  a clock separate from the drift. Pause and reduced motion stop it.
+- Steps 1–3 and the Born closure are unchanged: no shell waters.
+
+**Thresholds of IB13(d).** They only have to detect a rigid shell. They were set below the smallest 100 fs change of
+the ion-relative positions of any water that stays in a first shell throughout a run, checked on the four trajectories
+before this note was written; the values are not reproduced here.
+
+**Page text (no criterion).** The note under the view and "How to read this view" say that the ion markers show the mean
+drift on one clock and the shell waters replay recorded motion relative to the ion on another; test ranges become
+I1–I19 and IB1–IB13. On the home page the Continuum Lab card moves below the Live Water Lab and inspector cards.
+
+**Amendment of the drawing, before any code was run (26 Oct 2026).** The runs track 3 to 15 waters per ion, so the k-th
+nearest water of one run often has no partner in the other. Across each mouth the two shells are therefore cross-faded
+instead of paired: the weights of the outside run add up to (1 − w) m(x) and those of the inside run to w m(x), with w
+the mouth weight, so the drawn weights still add up to m(x) and every water stays at its own recorded position. Waters
+with a weight below 10⁻³ (drawn radius below 0.1 % of full size) are not instanced; their weights still count in the sum
+that IB13(c) checks. No criterion changes.
+
+### Record of runs, release 2026.10.2
+- The 2026.10.1 records are kept as `../results/t_ions.2026.10.1-run1.json`, `../results/browser_ions.2026.10.1-run1.json`
+  and `../results/benchmark_ions.2026.10.1.json`.
+- **Solver and controller run 1 of 2026.10.2 (26 Oct 2026): 19 PASS** (`../results/t_ions.json`, I1–I19, 96.0 s). I19:
+  `make_shells.py --check` reproduces the index and the four files; the first-shell counts of the stored waters equal the
+  counts from the trajectories at every stored frame (1636 ion-frames, 12 ions); largest position differences
+  1.0 × 10⁻⁵ nm (oxygen, hydrogen) and 5.0 × 10⁻⁵ nm (ion across the tube); every O–H distance inside its bound; every
+  ion inside the accessible radius.
+- **Browser run 1 of 2026.10.2 (26 Oct 2026): 13 PASS** (`../results/browser_ions.json`, IB1–IB13). IB13: the shell index
+  and the (7,7) and (11,11) data were requested only after Start; no Na⁺ or Cl⁻ marker was wholly inside the pore when
+  the probes were taken (Cl⁻ hardly enters the charged (7,7) pore), so the test moved one marker of each species to the
+  pore centre, as its procedure allows, under both dehydration closures; drawn positions equal to the stored ones (largest
+  difference 0), weight sums within 1.6 × 10⁻¹⁴ of the closure counts, the counts equal to the recorded (7,7), rigid-shell
+  and (11,11) values; over 1.07 s of playing (107 fs of the runs) the drawn waters moved relative to their ions by more
+  than the thresholds of (d); clock exact to 1.4 × 10⁻¹⁴ fs s⁻¹; no motion while paused or, with reduced motion, before
+  Play; no shell water with the Born closure or at step 3; no page errors.
+- **Run times (26 Oct 2026)**, `../results/benchmark_ions.json`, on a 2-core 2.10 GHz build machine with nothing else
+  running: first result 1.35 s, whole run 4.64 s (0.5 %) and 13.2 s (0.1 %, level 3). The page quotes them.
+- **Reporting change after run 1 (26 Oct 2026; criteria unchanged).** The run-1 details printed three summary statistics
+  of the trajectories (I19: the range of the stored O–H distances and the largest ion position relative to the
+  accessible radius; IB13: the measured RMS changes of the drawn positions). The website evidence policy allows only the
+  atomic positions of the four runs and the hydration counts on the site, so the tests now state whether those parts
+  meet their criteria without the values. Both suites are run again; the two run-1 records are kept outside the public
+  repository (with Ehsan), not in `../results/`.
+- **Solver and controller run 2 of 2026.10.2 (26 Oct 2026): 19 PASS** (`../results/t_ions.json`, I1–I19, 101.3 s), with
+  the new reporting; the record for the released files.
+- **Browser run 2 of 2026.10.2 (26 Oct 2026): 13 PASS** (`../results/browser_ions.json`, IB1–IB13), with the new
+  reporting; IB13 as in run 1 (one marker of each species moved to the pore centre by the test; drawn positions equal to
+  the stored ones; weight sums within 2.0 × 10⁻¹⁴ of the closure counts; motion above the thresholds; exact clock).
+
+### Review of 2026.10.2 (26 Oct 2026), applied before the next browser run; no criterion or threshold changes
+An external review of the 2026.10.2 package checked the shell-replay code, the page text and the QA report and reran I19.
+Accepted:
+- **Drawing.** The shift of an ion towards the viewer (when it would sit behind the section plane) is removed, because it
+  changed the recorded distance from the tube axis. Inside the pore the ion now keeps its recorded distance from the axis;
+  the rotation about the axis and the optional 180° turn are symmetry operations of an ideal cylinder (the drawn
+  lattice is not the run's lattice, so positions relative to individual carbon atoms are not preserved). To keep ions
+  just behind the section plane visible, the ion markers and shell waters are drawn after the section strip instead.
+  The shift that IB13(b) reads is therefore always 0; the criterion is unchanged.
+- **Clarification of IB13(b).** Its 10⁻⁶ nm compares the drawing with the stored files (rendering consistency). The
+  stored positions have a resolution of 10⁻⁴ nm, and their agreement with the trajectories is I19(c). Neither is a
+  statement about physical accuracy.
+- **Page text (no criterion).** The scene is described as a composite: ion markers follow the computed mean drift, the
+  water configurations around them are reconstructed from the recorded runs (interpolated in time, turned about the
+  axis), and the two clocks are separate, so the animation shows no correlation between shell rearrangement and ion
+  passage. The drawn sizes represent the closure's mean hydration, not the instantaneous coordination of a frame; the
+  shell outside the pore is the confined (11,11) reference shell, not bulk water; forward-and-backward play is a display
+  loop, not additional simulated time. The drift speed is written as v = J/(cA) with J the molar flow (mol s⁻¹), as the
+  code computes it (the page wrote J/(N_A cA)). The validation summary names its scope ("Ion experiment: …").
+- **Browser run 3 of 2026.10.2 (26 Oct 2026): 13 PASS** (`../results/browser_ions.json`, IB1–IB13), after the review
+  changes above (no shift, ions and shells drawn after the section strip, page text); the record for the released files.
+  IB13 as before (markers moved to the pore centre by the test; drawn positions equal to the stored ones; reported
+  shift 0; weight sums within 1.8 × 10⁻¹⁵ of the closure counts). The run-2 record is kept as
+  `../results/browser_ions.2026.10.2-run2.json`. The Node suite was not rerun: none of the files it tests changed.
+- **Run times measured again (26 Oct 2026)** after the build machine was replaced (now 2 cores at 2.80 GHz): first result
+  1.34 s, whole run 5.23 s (0.5 %) and 16.0 s (0.1 %, level 3), `../results/benchmark_ions.json`; the morning's
+  measurement on the 2.10 GHz machine is kept as `../results/benchmark_ions.2026.10.2-first.json`.
 

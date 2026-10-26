@@ -1,0 +1,345 @@
+{
+ "format": "continuum-ions-shells-1",
+ "generated_by": "tools/continuum/ions/make_shells.py",
+ "source_manifest": "lab/cnt/data/manifest.json",
+ "source_manifest_sha256": "a0dff8530aa96b7f393eb488866d2f90306909ebfabe62b01093ed16988ff36e",
+ "method": {
+  "code": "CP2K 2026.1",
+  "xc": "PBE",
+  "dispersion": "D3(BJ)",
+  "ensemble": "NVT",
+  "T_K": 300.0
+ },
+ "units": {
+  "position": "milli-angstrom int16, little-endian",
+  "time": "fs"
+ },
+ "layout": "per ion, in the order of \"ions\": ion_yz[frames][2] (position across the tube relative to the axis), then water[frames][n_waters][3][3] (O, H, H; x, y, z relative to the ion; minimum image)",
+ "axes": "x along the tube axis (trajectory z); y, z across it (trajectory x, y)",
+ "selection": "every Na+ and Cl- of each run; waters whose oxygen comes within track_radius_nm of the ion in at least one stored frame; every second recorded frame",
+ "caveats": [
+  "Positions only, from runs of 0.50-0.75 ps: the replay shows the recorded motion of these short runs, not converged dynamics.",
+  "Ions were not restrained; neighbouring ions and the counter-ion are not stored."
+ ],
+ "tubes": [
+  {
+   "id": "cnt_6_6",
+   "label": "(6,6)",
+   "n": 6,
+   "file": "shells-6-6.bin",
+   "bytes": 25192,
+   "sha256": "8012b0dbef5a5b0d72145a41d7ae8a575fb4c2c88738c2a9abea140be1e61ede",
+   "frames": 188,
+   "frame_spacing_fs": 4.0,
+   "source_frame_stride": 2,
+   "source_file": "lab/cnt/data/cnt_6_6.bin",
+   "source_sha256": "b7f50624bf8a65bd90ba8a945c0813ab6f817bbaa5a66f11a658856fa8b805b2",
+   "cell_A": [
+    24.136,
+    24.136,
+    24.5951
+   ],
+   "ions": [
+    {
+     "species": "Na+",
+     "atom_index": 258,
+     "first_shell_radius_nm": 0.32,
+     "track_radius_nm": 0.38,
+     "n_waters": 4,
+     "water_oxygen_atoms": [
+      240,
+      243,
+      252,
+      255
+     ],
+     "offset_bytes": 0,
+     "bytes": 14288
+    },
+    {
+     "species": "Cl-",
+     "atom_index": 259,
+     "first_shell_radius_nm": 0.38,
+     "track_radius_nm": 0.44,
+     "n_waters": 3,
+     "water_oxygen_atoms": [
+      240,
+      243,
+      246
+     ],
+     "offset_bytes": 14288,
+     "bytes": 10904
+    }
+   ]
+  },
+  {
+   "id": "cnt_7_7",
+   "label": "(7,7)",
+   "n": 7,
+   "file": "shells-7-7.bin",
+   "bytes": 28224,
+   "sha256": "fae8bbe3ba0aa03e8dc5ecd520702a303abe6a02f621d84304af582947470f29",
+   "frames": 126,
+   "frame_spacing_fs": 4.0,
+   "source_frame_stride": 2,
+   "source_file": "lab/cnt/data/cnt_7_7.bin",
+   "source_sha256": "9069212d16e490d5464c9413a2f64906ba7fe4d49259f2d2c30e91ff05e1c06e",
+   "cell_A": [
+    25.492,
+    25.492,
+    24.5951
+   ],
+   "ions": [
+    {
+     "species": "Na+",
+     "atom_index": 328,
+     "first_shell_radius_nm": 0.32,
+     "track_radius_nm": 0.38,
+     "n_waters": 6,
+     "water_oxygen_atoms": [
+      283,
+      289,
+      292,
+      304,
+      307,
+      322
+     ],
+     "offset_bytes": 0,
+     "bytes": 14112
+    },
+    {
+     "species": "Cl-",
+     "atom_index": 329,
+     "first_shell_radius_nm": 0.38,
+     "track_radius_nm": 0.44,
+     "n_waters": 6,
+     "water_oxygen_atoms": [
+      280,
+      286,
+      295,
+      298,
+      301,
+      319
+     ],
+     "offset_bytes": 14112,
+     "bytes": 14112
+    }
+   ]
+  },
+  {
+   "id": "cnt_9_9",
+   "label": "(9,9)",
+   "n": 9,
+   "file": "shells-9-9.bin",
+   "bytes": 104076,
+   "sha256": "7558fe89aee16098c958f3512c118cbcc56767ce420045f8dcc7b6f198039174",
+   "frames": 126,
+   "frame_spacing_fs": 4.0,
+   "source_frame_stride": 2,
+   "source_file": "lab/cnt/data/cnt_9_9.bin",
+   "source_sha256": "44c9b0f444ebac14bf03ae59562ceef4aac7d9698f22a6d0bf8bfa5e21607001",
+   "cell_A": [
+    28.204,
+    28.204,
+    24.5951
+   ],
+   "ions": [
+    {
+     "species": "Na+",
+     "atom_index": 477,
+     "first_shell_radius_nm": 0.32,
+     "track_radius_nm": 0.38,
+     "n_waters": 9,
+     "water_oxygen_atoms": [
+      369,
+      399,
+      414,
+      420,
+      429,
+      438,
+      441,
+      462,
+      474
+     ],
+     "offset_bytes": 0,
+     "bytes": 20916
+    },
+    {
+     "species": "Na+",
+     "atom_index": 479,
+     "first_shell_radius_nm": 0.32,
+     "track_radius_nm": 0.38,
+     "n_waters": 11,
+     "water_oxygen_atoms": [
+      360,
+      363,
+      366,
+      384,
+      390,
+      402,
+      417,
+      432,
+      444,
+      456,
+      468
+     ],
+     "offset_bytes": 20916,
+     "bytes": 25452
+    },
+    {
+     "species": "Cl-",
+     "atom_index": 478,
+     "first_shell_radius_nm": 0.38,
+     "track_radius_nm": 0.44,
+     "n_waters": 13,
+     "water_oxygen_atoms": [
+      363,
+      366,
+      372,
+      393,
+      396,
+      399,
+      402,
+      408,
+      423,
+      447,
+      453,
+      459,
+      471
+     ],
+     "offset_bytes": 46368,
+     "bytes": 29988
+    },
+    {
+     "species": "Cl-",
+     "atom_index": 480,
+     "first_shell_radius_nm": 0.38,
+     "track_radius_nm": 0.44,
+     "n_waters": 12,
+     "water_oxygen_atoms": [
+      378,
+      384,
+      387,
+      390,
+      417,
+      426,
+      432,
+      435,
+      444,
+      450,
+      456,
+      468
+     ],
+     "offset_bytes": 76356,
+     "bytes": 27720
+    }
+   ]
+  },
+  {
+   "id": "cnt_11_11",
+   "label": "(11,11)",
+   "n": 11,
+   "file": "shells-11-11.bin",
+   "bytes": 99540,
+   "sha256": "2a1751582b9c618e388483151f1b8fdb0426cf7ea4379013b27c7ff30e764216",
+   "frames": 126,
+   "frame_spacing_fs": 4.0,
+   "source_frame_stride": 2,
+   "source_file": "lab/cnt/data/cnt_11_11.bin",
+   "source_sha256": "beef740b3cd64fdbf763acca77b92eb485ca5874b1cc470e8a8d308915162141",
+   "cell_A": [
+    30.916,
+    30.916,
+    24.5951
+   ],
+   "ions": [
+    {
+     "species": "Na+",
+     "atom_index": 641,
+     "first_shell_radius_nm": 0.32,
+     "track_radius_nm": 0.38,
+     "n_waters": 9,
+     "water_oxygen_atoms": [
+      446,
+      455,
+      488,
+      503,
+      506,
+      512,
+      536,
+      608,
+      638
+     ],
+     "offset_bytes": 0,
+     "bytes": 20916
+    },
+    {
+     "species": "Na+",
+     "atom_index": 643,
+     "first_shell_radius_nm": 0.32,
+     "track_radius_nm": 0.38,
+     "n_waters": 7,
+     "water_oxygen_atoms": [
+      482,
+      518,
+      542,
+      581,
+      593,
+      599,
+      605
+     ],
+     "offset_bytes": 20916,
+     "bytes": 16380
+    },
+    {
+     "species": "Cl-",
+     "atom_index": 642,
+     "first_shell_radius_nm": 0.38,
+     "track_radius_nm": 0.44,
+     "n_waters": 12,
+     "water_oxygen_atoms": [
+      461,
+      497,
+      503,
+      509,
+      524,
+      530,
+      542,
+      563,
+      581,
+      587,
+      590,
+      611
+     ],
+     "offset_bytes": 37296,
+     "bytes": 27720
+    },
+    {
+     "species": "Cl-",
+     "atom_index": 644,
+     "first_shell_radius_nm": 0.38,
+     "track_radius_nm": 0.44,
+     "n_waters": 15,
+     "water_oxygen_atoms": [
+      455,
+      464,
+      485,
+      521,
+      527,
+      533,
+      536,
+      551,
+      554,
+      557,
+      560,
+      569,
+      584,
+      596,
+      635
+     ],
+     "offset_bytes": 65016,
+     "bytes": 34524
+    }
+   ]
+  }
+ ]
+}

@@ -270,26 +270,11 @@
   </div>
 </section>
 
-<!-- D. Simulation Lab: the multiscale experiment first, then the two molecular viewers; each opens on its own page -->
+<!-- D. Simulation Lab: the two molecular viewers first, then the multiscale experiment; each opens on its own page -->
 <section class="section section-band" id="lab">
   <div class="container">
     <h2>Simulation Lab</h2>
-    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: the Continuum Lab (ion transport through one nanotube pore, and water flow through a nanotube membrane), live molecular dynamics and recorded ab initio trajectories.</p>
-    <article class="lab-card lab-card-feature">
-      <a class="lab-card-media" href="lab/continuum/" tabindex="-1" aria-hidden="true"><img src="assets/figures/continuum-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
-      <div class="lab-card-body">
-        <p class="project-kicker">Multiscale experiments · browser solvers</p>
-        <h3>The Continuum Lab</h3>
-        <p><span class="status">Live solvers · numerical controller · recorded CP2K hydration · illustrative closure</span></p>
-        <p class="lab-lead">Why does a pore pass one ion and resist another? Explore how pore charge, hydration and mobility change ion transport through one carbon-nanotube pore. A live continuum solver compares six physical models, checks grid convergence and can name a suggested molecular calculation, marked not run. Inspect the recorded CP2K hydration and the closure assumptions, or switch to water flow through a CNT membrane.</p>
-        <ul class="lab-points">
-          <li>Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model.</li>
-          <li>A rule-based controller checks the prediction on finer grids, refines within its budget and records why it stops; the decision record can be downloaded and reproduced.</li>
-          <li>Numerically verified against an independent solver and analytical limits (Hall, Goldman–Hodgkin–Katz, Donnan, Onsager, van ’t Hoff); a 3D cutaway shows the computed fields.</li>
-        </ul>
-        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/">Open the ion experiment</a> <a class="btn btn-small" href="lab/continuum/water.html">Water-flow experiment</a> <a class="lab-more" href="lab/continuum/#validation">Validation</a></p>
-      </div>
-    </article>
+    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: live molecular dynamics, recorded ab initio trajectories and the Continuum Lab (ion transport through one nanotube pore, and water flow through a nanotube membrane).</p>
     <div class="lab-cards">
       <article class="lab-card">
         <a class="lab-card-media" href="lab/water/" tabindex="-1" aria-hidden="true"><img src="assets/figures/water-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
@@ -312,6 +297,21 @@
         </div>
       </article>
     </div>
+    <article class="lab-card lab-card-feature">
+      <a class="lab-card-media" href="lab/continuum/" tabindex="-1" aria-hidden="true"><img src="assets/figures/continuum-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
+      <div class="lab-card-body">
+        <p class="project-kicker">Multiscale experiments · browser solvers</p>
+        <h3>The Continuum Lab</h3>
+        <p><span class="status">Live solvers · numerical controller · recorded CP2K hydration · illustrative closure</span></p>
+        <p class="lab-lead">Why does a pore pass one ion and resist another? Explore how pore charge, hydration and mobility change ion transport through one carbon-nanotube pore. A live continuum solver compares six physical models, checks grid convergence and can name a suggested molecular calculation, marked not run. Inspect the recorded CP2K hydration and the closure assumptions, or switch to water flow through a CNT membrane.</p>
+        <ul class="lab-points">
+          <li>Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model.</li>
+          <li>A rule-based controller checks the prediction on finer grids, refines within its budget and records why it stops; the decision record can be downloaded and reproduced.</li>
+          <li>Numerically verified against an independent solver and analytical limits (Hall, Goldman–Hodgkin–Katz, Donnan, Onsager, van ’t Hoff); a 3D cutaway shows the computed fields.</li>
+        </ul>
+        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/">Open the ion experiment</a> <a class="btn btn-small" href="lab/continuum/water.html">Water-flow experiment</a> <a class="lab-more" href="lab/continuum/#validation">Validation</a></p>
+      </div>
+    </article>
     <h3 class="lab-next-title">Next stages</h3>
     <ol class="lab-steps">
       <li><b>Calibrated pore law for the Continuum Lab <span class="status status-proposed">Planned</span></b> net water crossings through the (6,6) membrane from molecular dynamics at zero and finite drive, analysed with the published calibration package, replacing the illustrative law with a qualified one and its uncertainty.</li>
@@ -717,7 +717,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.10.1. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
+      <p class="version">Version 2026.10.2. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>

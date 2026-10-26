@@ -9,7 +9,7 @@
 const fs = require('fs'), path = require('path');
 const katex = require('katex');
 const ROOT = path.resolve(__dirname, '../../..');
-const VERSION = '2026.10.1';
+const VERSION = '2026.10.2';
 const Core = require(path.join(ROOT, 'lab/continuum/ions/core.js'));
 const Pm = require(path.join(ROOT, 'lab/continuum/ions/params.js'));
 const Ctl = require(path.join(ROOT, 'lab/continuum/ions/controller.js'));
@@ -83,8 +83,8 @@ function criteria(file) {
 function validationHtml() {
   const crit = criteria(path.join(ROOT, 'tools/continuum/ions/TOLERANCES.md'));
   const groups = [
-    { title: 'Solver and controller (Node)', short: 'solver and controller', ids: ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18'], res: readJson(path.join(ROOT, 'tools/continuum/results/t_ions.json')), cmd: 'node tools/continuum/ions/t_ions.js' },
-    { title: 'Browser (Chromium)', short: 'browser', ids: ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10', 'IB11', 'IB12'], res: readJson(path.join(ROOT, 'tools/continuum/results/browser_ions.json')), cmd: 'node tools/continuum/ions/browser_ions.js' },
+    { title: 'Solver and controller (Node)', short: 'solver and controller', ids: ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18', 'I19'], res: readJson(path.join(ROOT, 'tools/continuum/results/t_ions.json')), cmd: 'node tools/continuum/ions/t_ions.js' },
+    { title: 'Browser (Chromium)', short: 'browser', ids: ['IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'IB7', 'IB8', 'IB9', 'IB10', 'IB11', 'IB12', 'IB13'], res: readJson(path.join(ROOT, 'tools/continuum/results/browser_ions.json')), cmd: 'node tools/continuum/ions/browser_ions.js' },
   ];
   const amended = {
     I14: { label: 'PASS (applied as clarified)', note: 'applied after run 2 to the displayed value, run 2 kept; since release 2026.9.1 the displayed status is also compared with an independent classification (beyond the display range, Nernst band, invalid)' },
@@ -113,8 +113,8 @@ function validationHtml() {
   const mb = i8 && /b \+100 mV[^:]*: I [-\d.]+ vs [-\d.]+ pA \(([\d.e+-]+)\), Na⁺ ([\d.e+-]+), Cl⁻ ([\d.e+-]+)/.exec(i8.detail);
   const vals = mb ? [+mb[1], +mb[2], +mb[3]] : [], kmax = vals.indexOf(Math.max(...vals));
   const scope = mb ? 'Numerically verified against an independent solver and analytical limits. The SciPy comparison (I8) covers selected cases without the finite-size and electro-osmotic terms; its largest difference, ' + f3(100 * vals[kmax]) + ' % in ' + ['the total current', 'the Na⁺ part of the current', 'the small Cl⁻ part of the current'][kmax] + ', is a numerical comparison in those cases, not a guarantee of physical accuracy for every setting. ' : '';
-  return '<p><b>' + passed + ' of ' + total + ' checks pass</b>' + (failed ? ', ' + failed + ' fail' : '') + (notrun ? ', ' + notrun + ' not run' : '') + ': ' + stats.join('; ') + '. ' + scope +
-    'The criteria were written in <code>tools/continuum/ions/TOLERANCES.md</code> before the solver existed; I15 was added for release 2026.9.1, I16, I17 and IB11 for release 2026.10 (the numerical controller) and I18 and IB12 for release 2026.10.1 (the controller’s guards and the failed-run display), each before it was run here. The controller’s gates G1 and G2 were amended once, after a development run and before the first official run, and G2 and G3 once more for 2026.10.1, to require finite diagnostics after an external review found by fault injection that non-finite values could pass; <code>TOLERANCES.md</code> keeps the original wording and the measurements. Two earlier solver runs failed and are kept (<code>results/t_ions.run1.json</code>: I5, fixed by a change to the solver; <code>results/t_ions.run2.json</code>: I14, criterion applied to the displayed value as recorded in TOLERANCES.md). ' +
+  return '<p><b>Ion experiment: ' + passed + ' of ' + total + ' checks pass</b>' + (failed ? ', ' + failed + ' fail' : '') + (notrun ? ', ' + notrun + ' not run' : '') + ': ' + stats.join('; ') + '. ' + scope +
+    'The criteria were written in <code>tools/continuum/ions/TOLERANCES.md</code> before the solver existed; I15 was added for release 2026.9.1, I16, I17 and IB11 for release 2026.10 (the numerical controller) I18 and IB12 for release 2026.10.1 (the controller’s guards and the failed-run display) and I19 and IB13 for release 2026.10.2 (the recorded shell motion of the 3D view), each before it was run here. The controller’s gates G1 and G2 were amended once, after a development run and before the first official run, and G2 and G3 once more for 2026.10.1, to require finite diagnostics after an external review found by fault injection that non-finite values could pass; <code>TOLERANCES.md</code> keeps the original wording and the measurements. Two earlier solver runs failed and are kept (<code>results/t_ions.run1.json</code>: I5, fixed by a change to the solver; <code>results/t_ions.run2.json</code>: I14, criterion applied to the displayed value as recorded in TOLERANCES.md). ' +
     'The solver tests run the same <code>ions/core.js</code>, <code>ions/params.js</code> and <code>ions/controller.js</code> as this page. The water experiment has its own validation on <a href="water.html#validation">its page</a>; none of its tests validates this electrolyte solver.</p>\n' + html;
 }
 
@@ -131,7 +131,7 @@ function cp2kHtml() {
     return '<tr><th scope="row">' + esc(t.label) + '</th><td>' + t.diameter_nm.toFixed(3) + '</td><td>' + t.n_water + '</td><td>' + na.n_ions + ' + ' + cl.n_ions + '</td><td>' + t.run_length_ps.toFixed(2) + '</td><td>' + f3(na.mean_count) + ' (' + rng(na) + ')</td><td>' + f3(cl.mean_count) + ' (' + rng(cl) + ')</td><td><code>' + t.file_sha256.slice(0, 12) + '…</code></td></tr>';
   }).join('\n');
   const table = '<div class="cl-table-wrap"><table class="cl-table"><thead><tr><th scope="col">Tube</th><th scope="col">Diameter (nm)</th><th scope="col">Waters</th><th scope="col">Na⁺ + Cl⁻</th><th scope="col">Run (ps)</th><th scope="col">Na⁺ first shell (block range)</th><th scope="col">Cl⁻ first shell (block range)</th><th scope="col">File SHA-256</th></tr></thead><tbody>\n' + rows + '\n</tbody></table></div>\n' +
-    '<p class="cl-small">CP2K 2026.1, PBE with D3(BJ) dispersion, NVT at 300 K, 0.25 fs steps; frames stored every 2 fs. Counts: water oxygens within 0.32 nm of Na⁺ or 0.38 nm of Cl⁻ (minimum image), averaged over every stored frame and over the ions of each kind; computed by <code>tools/continuum/ions/make_hydration.py</code> from the public trajectory files of the <a href="../cnt/">CNT inspector</a>.</p>';
+    '<p class="cl-small">CP2K 2026.1, PBE with D3(BJ) dispersion, NVT at 300 K, 0.25 fs steps; frames stored every 2 fs. Counts: water oxygens within 0.32 nm of Na⁺ or 0.38 nm of Cl⁻ (minimum image), averaged over every stored frame and over the ions of each kind; computed by <code>tools/continuum/ions/make_hydration.py</code> from the public trajectory files of the <a href="../cnt/">CNT inspector</a>. The 3D view reconstructs the first-shell water configurations of the same runs (positions relative to each ion, every 4 fs) from <code>data/shells.json</code> and <code>data/shells-n-n.bin</code>, written by <code>tools/continuum/ions/make_shells.py</code>.</p>';
   const caveats = h.caveats.map((c) => '<li>' + esc(c) + '</li>').join('');
   return { table, caveats };
 }

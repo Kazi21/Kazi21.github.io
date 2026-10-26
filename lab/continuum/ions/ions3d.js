@@ -3,19 +3,35 @@
    A cutaway of the membrane around one carbon nanotube: the back half of the membrane and of the tube (an armchair
    (n,n) lattice at the radius of the recorded CP2K tube), the two access regions of the reduced model (cones of slope
    4/π) and the computed field on the section through the axis, one overlay at a time: concentration, potential or
-   current density. Nothing is a recorded trajectory: ion markers are placed with the computed line density
-   N_A c(x) A(x) and move at the mean drift speed v(x) = J/(N_A c(x) A(x)) of the computed flux, so their density and
-   their flux reproduce the solution; thermal motion is not drawn. 1 s on screen = 100 ns. The drawing follows the
-   model step: point ions (classical, charged rims), spheres of the lattice-gas size (finite size), and with a
-   dehydration closure each ion carries the first-shell waters the closure assumes, fewer inside the pore (the recorded
-   CP2K count of this tube, or the rigid-shell estimate). Loaded when the view is first shown; uses three.js 0.160.0
-   (MIT licence, ../vendor/three.module.min.js). */
+   current density. The ion markers are not a recorded trajectory: they are placed with the computed line density
+   N_A c(x) A(x) and move along the pore at the mean drift speed v(x) = J/(c(x) A(x)) of the computed molar flow J
+   (mol s⁻¹), so their density and their flux reproduce the solution; 1 s on screen = 100 ns. The drawing follows the model step: point
+   ions (classical, charged rims), spheres of the lattice-gas size (finite size), and with a dehydration closure each
+   ion carries the first-shell waters the closure assumes, fewer inside the pore (the recorded CP2K count of this tube,
+   or the rigid-shell estimate).
+   Release 2026.10.2: the shell water configurations are reconstructed from the recorded runs, so the scene is a composite
+   of computed continuum drift and recorded molecular motion on two separate clocks. Their positions relative to the ion
+   come from the CP2K runs (data/shells-n-n.bin, written by tools/continuum/ions/make_shells.py from the inspector's trajectories): inside
+   the pore the run of the selected tube, outside the (11,11) run (the model's reference shell), cross-faded across each
+   mouth. Each marker replays one recorded ion of its species, from its own start time, forward and backward, on a
+   separate clock (1 s on screen = 0.1 ps), after a rotation about the tube axis and an optional 180° turn across it.
+   Inside the pore the ion keeps its recorded distance from the tube axis (no shift; ions and shells are drawn after the
+   section strip so that those just behind the section plane stay visible). The drawn sizes represent the closure's mean
+   hydration: each water is weighted by a logistic step in its oxygen distance (width 0.01 nm) placed so that the
+   weights add up to the closure's count, and drawn at that fraction of its size. Loaded when the view is first shown; uses three.js 0.160.0 (MIT licence,
+   ../vendor/three.module.min.js). */
 (function (root) {
   'use strict';
   const NS_PER_S = 100;                    // 1 s on screen = 100 ns of transport
   const S_VIEW = 4.0;                      // nm of each access region drawn beyond the mouth
   const ALPHA = 4 / Math.PI;               // cone slope of the reduced model
   const MAX_MARKERS = 140;                 // per species; above this one marker stands for several ions
+  const REPLAY_FS_PER_S = 100;             // shell replay clock: 1 s on screen = 0.1 ps of the recorded run
+  const SHELL_DELTA = 0.01;                // nm, width of the logistic weight in the oxygen distance
+  const MOUTH_W = 0.15;                    // nm, width of the mouth blend (the same as for the drawn count)
+  const Z_FRONT = 0.02;                    // nm, schematic placements (outside the recorded pore shells) sit in front of the section plane
+  const REF_TUBE = 11;                     // the (11,11) run: the model's reference (least confined) shell
+  const W_DRAW = 1e-3;                     // waters with a smaller weight are not instanced (radius below 0.1 % of full size)
   const COL = { bg: 0x0d1b2a, C: 0x8a94a0, bond: 0x9aa3ad, O: 0xe03030, H: 0xf2f4f7, Na: 0xb07ce0, Cl: 0x4cc66a, rimO: 0xff7b63, rimC: 0xb8c0c8, N: 0x5b8def, water: 0x9ec9ff };
   const RDBU = ['#053061', '#2166ac', '#4393c3', '#92c5de', '#d1e5f0', '#f7f7f7', '#fddbc7', '#f4a582', '#d6604d', '#b2182b', '#67001f'];
   const VIRIDIS = ['#440154', '#482878', '#3e4989', '#31688e', '#26828e', '#1f9e89', '#35b779', '#6ece58', '#b5de2b', '#fde725'];
@@ -59,9 +75,12 @@
     this.host = host; this.hooks = hooks || {};
     this.playing = !this.hooks.reduceMotion; this.visible = false; this.raf = 0; this.last = 0; this.frames = 0; this.needs = true; this.anim = null;
     this.overlay = 'conc'; this.species = 0; this.data = null; this.particles = [[], []]; this.spawnAcc = [0, 0]; this.disp = [0, 0]; this.rng = mulberry(20261021);
+    // recorded shells (release 2026.10.2): decoded runs by tube, loading promises, per-species cycling, playing time, scratch
+    this.shellTubes = {}; this.shellLoading = {}; this.shellIndexP = null; this.shellError = null; this.shellPick = [0, 0]; this.shellCap = 16; this.playTime = 0; this.pid = 0;
+    this.sc = { ion: new Float64Array(3), pos: new Float64Array(64 * 9), d: new Float64Array(64), w: new Float64Array(64), src: new Int8Array(64), idx: new Int16Array(64), n: 0, win: 0, m: 0, shift: 0, tIn: 0, tOut: 0 };
     const canvas = this.canvas = document.createElement('canvas');
     canvas.className = 'ion-3d-canvas'; canvas.tabIndex = 0; canvas.setAttribute('role', 'img');
-    canvas.setAttribute('aria-label', 'Cutaway of the membrane around one carbon nanotube, with the computed field on a section through the pore axis and schematic Na⁺ and Cl⁻ markers moving at the computed drift speed.');
+    canvas.setAttribute('aria-label', 'Cutaway of the membrane around one carbon nanotube, with the computed field on a section through the pore axis and schematic Na⁺ and Cl⁻ markers moving at the computed drift speed; from the dehydration step on, the first-shell water configurations around each ion are reconstructed from recorded CP2K trajectories.');
     host.appendChild(canvas);
     this.labels = document.createElement('div'); this.labels.className = 'ion-3d-labels'; this.labels.setAttribute('aria-hidden', 'true'); host.appendChild(this.labels);
     this.renderer = new T.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true, powerPreference: 'low-power' });
@@ -80,6 +99,9 @@
       O: M({ color: COL.O, roughness: 0.35 }), H: M({ color: COL.H, roughness: 0.35 }),
       rimO: M({ color: COL.rimO, roughness: 0.4 }), rimC: M({ color: COL.rimC, roughness: 0.4 }), N: M({ color: COL.N, roughness: 0.4 }),
       water: new T.MeshStandardMaterial({ color: COL.water, roughness: 0.5, transparent: true, opacity: 0.35, depthWrite: false }),
+      // ions and shell waters: opaque in look, but drawn in the transparent pass after the section strip (renderOrder 2)
+      mNa: M({ color: COL.Na, roughness: 0.35, transparent: true, opacity: 1 }), mCl: M({ color: COL.Cl, roughness: 0.35, transparent: true, opacity: 1 }),
+      mO: M({ color: COL.O, roughness: 0.35, transparent: true, opacity: 1 }), mH: M({ color: COL.H, roughness: 0.35, transparent: true, opacity: 1 }),
       field: new T.MeshBasicMaterial({ vertexColors: true, side: T.DoubleSide, transparent: true, opacity: 1, depthWrite: false }),
       cone: new T.LineBasicMaterial({ color: 0xdbe4ee, transparent: true, opacity: 0.3 }),
       bar: new T.LineBasicMaterial({ color: 0xe9eef3 }),
@@ -111,7 +133,7 @@
     const T = this.T, geomKey = [d.n, d.Rc, d.a, d.L, d.step >= 2 ? d.rimN : 0, d.step >= 4 ? d.lining : 'none'].join('|');
     this.data = d;
     if (geomKey !== this.geomKey) { this.geomKey = geomKey; this.buildStatic(d); }
-    this.buildField(); this.resetParticles(); this.buildWater();
+    this.buildField(); this.resetParticles(); this.buildWater(); this.ensureShells();
     this.needs = true; this.kick();
   };
   IonView.prototype.buildStatic = function (d) {
@@ -247,7 +269,7 @@
     const d = this.data, X0 = d.L / 2 + S_VIEW;
     this.xnm = d.x.map((x) => x * 1e9);
     this.dens = [0, 1].map((s) => d.x.map((x, k) => this.lineDensity(s, k)));
-    // mean drift speed v = J/(N_A c A) in nm/ns: ions per ns divided by ions per nm
+    // mean drift speed v = J/(c A) (J in mol/s, c in mol/m³) in nm/ns: ions per ns divided by ions per nm
     this.vel = [0, 1].map((s) => d.x.map((x, k) => { const n = 2 * this.dens[s][k]; return n > 0 ? d.J[s] * 6.02214076e23 * 1e-9 / n : 0; }));
     this.scale = [1, 1];
     for (let s = 0; s < 2; s++) {
@@ -270,40 +292,171 @@
   };
   IonView.prototype.newParticle = function (x) {
     const u = Math.sqrt(this.rng()) * 0.92, th = Math.PI * (0.06 + 0.88 * this.rng());
-    const dirs = [];                                                  // shell directions, the most axial first
+    const dirs = [];                                                  // schematic shell directions, the most axial first (until the recorded shells load)
     for (let i = 0; i < 8; i++) { const z = 2 * this.rng() - 1, ph = 2 * Math.PI * this.rng(), s = Math.sqrt(1 - z * z); dirs.push([z, s * Math.cos(ph), s * Math.sin(ph)]); }
     dirs.sort((p, q) => Math.abs(q[0]) - Math.abs(p[0]));
-    return { x, u, th, dirs };
+    this.pid += 1;
+    return { id: this.pid, x, u, th, dirs, sh: null };
   };
   IonView.prototype.radiusAt = function (xn) { const d = this.data; return Math.abs(xn) <= d.L / 2 ? d.a : d.a + ALPHA * (Math.abs(xn) - d.L / 2); };
+  // weight of "inside the pore" at x: tanh steps of width 0.15 nm at both mouths, set to exactly 0 or 1 within 1e-4 of them
+  IonView.prototype.insideWeight = function (xn) {
+    const half = this.data.L / 2, w = 0.5 * (Math.tanh((xn + half) / MOUTH_W) - Math.tanh((xn - half) / MOUTH_W));
+    return w > 1 - 1e-4 ? 1 : (w < 1e-4 ? 0 : w);
+  };
   IonView.prototype.shellCount = function (s, xn) {                  // first-shell waters drawn with an ion at x
     const d = this.data;
     if (!(d.step >= 4) || d.solvation === 'born') return 0;
-    const half = d.L / 2, w = 0.15, inside = 0.5 * (Math.tanh((xn + half) / w) - Math.tanh((xn - half) / w));
-    return d.nRef[s] + (d.nPore[s] - d.nRef[s]) * inside;
+    return d.nRef[s] + (d.nPore[s] - d.nRef[s]) * this.insideWeight(xn);
   };
+
+  /* ------------------------------------------------------------------ recorded shells (release 2026.10.2) */
+  function decodeShellTube(t, buf) {                                 // int16 milli-ångström → nm (1 milli-Å = 1e-4 nm)
+    const dv = new DataView(buf), F = t.frames, dt = t.frame_spacing_fs;
+    const out = { n: t.n, label: t.label, F, dt, D: (F - 1) * dt, ions: [[], []] };
+    for (const io of t.ions) {
+      const W = io.n_waters, yz = new Float64Array(F * 2), wat = new Float64Array(F * W * 9);
+      let o = io.offset_bytes;
+      for (let i = 0; i < F * 2; i++, o += 2) yz[i] = dv.getInt16(o, true) / 10000;
+      for (let i = 0; i < F * W * 9; i++, o += 2) wat[i] = dv.getInt16(o, true) / 10000;
+      let my = 0, mz = 0; for (let f = 0; f < F; f++) { my += yz[2 * f]; mz += yz[2 * f + 1]; }
+      out.ions[io.species === 'Na+' ? 0 : 1].push({ atom: io.atom_index, W, yz, wat, my: my / F, mz: mz / F });
+    }
+    return out;
+  }
+  function pingpong(tau, D) { if (!(D > 0)) return 0; const u = tau % (2 * D); return u <= D ? u : 2 * D - u; }
+  /* logistic weights w_k = 1/(1 + exp((d_k − r)/δ)) of n waters starting at o, with r chosen so that they add up to T */
+  function shellWeights(d, w, o, n, T) {
+    if (!(T > 0) || n === 0) { for (let k = 0; k < n; k++) w[o + k] = 0; return; }
+    T = Math.min(T, n * (1 - 1e-12));
+    let lo = Infinity, hi = -Infinity;
+    for (let k = 0; k < n; k++) { lo = Math.min(lo, d[o + k]); hi = Math.max(hi, d[o + k]); }
+    lo -= 40 * SHELL_DELTA; hi += 40 * SHELL_DELTA;
+    let r = 0.5 * (lo + hi);
+    for (let it = 0; it < 100; it++) {                                // safeguarded Newton on a monotonic sum
+      let S = 0, dS = 0;
+      for (let k = 0; k < n; k++) { const v = 1 / (1 + Math.exp((d[o + k] - r) / SHELL_DELTA)); S += v; dS += v * (1 - v) / SHELL_DELTA; }
+      const g = S - T;
+      if (Math.abs(g) < 1e-13) break;
+      if (g > 0) hi = r; else lo = r;
+      let rn = dS > 1e-300 ? r - g / dS : NaN;
+      if (!(rn > lo && rn < hi)) rn = 0.5 * (lo + hi);
+      r = rn;
+    }
+    for (let k = 0; k < n; k++) w[o + k] = 1 / (1 + Math.exp((d[o + k] - r) / SHELL_DELTA));
+  }
+  IonView.prototype.shellsOn = function () { const d = this.data; return !!d && d.step >= 4 && d.solvation !== 'born'; };
+  IonView.prototype.shellsReady = function () { const d = this.data; return this.shellsOn() && !!this.shellTubes[d.n] && !!this.shellTubes[REF_TUBE]; };
+  // fetch the index and the runs of the selected tube and of (11,11); only once shells are drawn (never before Start)
+  IonView.prototype.ensureShells = function () {
+    if (!this.shellsOn()) return;
+    const self = this, d = this.data, base = this.hooks.dataBase || 'ions/data/';
+    if (!this.shellIndexP) this.shellIndexP = fetch(base + 'shells.json').then((r) => { if (!r.ok) throw new Error('shells.json: HTTP ' + r.status); return r.json(); });
+    for (const n of [d.n, REF_TUBE]) {
+      if (this.shellTubes[n] || this.shellLoading[n]) continue;
+      this.shellLoading[n] = this.shellIndexP.then((idx) => {
+        const t = idx.tubes.find((u) => u.n === n);
+        if (!t) throw new Error('no recorded shells for (' + n + ',' + n + ')');
+        return fetch(base + t.file).then((r) => { if (!r.ok) throw new Error(t.file + ': HTTP ' + r.status); return r.arrayBuffer(); }).then((buf) => {
+          if (buf.byteLength !== t.bytes) throw new Error(t.file + ': ' + buf.byteLength + ' bytes, expected ' + t.bytes);
+          self.shellTubes[n] = decodeShellTube(t, buf);
+          if (self.shellsReady()) { self.buildMarkers(); self.needs = true; self.kick(); }   // also when paused: show the recorded shells
+        });
+      }).catch((e) => { self.shellError = String((e && e.message) || e); });
+    }
+  };
+  /* symmetry operations of one marker: an optional 180° turn across the tube ((x, y, z) → (−x, −y, z)), then a rotation
+     about the tube axis by φ; inside the pore φ turns the recorded ion's mean position towards the viewer (+z), ± 0.5 rad */
+  IonView.prototype.assignShell = function (p, s) {
+    const tin = this.shellTubes[this.data.n], tout = this.shellTubes[REF_TUBE], k = this.shellPick[s]++;
+    const inIon = k % tin.ions[s].length, outIon = k % tout.ions[s].length, rec = tin.ions[s][inIon];
+    const flipIn = this.rng() < 0.5 ? -1 : 1, flipOut = this.rng() < 0.5 ? -1 : 1;
+    const phiIn = Math.PI / 2 - Math.atan2(rec.mz, flipIn * rec.my) + (2 * this.rng() - 1) * 0.5, phiOut = 2 * Math.PI * this.rng();
+    p.sh = { tube: this.data.n, inIon, outIon, flipIn, flipOut, phiIn, phiOut, cIn: Math.cos(phiIn), sIn: Math.sin(phiIn), cOut: Math.cos(phiOut), sOut: Math.sin(phiOut),
+      tau: this.rng() * 2 * Math.max(tin.D, tout.D) };                // replay time (fs), its own start for every marker
+  };
+  // waters of one recorded ion at time t (fs), after the marker's operations, appended to the scratch with weights adding up to T
+  IonView.prototype.addSource = function (rec, tube, t, flip, c, sn, T, srcId) {
+    const sc = this.sc, W = rec.W, fi = t / tube.dt, i0 = Math.min(tube.F - 2, Math.floor(fi)), f = fi - i0, b0 = i0 * W * 9, b1 = b0 + W * 9, start = sc.n;
+    for (let k = 0; k < W; k++) {
+      const o = start + k, q = o * 9;
+      for (let a = 0; a < 3; a++) {
+        const j0 = b0 + k * 9 + a * 3, j1 = b1 + k * 9 + a * 3;
+        let x = (1 - f) * rec.wat[j0] + f * rec.wat[j1], y = (1 - f) * rec.wat[j0 + 1] + f * rec.wat[j1 + 1];
+        const z = (1 - f) * rec.wat[j0 + 2] + f * rec.wat[j1 + 2];
+        if (flip < 0) { x = -x; y = -y; }
+        sc.pos[q + a * 3] = x; sc.pos[q + a * 3 + 1] = y * c - z * sn; sc.pos[q + a * 3 + 2] = y * sn + z * c;
+      }
+      sc.d[o] = Math.hypot(sc.pos[q], sc.pos[q + 1], sc.pos[q + 2]);
+      sc.src[o] = srcId; sc.idx[o] = k;
+    }
+    sc.n = start + W;
+    shellWeights(sc.d, sc.w, start, W, T);
+  };
+  /* the ion and its shell for marker p at its replay time: inside the pore the selected tube's run, outside the (11,11)
+     run, cross-faded with the mouth weight; the ion's position across the pore is recorded inside, schematic outside */
+  IonView.prototype.computeShell = function (p, s) {
+    const d = this.data, sc = this.sc, sh = p.sh, tin = this.shellTubes[d.n], tout = this.shellTubes[REF_TUBE];
+    const win = this.insideWeight(p.x), m = this.shellCount(s, p.x);
+    sc.win = win; sc.m = m; sc.n = 0; sc.shift = 0;
+    sc.tIn = pingpong(sh.tau, tin.D); sc.tOut = pingpong(sh.tau, tout.D);
+    const r0 = this.radiusAt(p.x) * p.u, yOut = r0 * Math.cos(p.th), zOut = Math.max(Z_FRONT, r0 * Math.sin(p.th));
+    let yIn = 0, zIn = 0;
+    if (win > 0) {
+      const rec = tin.ions[s][sh.inIon], fi = sc.tIn / tin.dt, i0 = Math.min(tin.F - 2, Math.floor(fi)), f = fi - i0;
+      let y = (1 - f) * rec.yz[2 * i0] + f * rec.yz[2 * i0 + 2];
+      const z = (1 - f) * rec.yz[2 * i0 + 1] + f * rec.yz[2 * i0 + 3];
+      if (sh.flipIn < 0) y = -y;
+      yIn = y * sh.cIn - z * sh.sIn; zIn = y * sh.sIn + z * sh.cIn;
+    }
+    const y = (1 - win) * yOut + win * yIn, z = (1 - win) * zOut + win * zIn;   // no shift: the recorded distance from the axis is kept
+    sc.ion[0] = p.x; sc.ion[1] = y; sc.ion[2] = z;
+    if (win > 0) this.addSource(tin.ions[s][sh.inIon], tin, sc.tIn, sh.flipIn, sh.cIn, sh.sIn, win * m, 1);
+    if (win < 1) this.addSource(tout.ions[s][sh.outIon], tout, sc.tOut, sh.flipOut, sh.cOut, sh.sOut, (1 - win) * m, 0);
+  };
+
   IonView.prototype.buildMarkers = function () {
     const d = this.data; this.clear(this.dyn);
+    if (this.waterMesh) this.dyn.add(this.waterMesh);                 // the water column stays in the scene when the markers are rebuilt
     const n0 = this.particles[0].length, n1 = this.particles[1].length;
-    this.ionMesh = [this.inst(this.geo.sphere, this.mat.Na, n0, this.dyn), this.inst(this.geo.sphere, this.mat.Cl, n1, this.dyn)];
-    const shells = d.step >= 4 && d.solvation !== 'born';
-    this.shellO = this.inst(this.geo.sphere, this.mat.O, shells ? 8 * (n0 + n1) : 0, this.dyn);
-    this.shellH = this.inst(this.geo.sphere, this.mat.H, shells ? 16 * (n0 + n1) : 0, this.dyn);
+    this.ionMesh = [this.inst(this.geo.sphere, this.mat.mNa, n0, this.dyn), this.inst(this.geo.sphere, this.mat.mCl, n1, this.dyn)];
+    const cap = this.shellsOn() ? Math.max(8, this.shellCap) : 0;
+    this.shellO = this.inst(this.geo.sphere, this.mat.mO, cap * (n0 + n1), this.dyn);
+    this.shellH = this.inst(this.geo.sphere, this.mat.mH, 2 * cap * (n0 + n1), this.dyn);
+    for (const m of [this.ionMesh[0], this.ionMesh[1], this.shellO, this.shellH]) m.renderOrder = 2;   // after the section strip (renderOrder 1)
     this.ionR = d.step <= 2 ? [0.09, 0.09] : (d.step === 3 ? [d.ionSize / 2, d.ionSize / 2] : (d.solvation === 'born' ? [0.188, 0.202] : [0.102, 0.181]));
     this.placeMarkers();
   };
   IonView.prototype.placeMarkers = function () {
-    const d = this.data, R1 = [0.24, 0.32];
-    let ko = 0, kh = 0;
+    const d = this.data, R1 = [0.24, 0.32], shells = this.shellsOn(), ready = shells && this.shellsReady();
+    const capO = this.shellO.instanceMatrix.count;
+    let ko = 0, kh = 0, overflow = false;
     for (let s = 0; s < 2; s++) {
       const mesh = this.ionMesh[s], ps = this.particles[s];
       mesh.count = ps.length;
       ps.forEach((p, i) => {
+        if (ready) {
+          if (!p.sh || p.sh.tube !== d.n) this.assignShell(p, s);
+          this.computeShell(p, s);
+          const sc = this.sc, ix = sc.ion[0], iy = sc.ion[1], iz = sc.ion[2];
+          this.place(mesh, i, ix, iy, iz, this.ionR[s]);
+          for (let k = 0; k < sc.n; k++) {
+            const wk = sc.w[k]; if (wk < W_DRAW) continue;
+            if (ko >= capO) { overflow = true; continue; }
+            const q = k * 9;
+            this.place(this.shellO, ko++, ix + sc.pos[q], iy + sc.pos[q + 1], iz + sc.pos[q + 2], 0.075 * wk);
+            this.place(this.shellH, kh++, ix + sc.pos[q + 3], iy + sc.pos[q + 4], iz + sc.pos[q + 5], 0.042 * wk);
+            this.place(this.shellH, kh++, ix + sc.pos[q + 6], iy + sc.pos[q + 7], iz + sc.pos[q + 8], 0.042 * wk);
+          }
+          return;
+        }
+        // schematic placement: steps 1–3, the Born closure, and while the recorded shells load
         const r = this.radiusAt(p.x) * p.u, y = r * Math.cos(p.th), z = Math.max(0.02, r * Math.sin(p.th));
         this.place(mesh, i, p.x, y, z, this.ionR[s]);
-        if (this.shellO.count === 0 && !(d.step >= 4 && d.solvation !== 'born')) return;
+        if (!shells) return;
         const m = this.shellCount(s, p.x), full = Math.floor(m), frac = m - full;
         for (let j = 0; j < Math.min(8, Math.ceil(m - 1e-9)); j++) {
+          if (ko >= capO) { overflow = true; break; }
           const dir = p.dirs[j], sc = j < full ? 1 : Math.max(0.25, frac), ox = p.x + R1[s] * dir[0], oy = y + R1[s] * dir[1], oz = z + R1[s] * dir[2];
           this.place(this.shellO, ko++, ox, oy, oz, 0.075 * sc);
           // hydrogens: pointing away from a cation, one towards an anion
@@ -319,6 +472,7 @@
     this.shellO.count = ko; this.shellH.count = kh;
     this.shellO.instanceMatrix.needsUpdate = true; this.shellH.instanceMatrix.needsUpdate = true;
     this.shellWaters = ko;
+    if (overflow && this.shellCap < 64) { this.shellCap *= 2; this.buildMarkers(); }
   };
   IonView.prototype.stepParticles = function (dt) {
     const d = this.data, X0 = d.L / 2 + S_VIEW, tns = dt * NS_PER_S;
@@ -337,9 +491,12 @@
       while (this.spawnAcc[s] >= 1) { this.spawnAcc[s] -= 1; const x = (J > 0 ? -X0 : X0) * (1 - 1e-6 * this.rng()); out.push(this.newParticle(x)); }
       this.particles[s] = out;
     }
+    // recorded shells: every marker's replay time advances on its own clock, also at equilibrium
+    if (this.shellsReady()) { const dtau = dt * REPLAY_FS_PER_S; for (const ps of this.particles) for (const p of ps) if (p.sh) p.sh.tau += dtau; }
+    this.playTime += dt;
     if (this.particles[0].length !== this.ionMesh[0].count || this.particles[1].length !== this.ionMesh[1].count) {
-      const cap = (m, n) => m.instanceMatrix.count >= n;
-      if (!cap(this.ionMesh[0], this.particles[0].length) || !cap(this.ionMesh[1], this.particles[1].length) || !cap(this.shellO, 8 * (this.particles[0].length + this.particles[1].length))) { this.buildMarkers(); return; }
+      const cap = (m, n) => m.instanceMatrix.count >= n, per = this.shellsOn() ? Math.max(8, this.shellCap) : 0;
+      if (!cap(this.ionMesh[0], this.particles[0].length) || !cap(this.ionMesh[1], this.particles[1].length) || !cap(this.shellO, per * (this.particles[0].length + this.particles[1].length))) { this.buildMarkers(); return; }
     }
     this.placeMarkers();
   };
@@ -439,7 +596,7 @@
     this.raf = 0;
     if (!this.visible || document.hidden) return;
     const dt = this.last ? Math.min(0.1, (now - this.last) / 1000) : 0; this.last = now;
-    const d = this.data, moving = this.playing && d && (Math.abs(d.J[0]) > 0 || Math.abs(d.J[1]) > 0 || this.waterSpeed);
+    const d = this.data, moving = this.playing && d && (Math.abs(d.J[0]) > 0 || Math.abs(d.J[1]) > 0 || this.waterSpeed || this.shellsReady());
     if (moving && dt > 0) {
       this.stepParticles(dt);
       if (this.waterSpeed) { this.waterPhase = (this.waterPhase + this.waterSpeed * dt * NS_PER_S) % d.L; if (this.waterPhase < 0) this.waterPhase += d.L; this.placeWater(); }
@@ -454,7 +611,24 @@
     return { frames: this.frames, playing: this.playing, preset: this.preset, overlay: this.overlay, species: this.species,
       markers: [this.particles[0].length, this.particles[1].length], ionsPerMarker: this.scale ? this.scale.slice() : [1, 1], displacement_nm: this.disp.slice(),
       carbonAtoms: this.atomCount || 0, rimGroups: this.rimGroups || 0, liningMarks: this.liningMarks || 0, shellWaters: this.shellWaters || 0,
-      waterSpeed_nm_per_ns: this.waterSpeed || 0, legend: this.legend().title, nsPerSecond: NS_PER_S };
+      waterSpeed_nm_per_ns: this.waterSpeed || 0, legend: this.legend().title, nsPerSecond: NS_PER_S, playTime_s: this.playTime,
+      shellReplay: { on: this.shellsOn(), ready: this.shellsReady(), clock_fs_per_s: REPLAY_FS_PER_S, inside: this.data ? '(' + this.data.n + ',' + this.data.n + ')' : null, outside: '(' + REF_TUBE + ',' + REF_TUBE + ')', error: this.shellError } };
+  };
+  /* read-only: the recorded-shell state of the drawn markers, recomputed at their current replay time exactly as drawn */
+  IonView.prototype.shellProbe = function (max) {
+    const out = { playTime_s: this.playTime, ready: this.shellsReady(), clock_fs_per_s: REPLAY_FS_PER_S, drawThreshold: W_DRAW, markers: [] };
+    if (!out.ready) return out;
+    const d = this.data, lim = max || Infinity, v3 = (a, q) => [a[q], a[q + 1], a[q + 2]];
+    for (let s = 0; s < 2; s++) for (const p of this.particles[s]) {
+      if (out.markers.length >= lim) break;
+      if (!p.sh || p.sh.tube !== d.n) continue;                         // not drawn with the recorded shells yet
+      this.computeShell(p, s);
+      const sc = this.sc, waters = [];
+      for (let k = 0; k < sc.n; k++) { const q = k * 9; waters.push({ src: sc.src[k] ? 'in' : 'out', idx: sc.idx[k], w: sc.w[k], drawn: sc.w[k] >= W_DRAW, O: v3(sc.pos, q), H1: v3(sc.pos, q + 3), H2: v3(sc.pos, q + 6) }); }
+      out.markers.push({ id: p.id, s, x: p.x, win: sc.win, m: sc.m, tau: p.sh.tau, tIn: sc.tIn, tOut: sc.tOut, shift: sc.shift, ion: v3(sc.ion, 0),
+        inside: { tube: d.n, ion: p.sh.inIon, flip: p.sh.flipIn, phi: p.sh.phiIn }, outside: { tube: REF_TUBE, ion: p.sh.outIon, flip: p.sh.flipOut, phi: p.sh.phiOut }, waters });
+    }
+    return out;
   };
   IonView.prototype.dispose = function () { this.stop(); document.removeEventListener('visibilitychange', this.onVis); if (this.ro) this.ro.disconnect(); this.renderer.dispose(); this.canvas.remove(); this.labels.remove(); };
 
@@ -463,5 +637,5 @@
     const THREE = await import('../vendor/three.module.min.js');
     return new IonView(THREE, host, hooks);
   }
-  root.IonView3D = { create, webglAvailable, NS_PER_S, S_VIEW, rampColor, RDBU, VIRIDIS };
+  root.IonView3D = { create, webglAvailable, NS_PER_S, S_VIEW, REPLAY_FS_PER_S, rampColor, RDBU, VIRIDIS };
 })(typeof window !== 'undefined' ? window : globalThis);
