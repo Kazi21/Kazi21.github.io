@@ -256,3 +256,25 @@ alone and from the intact-membrane table for a modified membrane.
   Run 1 of 2026.10.2, with nothing else running: 17 of 17 PASS (`results/browser.json`; R1 finds the home page and its
   Continuum Lab link, and downloads the public CV, HTTP 200).
 
+
+- 1 Nov 2026 (release 2026.11; written before the run): the home page changed (three links to the new literature page
+  `evidence/models/`, in the Simulation Lab introduction, the Project 2 evidence line and the Methods introduction, and
+  the footer text); the water page changed only in its version number. No criterion changed. The build machine's
+  Chromium is now 141.0.7390.37 (headless shell, Playwright 1.56) instead of 131.0.6778.0. The 2026.10.2 run-1 record
+  is kept as `results/browser.2026.10.2-run1.json`.
+  Run 1 of 2026.11, on Chromium 141.0.7390.37 with nothing else running: 17 of 17 PASS (`results/browser.json`; R1 finds
+  the home page and its Continuum Lab link, downloads the public CV, HTTP 200, runs the Water Lab to step 10 and plays
+  the CNT inspector), in about 3 min.
+  In this Chromium build the dedicated worker is reported both by the request event and by the worker event that the
+  B1 procedure of 2026.10 added, so B1's detail lists `lab/continuum/worker.js` twice; the criterion (nothing requested
+  before Run) is unaffected.
+- 4 Nov 2026 (release 2026.11, run 2; written before the run): after run 1, `styles/components.css` changed (rules for
+  the models page, 1 and 4 November) and the home page's three links to `evidence/models/` were reworded (4 November);
+  R1 loads the home page. The release notes of 1 November wrongly said that the tested files had not changed again after
+  run 1. Criteria, thresholds and tests are unchanged; the suite is run again on the final files, and the run-1 record is
+  kept as `results/browser.2026.11-run1.json`.
+  Run 2 of 2026.11, on the final files with nothing else running: 17 of 17 PASS (`results/browser.json`), in about
+  3 min. Details as in run 1 except those that depend on wall-clock time or rendering: the B7 export is 153019 instead
+  of 153022 bytes (its size has varied by a few bytes in every record, because it carries time stamps; recomputed and
+  exported flow rates are identical), the B14 frame has other colour-class counts, and the CNT inspector advanced
+  8 fs instead of 4 fs after Play (R1).

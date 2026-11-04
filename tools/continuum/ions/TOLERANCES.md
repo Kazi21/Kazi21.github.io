@@ -393,3 +393,27 @@ Accepted:
   1.34 s, whole run 5.23 s (0.5 %) and 16.0 s (0.1 %, level 3), `../results/benchmark_ions.json`; the morning's
   measurement on the 2.10 GHz machine is kept as `../results/benchmark_ions.2026.10.2-first.json`.
 
+
+## Release 2026.11 (1 November 2026; written before the run)
+
+- **No criterion, threshold, test or tested solver file changed.** The release adds a literature page
+  (`evidence/models/`) and links to it from the home page; every page's footer now reads "Website version 2026.11",
+  which changes the ion page that IB1–IB13 load. The browser suite is therefore run again. The build machine's
+  Chromium is now 141.0.7390.37 (headless shell, Playwright 1.56) instead of 131.0.6778.0; the suite's procedures are
+  unchanged. The record of run 3 of 2026.10.2 is kept as `../results/browser_ions.2026.10.2-run3.json`. The Node suite
+  (I1–I19) is not rerun: none of the files it tests changed.
+- **Browser run 1 of 2026.11 (1 Nov 2026): 13 PASS** (`../results/browser_ions.json`, IB1–IB13, Chromium 141.0.7390.37 on
+  a 2-core 2.10 GHz machine, nothing else running; about 11 min). Same numbers as the 2026.10.2 record (default
+  experiment 3.76 pA, page and Node identical; ranking and controller decisions unchanged; IB13 drawn positions equal
+  to the stored ones). Superseded by run 2 (below); kept as `../results/browser_ions.2026.11-run1.json`.
+- **Browser run 2 of 2026.11 (4 November 2026; written before the run).** No criterion, threshold, test or tested
+  solver file changed. After run 1, a file that the ion page loads changed: `styles/components.css` gained the rules of
+  the models page on 1 November and changed again on 4 November, when that page became a model-selection and validation
+  guide. The 2026.11 release notes of 1 November said that the files the suites test had not changed again after run 1;
+  that was wrong for `styles/components.css`. The browser suite is therefore run again on the final files. The Node
+  suite (I1–I19) is not rerun: none of the files it tests changed.
+- **Browser run 2 of 2026.11 (4 Nov 2026): 13 PASS** (`../results/browser_ions.json`, IB1–IB13, Chromium 141.0.7390.37 on
+  the same 2-core machine, nothing else running; 10 min). Every number as in run 1 (default experiment 3.76 pA, page and
+  Node identical; ranking and controller decisions unchanged; IB13 drawn positions equal to the stored ones). Only
+  details that depend on wall-clock time or rendering differ: the marker travel and colour classes of the IB7 frame, and
+  the playing time and round-off of IB13. The record for the released files.

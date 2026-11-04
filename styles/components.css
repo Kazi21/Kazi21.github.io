@@ -561,3 +561,57 @@
   .contact-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
   .contact-portrait { width: 8rem; height: 8rem; }
 }
+
+/* release 2026.11: "Choosing an interaction model" (evidence/models/). Six-row comparison table that becomes one card
+   per row below 900 px (explicit ARIA roles keep the table semantics when the display changes); no new colours. */
+.mx-lead { font-size: var(--step-0); color: var(--text); max-width: var(--measure); }
+.mx-answer { max-width: var(--measure); border-left: 3px solid var(--accent); padding-left: var(--space-2); margin: var(--space-3) 0; }
+.mx-cite { font-size: 0.8em; vertical-align: 0.3em; line-height: 0; }
+.mx-cite a { text-decoration: none; }
+.badge-plan { color: var(--proposed); border-color: var(--proposed); }
+.mx-legend { list-style: none; padding: 0; margin: 0 0 var(--space-3); display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: var(--step--1); color: var(--muted); max-width: none; }
+.mx-legend li { margin: 0; }
+.mx-legend .badge { margin-right: 0.4rem; }
+.mx-table { width: 100%; border-collapse: collapse; font-size: var(--step--1); line-height: 1.55; background: var(--surface); }
+.mx-table caption { caption-side: top; text-align: left; color: var(--muted); font-size: var(--step--1); padding-bottom: var(--space-1); }
+.mx-table th, .mx-table td { text-align: left; vertical-align: top; padding: 0.8rem 0.9rem; border-top: 1px solid var(--line); }
+.mx-table thead th { color: var(--muted); font-weight: 500; border-top: 0; border-bottom: 2px solid var(--line); background: var(--bg); }
+.mx-table tbody th { font-weight: 400; width: 20%; }
+.mx-name { display: block; font-weight: 600; font-size: var(--step-0); color: var(--heading); }
+.mx-table .badge { margin: 0.4rem 0.3rem 0 0; }
+.mx-meta { display: block; margin-top: 0.5rem; color: var(--muted); }
+.mx-plan { display: block; margin-top: 0.6rem; border-left: 2px solid var(--proposed); padding-left: 0.6rem; color: var(--muted); }
+.mx-table code { font-family: var(--font-mono); font-size: 0.85em; background: var(--code-bg); padding: 0.05rem 0.3rem; border-radius: 3px; }
+.mx-flow tbody th { width: 22%; font-weight: 500; color: var(--heading); }
+.mx-note { font-size: var(--step--1); color: var(--muted); max-width: var(--measure); margin-top: var(--space-3); }
+.mx-pieces { margin-top: var(--space-4); }
+.mx-terms { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.45rem var(--space-3); max-width: var(--measure); margin: var(--space-1) 0 var(--space-3); }
+.mx-terms dt { font-weight: 600; color: var(--heading); }
+.mx-terms dd { margin: 0; }
+.mx-roles { list-style: none; padding: 0; max-width: var(--measure); }
+.mx-roles li { padding: 0.45rem 0; border-top: 1px solid var(--line-soft); margin: 0; }
+.mx-roles b { color: var(--heading); font-weight: 600; }
+.mx-mech { margin-top: var(--space-3); }
+.mx-mech h3 { font-size: var(--step-1); margin-bottom: var(--space-1); }
+.mx-refs { font-size: var(--step--1); padding-left: 1.7rem; max-width: 92ch; }
+.mx-refs li { margin-bottom: 0.45rem; scroll-margin-top: 5rem; }
+.mx-refs li:target { background: var(--accent-tint); }
+@media (max-width: 900px) {
+  .mx-table, .mx-table caption, .mx-table tbody, .mx-table tr, .mx-table th, .mx-table td { display: block; width: auto; }
+  .mx-table { background: none; }
+  .mx-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .mx-table tbody tr { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); margin-bottom: var(--space-2); padding: 0.35rem 0.9rem 0.6rem; }
+  .mx-table tbody th, .mx-table td { padding: 0.55rem 0; border-top: 0; }
+  .mx-table tbody th, .mx-flow tbody th { width: auto; }
+  .mx-table td { border-top: 1px solid var(--line-soft); }
+  .mx-table td::before { content: attr(data-label); display: block; font-weight: 500; color: var(--muted); margin-bottom: 0.15rem; }
+  .mx-terms { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; }
+  .mx-terms dd { margin-bottom: var(--space-1); }
+}
+/* release 2026.11: literature-background sections of evidence/models/ */
+.mx-fail, .mx-demand { padding-left: 1.6rem; max-width: 80ch; }
+.mx-fail li, .mx-demand li { margin: 0 0 var(--space-2); line-height: 1.6; }
+.mx-fail li::marker, .mx-demand li::marker { font-family: var(--font-mono); color: var(--accent); font-weight: 600; }
+.mx-fail b, .mx-demand b { color: var(--heading); font-weight: 600; }
+.mx-fail i, .mx-roles i { font-style: normal; font-weight: 500; color: var(--muted); }
+#delivered .mx-roles li, #open .mx-roles li { line-height: 1.6; }

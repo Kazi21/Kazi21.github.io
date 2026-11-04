@@ -209,7 +209,7 @@
           <dt>My contribution</dt>
           <dd>I built and ran the full workflow for NaCl–water in four carbon-nanotube diameters, with a check at every stage: CP2K ab initio MD seeds and reference labels (PBE-D3(BJ)), DP-GEN active learning, DeePMD-kit models and LAMMPS production runs.</dd>
           <dt>Available evidence</dt>
-          <dd><a href="#snapshots">Ab initio MD snapshots</a> (below the project cards) · <a href="lab/cnt/">trajectory inspector</a> (interactive, all four tubes) · <a href="evidence/nacl-water-cnt/index.html">methods and software demonstration</a> (synthetic example data, tests executed) · <a href="evidence/nacl-water-cnt/index.html#workflow">workflow schematic</a> · friction results and error analysis are unpublished and shown on request.</dd>
+          <dd><a href="#snapshots">Ab initio MD snapshots</a> (below the project cards) · <a href="lab/cnt/">trajectory inspector</a> (interactive, all four tubes) · <a href="evidence/nacl-water-cnt/index.html">methods and software demonstration</a> (synthetic example data, tests executed) · <a href="evidence/nacl-water-cnt/index.html#workflow">workflow schematic</a> · <a href="evidence/models/">guide to choosing and validating ML potentials</a> (model selection and validation; literature-based) · friction results and error analysis are unpublished and shown on request.</dd>
         </dl>
         <details class="disclosure">
           <summary>Methods, checks and next development</summary>
@@ -274,7 +274,7 @@
 <section class="section section-band" id="lab">
   <div class="container">
     <h2>Simulation Lab</h2>
-    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: live molecular dynamics, recorded ab initio trajectories and the Continuum Lab (ion transport through one nanotube pore, and water flow through a nanotube membrane).</p>
+    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: live molecular dynamics, recorded ab initio trajectories and the Continuum Lab (ion transport through one nanotube pore, and water flow through a nanotube membrane). Which interaction model such simulations should use, and how it is validated before use, is set out in <a href="evidence/models/">a practical guide to choosing and validating ML potentials</a>, from confined electrolytes to surface-response models.</p>
     <div class="lab-cards">
       <article class="lab-card">
         <a class="lab-card-media" href="lab/water/" tabindex="-1" aria-hidden="true"><img src="assets/figures/water-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
@@ -331,7 +331,7 @@
 <section class="section" id="practice">
   <div class="container">
     <h2>Methods and code</h2>
-    <p class="section-intro">Two kinds of reproducible evidence. The MLIP evidence package behind Project 2 shows error-analysis tooling: runnable code, synthetic fixtures and executed tests. The Live Water Lab shows simulation engineering and verification: LAMMPS in the browser, checked against native LAMMPS. Both serve the error-aware direction of the research map. The walkthrough explains methods; it does not report executed training or scientific outcomes. Select a step to read its purpose.</p>
+    <p class="section-intro">Two kinds of reproducible evidence. The MLIP evidence package behind Project 2 shows error-analysis tooling: runnable code, synthetic fixtures and executed tests. The Live Water Lab shows simulation engineering and verification: LAMMPS in the browser, checked against native LAMMPS. Both serve the error-aware direction of the research map. Why these model choices? The <a href="evidence/models/">guide to choosing and validating ML potentials</a> compares the local Deep Potential used in Project 2 with five other model families, shows how an observed model error leads to the next calculation, and lists the evidence required before a potential is used. The walkthrough explains methods; it does not report executed training or scientific outcomes. Select a step to read its purpose.</p>
 
     <div class="practice">
       <fieldset class="steps">
@@ -717,7 +717,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.10.2. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (from one nanotube to membrane flow, with a browser CFD solver), and the complete methods-and-software package for Project 2.</p>
+      <p class="version">Version 2026.11. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (ion transport through one nanotube pore, and water flow through a nanotube membrane), the complete methods-and-software package for Project 2, and a practical guide to choosing and validating ML potentials.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>

@@ -2,13 +2,13 @@
  "id": "browser_ions",
  "name": "Ion experiment browser tests IB1–IB13",
  "verdict": "PASS",
- "chromium": "131.0.6778.0",
+ "chromium": "141.0.7390.37",
  "items": [
   {
    "id": "IB1",
    "name": "Lazy start",
    "verdict": "PASS",
-   "detail": "requested during load + 1.5 s: none of the solver, worker, chart, data or 3D files; after Start: ions/core.js, ions/params.js, ions/controller.js, ions/charts.js, data/hydration.json, ions/ions3d.js, ions/worker.js, vendor/three.module.min.js"
+   "detail": "requested during load + 1.5 s: none of the solver, worker, chart, data or 3D files; after Start: ions/core.js, ions/params.js, ions/controller.js, ions/charts.js, data/hydration.json, ions/worker.js, ions/ions3d.js, vendor/three.module.min.js"
   },
   {
    "id": "IB2",
@@ -44,7 +44,7 @@
    "id": "IB7",
    "name": "3D view",
    "verdict": "PASS",
-   "detail": "three.js requested only after Start (IB1); frame non-blank: 64.2 % non-background pixels, 80 colour classes; overlays one at a time with a legend: true (phi: “Electric potential (mV)”; flux: “Current density |I| / A(x) (A m⁻²)”; conc: “Na⁺ concentration relative to its reservoir (c / c_res)”); at 100 mV markers moved 8.68 nm (Na⁺, towards the permeate) and -9.73 nm (Cl⁻, towards the feed) in 2 s; reduced motion: still before Play true, moving after Play true; without WebGL: fallback shown true (“The 3D view needs WebGL, which this browser does not provide. The expe…”), result 3.76 pA converged true, three.js requested false; page errors 0"
+   "detail": "three.js requested only after Start (IB1); frame non-blank: 64.1 % non-background pixels, 72 colour classes; overlays one at a time with a legend: true (phi: “Electric potential (mV)”; flux: “Current density |I| / A(x) (A m⁻²)”; conc: “Na⁺ concentration relative to its reservoir (c / c_res)”); at 100 mV markers moved 11.37 nm (Na⁺, towards the permeate) and -20.25 nm (Cl⁻, towards the feed) in 2 s; reduced motion: still before Play true, moving after Play true; without WebGL: fallback shown true (“The 3D view needs WebGL, which this browser does not provide. The expe…”), result 3.76 pA converged true, three.js requested false; page errors 0"
   },
   {
    "id": "IB8",
@@ -80,10 +80,10 @@
    "id": "IB13",
    "name": "Recorded shell motion in the 3D view",
    "verdict": "PASS",
-   "detail": "default experiment 7,7, step 6, closure cp2k; (a) shell files before Start: 0, after: shells.json, shells-7-7.bin, shells-11-11.bin; (b, c) recorded-CP2K closure (moved to the pore centre by the test: Na⁺, Cl⁻): 14 markers; inside 2, outside 3 compared: largest water position difference 0.00e+0 nm, ion 0.00e+0 nm, replay time 0.00e+0 fs, incomplete sources 0; weight sums within 8.88e-16 of the count, counts within 0.00e+0 of the closure; (d) over 1.05 s of playing (105 fs of the run), 9 markers, 50 waters: RMS change of the ion-relative oxygen positions at least 0.005 nm true, of the hydrogen positions at least 0.005 nm true; (b, c) rigid-shell closure (inside 1.4185 Na⁺, 0.8695 Cl⁻; moved: Na⁺, Cl⁻): 14 markers; inside 2, outside 3 compared: largest water position difference 0.00e+0 nm, ion 0.00e+0 nm, replay time 0.00e+0 fs, incomplete sources 0; weight sums within 1.78e-15 of the count, counts within 1.11e-16 of the closure; (f) Born closure: 0 shell waters drawn; step 3: 0; (e) replay clock: largest deviation from 100 fs per second of playing 8.53e-14 fs s⁻¹; paused: no advance true; reduced motion: no advance before Play true, advances after Play (13 markers); (g) page errors 0"
+   "detail": "default experiment 7,7, step 6, closure cp2k; (a) shell files before Start: 0, after: shells.json, shells-7-7.bin, shells-11-11.bin; (b, c) recorded-CP2K closure (moved to the pore centre by the test: Na⁺, Cl⁻): 14 markers; inside 2, outside 3 compared: largest water position difference 0.00e+0 nm, ion 0.00e+0 nm, replay time 0.00e+0 fs, incomplete sources 0; weight sums within 2.04e-14 of the count, counts within 0.00e+0 of the closure; (d) over 1.08 s of playing (108 fs of the run), 9 markers, 49 waters: RMS change of the ion-relative oxygen positions at least 0.005 nm true, of the hydrogen positions at least 0.005 nm true; (b, c) rigid-shell closure (inside 1.4185 Na⁺, 0.8695 Cl⁻; moved: Na⁺, Cl⁻): 14 markers; inside 2, outside 3 compared: largest water position difference 0.00e+0 nm, ion 0.00e+0 nm, replay time 0.00e+0 fs, incomplete sources 0; weight sums within 1.78e-15 of the count, counts within 1.11e-16 of the closure; (f) Born closure: 0 shell waters drawn; step 3: 0; (e) replay clock: largest deviation from 100 fs per second of playing 1.85e-13 fs s⁻¹; paused: no advance true; reduced motion: no advance before Play true, advances after Play (13 markers); (g) page errors 0"
   }
  ],
  "pageErrors": [],
- "environment": "Chromium 131.0.6778.0 (headless shell, Playwright, SwiftShader WebGL) on Intel(R) Xeon(R) Processor @ 2.80GHz (2 cores); local static server; no Safari, Firefox, real phones or GPUs",
- "date": "2026-10-26T11:44:37.744Z"
+ "environment": "Chromium 141.0.7390.37 (headless shell, Playwright, SwiftShader WebGL) on Intel(R) Xeon(R) Processor @ 2.10GHz (2 cores); local static server; no Safari, Firefox, real phones or GPUs",
+ "date": "2026-11-04T09:27:04.631Z"
 }

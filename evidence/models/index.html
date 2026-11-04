@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing and validating ML potentials — Kazi Ehsanul Karim</title>
+<meta name="description" content="How Kazi Ehsanul Karim chooses and validates machine-learned interatomic potentials, from confined electrolytes to surface-response models: six model families compared, a workflow from an observed model error to the next calculation, the molecular evidence that larger-scale models need, and an optional literature background with 31 primary sources.">
+<meta name="robots" content="index,follow">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#F8FAFC">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
+      <a href="../../index.html#lab">Simulation Lab</a>
+      <a href="../../index.html#practice" aria-current="page">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section" id="top">
+  <div class="container">
+    <p class="project-kicker">Methods and code · model-selection and validation guide</p>
+    <h1 class="evidence-title">Choosing and validating ML potentials</h1>
+    <p class="statement">From confined electrolytes to surface-response models.</p>
+    <p class="mx-lead">In Project 2, I built and ran a CP2K–DP-GEN–DeePMD–LAMMPS workflow for NaCl–water in four carbon-nanotube diameters, with a check at every stage. This guide shows how I choose an interaction model, what it must pass before use, and what validated molecular results supply to larger-scale models. Applications to semiconductor surfaces are proposed and marked as such.</p>
+    <p class="mx-answer"><strong>Working rule:</strong> a low force error is necessary but not sufficient. A benchmark of machine-learned force fields found that force accuracy does not reliably predict performance in simulation<sup class="mx-cite"><a href="#ref-fu2023">[1]</a></sup>, so structure, stability and the transport or yield observable are tested directly.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="../../index.html#project-2">View my workflow</a>
+      <a class="btn" href="../../index.html#lab">Explore the simulations</a>
+    </div>
+    <p class="mx-note"><span class="badge badge-label">Based on the literature and Project 2 methods · no new simulation results</span></p>
+  </div>
+</section>
+
+<section class="section section-band" id="families">
+  <div class="container">
+    <h2>Six model families compared</h2>
+    <p class="section-intro">An MLIP approximates a reference potential-energy surface. Its predictions depend on the reference data, training coverage and model form; symmetry constraints and explicit physical terms can be built into that form.</p>
+    <ul class="mx-legend" aria-label="Status labels">
+      <li><span class="badge badge-exec">Used in Project 2 workflow</span> used in this research</li>
+      <li><span class="badge">Literature comparison</span> from the cited paper; not run here</li>
+      <li><span class="badge badge-plan">Planned benchmark</span> proposed; not run</li>
+    </ul>
+    <table class="mx-table" role="table">
+      <caption>Model families for confined water and ions</caption>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">Model family</th>
+          <th scope="col" role="columnheader">Representation</th>
+          <th scope="col" role="columnheader">Electrostatics</th>
+          <th scope="col" role="columnheader">Question for confined electrolytes</th>
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        <tr role="row" id="deep-potential">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">Deep Potential (DeepPot-SE)<sup class="mx-cite"><a href="#ref-zhang2018">[2]</a></sup></span>
+            <span class="badge badge-exec">Used in Project 2 workflow</span>
+          </th>
+          <td role="cell" data-label="Representation">Neural-network atomic energies from a smooth, symmetry-preserving local descriptor.</td>
+          <td role="cell" data-label="Electrostatics">No explicit long-range term; electrostatics enter only through the local environment.</td>
+          <td role="cell" data-label="Question for confined electrolytes">Does a 6.0 Å cutoff capture each species' hydration and the wall forces?</td>
+        </tr>
+        <tr role="row" id="nequip">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">NequIP<sup class="mx-cite"><a href="#ref-batzner2022">[3]</a></sup></span>
+            <span class="badge">Literature comparison</span>
+          </th>
+          <td role="cell" data-label="Representation">E(3)-equivariant message passing with scalar, vector and tensor features.</td>
+          <td role="cell" data-label="Electrostatics">No explicit long-range term; reach grows with each interaction layer.</td>
+          <td role="cell" data-label="Question for confined electrolytes">Do equivariant features lower species-resolved errors on the same data?</td>
+        </tr>
+        <tr role="row" id="mace">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">MACE<sup class="mx-cite"><a href="#ref-batatia2022">[4]</a></sup></span>
+            <span class="badge">Literature comparison</span>
+            <span class="badge badge-plan">Planned benchmark</span>
+          </th>
+          <td role="cell" data-label="Representation">Equivariant message passing with higher-body-order messages.</td>
+          <td role="cell" data-label="Electrostatics">No explicit long-range term in the base architecture.</td>
+          <td role="cell" data-label="Question for confined electrolytes">Does higher body order improve forces and structure at matched cost?</td>
+        </tr>
+        <tr role="row" id="allegro">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">Allegro<sup class="mx-cite"><a href="#ref-musaelian2023">[5]</a></sup></span>
+            <span class="badge">Literature comparison</span>
+          </th>
+          <td role="cell" data-label="Representation">Strictly local equivariant features built over neighbour pairs.</td>
+          <td role="cell" data-label="Electrostatics">No explicit long-range term; reach is one cutoff, which keeps the computation parallel.</td>
+          <td role="cell" data-label="Question for confined electrolytes">Is accuracy retained for wall-adjacent water and partly dehydrated ions?</td>
+        </tr>
+        <tr role="row" id="dplr">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">DPLR (Deep Potential Long-Range)<sup class="mx-cite"><a href="#ref-zhang2022">[6]</a></sup></span>
+            <span class="badge">Literature comparison</span>
+          </th>
+          <td role="cell" data-label="Representation">Short-range Deep Potential plus Gaussian charges at ionic and Wannier-centroid sites.</td>
+          <td role="cell" data-label="Electrostatics">Explicit long-range electrostatics; needs Wannier-centroid labels.</td>
+          <td role="cell" data-label="Question for confined electrolytes">Are the charge representation and its labels valid next to a carbon wall?</td>
+        </tr>
+        <tr role="row" id="mbx">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">MB-pol and MB-nrg, through MBX<sup class="mx-cite"><a href="#ref-riera2023">[7]</a></sup></span>
+            <span class="badge">Literature comparison</span>
+          </th>
+          <td role="cell" data-label="Representation">Physics-based many-body baseline plus machine-learned short-range terms.</td>
+          <td role="cell" data-label="Electrostatics">Explicit permanent electrostatics and many-body polarization.</td>
+          <td role="cell" data-label="Question for confined electrolytes">Is there a supported parameterisation for wall–water and wall–ion terms?</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="disclosure mx-pieces" id="configuration">
+      <summary>Project 2 configuration, scope notes and the planned benchmark</summary>
+      <div class="disclosure-body">
+        <ul class="mx-roles">
+          <li><b>Deep Potential in Project 2.</b> Recorded configuration: DeePMD-kit 3.1.1 (TensorFlow backend) with DP-GEN 0.13.3; <code>se_e2_a</code> descriptor with a 6.0 Å cutoff. Trained on energies and forces without virial labels, a choice of this project rather than a limit of the family. DeePMD-kit<sup class="mx-cite"><a href="#ref-zeng2025">[8]</a></sup> is the software; it implements this and other model families. <a href="../../index.html#project-2">Project 2</a> · <a href="../nacl-water-cnt/package/MODEL_SCOPE.md">model scope</a></li>
+          <li><b>Coverage and comparison.</b> Accuracy or speed figures from different papers are not combined into a ranking. For every family, coverage is set by the training species and environments; for MB-pol and MB-nrg, by the available parameterisations, which include alkali-metal and halide ions in water. A pretrained foundation checkpoint needs a check of its training domain before use.</li>
+          <li><b>DPLR.</b> A second network predicts the Wannier-centroid positions from the local environment. The original formulation targets insulating systems; application to CNT-confined electrolytes requires assessment of the electronic structure, the charge representation and the available reference labels.</li>
+          <li><b>MB-pol and MB-nrg.</b> MBX is the software library that evaluates these models. Complete wall–water and wall–ion interactions, with consistent electrostatics and polarization, require a supported parameterisation.</li>
+          <li><b>Planned benchmark (not run).</b> Compare DeepPot-SE and MACE using consistent reference data, grouped held-out configurations and declared computational budgets, evaluating forces, structure and dynamical stability. The reference data are checked first, so that the comparison tests the models rather than the labels.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="disclosure mx-pieces" id="pieces">
+      <summary>How the pieces fit together: architecture, checkpoint, engine and workflow</summary>
+      <div class="disclosure-body">
+        <p>The names in the table are architectures. Four different things are often called "the model":</p>
+        <dl class="mx-terms">
+          <dt>Architecture</dt>
+          <dd>the functional form, for example DeepPot-SE or MACE.</dd>
+          <dt>Trained checkpoint</dt>
+          <dd>one set of fitted parameters, valid for the species, conditions and reference method behind its training data. Pretrained "foundation" checkpoints are no exception: their training domain and suitability are checked before use.</dd>
+          <dt>Software engine</dt>
+          <dd>the code that trains or evaluates a model: DeePMD-kit, MBX, LAMMPS.</dd>
+          <dt>Workflow</dt>
+          <dd>what decides the next calculation: DP-GEN in Project 2, the rule-based controller in the Continuum Lab.</dd>
+        </dl>
+        <p>The roles in this research:</p>
+        <ul class="mx-roles">
+          <li><b>CP2K</b>: electronic-structure reference calculations, the energies and forces of selected configurations.</li>
+          <li><b>MLIP</b>: an approximation to that reference energy landscape and its atomic forces.</li>
+          <li><b>LAMMPS</b>: molecular dynamics with the chosen interaction model.</li>
+          <li><b>DP-GEN</b>: concurrent learning, which cycles through exploration, labelling and training<sup class="mx-cite"><a href="#ref-zhang2020">[9]</a></sup>.</li>
+          <li><b>PINN</b>: physics-constrained learning of solutions or closures<sup class="mx-cite"><a href="#ref-raissi2019">[10]</a></sup>; here intended for the molecular-to-continuum connection (<a href="../../index.html#project-3">Project 3</a>).</li>
+          <li><b>Continuum solver</b>: fields and device-scale response from stated equations and closures (<a href="../../lab/continuum/">Continuum Lab</a>).</li>
+          <li><b>Controller</b>: selects and records computational actions according to stated rules and the available evidence; the <a href="../../lab/continuum/#controller">Continuum Lab controller</a> is rule-based and uses no language model.</li>
+        </ul>
+        <p>The loop that connects these steps is described under <a href="../../index.html#practice">Methods and code</a>.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="decisions">
+  <div class="container">
+    <h2>From an observation to the next calculation</h2>
+    <p class="section-intro">The next calculation follows the diagnosis; acceptance rests on independent configurations and predicted physical behaviour, not on error metrics alone<sup class="mx-cite"><a href="#ref-morrow2023">[11]</a></sup>. Committee disagreement is a signal whose relation to the actual error is itself tested.</p>
+    <ul class="mx-legend" aria-label="Status">
+      <li><span class="badge badge-plan">Proposed</span> generic examples of the method, not campaign results</li>
+    </ul>
+    <table class="mx-table mx-flow" role="table">
+      <caption>Three generic examples</caption>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">Observation</th>
+          <th scope="col" role="columnheader">Diagnostic check</th>
+          <th scope="col" role="columnheader">Next calculation</th>
+          <th scope="col" role="columnheader">Acceptance evidence</th>
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        <tr role="row">
+          <th scope="row" role="rowheader">Ion coordination is wrong although the pooled force error is low.</th>
+          <td role="cell" data-label="Diagnostic check">Species- and environment-resolved errors on independent frames; reference consistency; matched conditions; the coordination definition.</td>
+          <td role="cell" data-label="Next calculation">What the diagnosis points to: reference convergence, targeted labels, longer sampling or a narrower scope.</td>
+          <td role="cell" data-label="Acceptance evidence">Species-resolved errors within tolerance on independent frames; coordination within the reference uncertainty.</td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">The committee is quiet, but the dynamics becomes unstable.</th>
+          <td role="cell" data-label="Diagnostic check">Time step; environments the run visited; committee disagreement against independent reference errors.</td>
+          <td role="cell" data-label="Next calculation">Labels near the failure, plus random audit labels from frames rated confident.</td>
+          <td role="cell" data-label="Acceptance evidence">Stable runs from independent starts; the miss rate reported with its denominator.</td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">Two friction estimators disagree.</th>
+          <td role="cell" data-label="Diagnostic check">Estimator definitions, ensembles, finite-size behaviour and convergence.</td>
+          <td role="cell" data-label="Next calculation">An estimator with controlled finite-size behaviour, such as constrained-momentum Green–Kubo, which gives an effective friction<sup class="mx-cite"><a href="#ref-bui2024">[12]</a></sup>.</td>
+          <td role="cell" data-label="Acceptance evidence">Agreement with an independent driven-flow measurement under matched conditions.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="mx-note">Miss rate: large-error atoms the committee did not flag, divided by all large-error atoms.</p>
+  </div>
+</section>
+
+<section class="section section-band" id="outputs">
+  <div class="container">
+    <h2>From molecular observables to larger-scale inputs</h2>
+    <p class="section-intro">Each row names what the molecular model must establish before a larger-scale model can use its output.</p>
+    <ul class="mx-legend" aria-label="Status labels">
+      <li><span class="badge">Current research</span> pursued in the projects named</li>
+      <li><span class="badge badge-plan">Proposed application</span> not started; literature basis cited</li>
+    </ul>
+    <table class="mx-table mx-flow" role="table">
+      <caption>Molecular evidence and the input it supports</caption>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">Research question</th>
+          <th scope="col" role="columnheader">What the molecular model must establish</th>
+          <th scope="col" role="columnheader">Output for a larger-scale model</th>
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        <tr role="row">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">How does confinement change electrolyte transport?</span>
+            <span class="badge">Current research</span>
+            <span class="mx-meta"><a href="../../index.html#project-2">Project 2</a> · <a href="../../lab/continuum/">Continuum Lab</a></span>
+          </th>
+          <td role="cell" data-label="What the molecular model must establish">Hydration, mobility and driven response within a tested domain</td>
+          <td role="cell" data-label="Output for a larger-scale model">Calibrated pore response with uncertainty</td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">When can a molecular wall law describe flow?</span>
+            <span class="badge">Current research</span>
+            <span class="mx-meta"><a href="../../index.html#project-1">Project 1</a> · <a href="../../index.html#project-3">Project 3</a></span>
+          </th>
+          <td role="cell" data-label="What the molecular model must establish">Consistent boundary definition, friction/slip estimator and independent flow validation</td>
+          <td role="cell" data-label="Output for a larger-scale model">Boundary condition with a stated validity range</td>
+        </tr>
+        <tr role="row">
+          <th scope="row" role="rowheader">
+            <span class="mx-name">How does an incident particle change a surface?</span>
+            <span class="badge badge-plan">Proposed application</span>
+            <span class="mx-meta">Plasma-exposed semiconductor surfaces</span>
+          </th>
+          <td role="cell" data-label="What the molecular model must establish">Impact-energy coverage, restructuring, reflection and sputtering statistics<sup class="mx-cite"><a href="#ref-kounis2025">[13]</a></sup></td>
+          <td role="cell" data-label="Output for a larger-scale model">Yield and reflection data for process models<sup class="mx-cite"><a href="#ref-hong2024">[14]</a></sup></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="background">
+  <div class="container">
+    <h2>Read the literature background</h2>
+    <p class="section-intro">Optional reading behind the tables, with 31 primary sources; nothing here is my own result.</p>
+    <div class="mx-background">
+
+      <details class="disclosure" id="inherit">
+        <summary>What an MLIP inherits from its reference</summary>
+        <div class="disclosure-body">
+          <div class="grid-2 mx-mech">
+            <div>
+              <h3>The reference method and its conditions</h3>
+              <p>An MLIP can at best reproduce the method that labelled its data, and for water that method is a combination of choices. Early ab initio molecular dynamics with GGA functionals and classical nuclei found liquid water overstructured and glassy at ambient temperature and pressure; non-local dispersion counteracts the overstructuring and can change the liquid's structure and equilibrium density substantially<sup class="mx-cite"><a href="#ref-gillan2016">[15]</a></sup><sup class="mx-cite"><a href="#ref-ruizpestana2018">[16]</a></sup>. With classical nuclei, the good agreement of dispersion-corrected revPBE-D3 has been attributed to a cancellation between the neglect of exact exchange and the neglect of nuclear quantum effects, so a functional's quality for water is judged with quantum nuclei rather than with an elevated temperature as a proxy<sup class="mx-cite"><a href="#ref-ruizpestana2018">[16]</a></sup>. A statement about one functional's structure or diffusion therefore needs its conditions: functional, dispersion treatment, nuclear treatment, temperature and density. A potential trained on such data inherits the combination. The strongest confined-water work chose its functional against higher-level benchmarks before training<sup class="mx-cite"><a href="#ref-kapil2022">[17]</a></sup>, and reference convergence (cutoffs, basis, SCF, grid) is part of the model's error budget, not a separate concern.</p>
+            </div>
+            <div>
+              <h3>The Born–Oppenheimer picture</h3>
+              <p>Nuclei move on the electronic ground-state surface. Ground-state charge redistribution, such as polarization or charge transfer between fragments, belongs to that surface: a local potential captures it only implicitly, through the environment inside its cutoff, whereas charge-equilibration potentials represent it explicitly, including non-local charge transfer<sup class="mx-cite"><a href="#ref-ko2021">[18]</a></sup>. Electronic excitation, nonadiabatic charge-state transitions such as ion neutralisation at a surface, and dissipative electronic friction lie outside a single ground-state surface and need dedicated methods. For water on carbon, a fluctuation-induced quantum friction between the liquid's charge fluctuations and the solid's electronic excitations has been proposed, a dissipative contribution absent from Born–Oppenheimer molecular dynamics by construction<sup class="mx-cite"><a href="#ref-kavokine2022">[19]</a></sup>.</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="disclosure" id="delivered">
+        <summary>What MLIPs have delivered for confined water, ions and surfaces</summary>
+        <div class="disclosure-body">
+          <p>Results from the primary literature, with the detail that makes each one credible. Nothing here is my own result; what my own work has used is marked in the model table.</p>
+          <div class="grid-2 mx-mech">
+            <div>
+              <h3>Confined water and ions</h3>
+              <ul class="mx-roles">
+                <li><b>Committee potentials with active learning</b> made first-principles-quality simulation of water in carbon and boron nitride nanotubes, between MoS₂ sheets and at oxide interfaces routine: a committee of Behler–Parrinello networks, trained by adding the configurations on which the members disagree most, converged at roughly 300 reference structures per system<sup class="mx-cite"><a href="#ref-schran2021">[20]</a></sup>.</li>
+                <li><b>Friction from first principles.</b> With such potentials, water in carbon nanotubes shows roughly four to five times less friction than in boron nitride tubes, decreasing further in narrower tubes; the mechanism is attributed to oxygen motion on a curvature-smoothed energy landscape in carbon and to hydrogen–nitrogen docking and hopping in boron nitride<sup class="mx-cite"><a href="#ref-thiemann2022">[21]</a></sup>.</li>
+                <li><b>A first-principles phase diagram of monolayer confined water</b>, with the functional (revPBE0-D3) selected against quantum Monte Carlo before the potential was trained, revealed new monolayer ice phases, a hexatic-like phase and a superionic regime<sup class="mx-cite"><a href="#ref-kapil2022">[17]</a></sup>.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Semiconductor surfaces and plasma processes</h3>
+              <ul class="mx-roles">
+                <li><b>Physical and reactive etching of silicon.</b> A Deep Potential for Si–Cl–Ar was tested against experiment on sputtering yields, the depth of the amorphous–crystalline interface, etch yields versus flux ratio and ion energy, and the products of atomic layer etching<sup class="mx-cite"><a href="#ref-kounis2025">[13]</a></sup>; for Si and SiO₂ ion-beam etching, neural-network potentials blended with the ZBL repulsion at short range were compared with experiment and classical MD<sup class="mx-cite"><a href="#ref-tanaka2024">[22]</a></sup>.</li>
+                <li><b>Reactive chemistry on amorphous nitride.</b> A neural-network potential for HF etching of amorphous Si₃N₄ reproduced the etching behaviour and was reduced to a continuum etch model<sup class="mx-cite"><a href="#ref-hong2024">[14]</a></sup>, the step that feature-scale simulation needs.</li>
+                <li><b>Thin-film process steps</b> such as atomic layer deposition of HfO₂ and plasma atomic layer etching of MoS₂ have been simulated with a moment tensor potential trained by active learning, with the stated expectation that the potential is reliable only within the process conditions sampled<sup class="mx-cite"><a href="#ref-natarajan2025">[23]</a></sup>.</li>
+                <li><b>A benchmark for the field.</b> Ten force-field models were compared on silicon nitride and hafnium oxide datasets with simulation indicators beyond energy and force errors<sup class="mx-cite"><a href="#ref-kim2023">[24]</a></sup>; the etching community's own roadmap asks for MD models tested more against experiment and extended to more materials, species and patterned surfaces<sup class="mx-cite"><a href="#ref-oehrlein2024">[25]</a></sup>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="disclosure" id="failures">
+        <summary>Seven checks before using a potential</summary>
+        <div class="disclosure-body">
+          <p>Each check answers a limitation documented in the literature. Together they are the reason this site measures a model's errors where they occur rather than averaging them away.</p>
+          <ol class="mx-fail">
+            <li><b>Test behaviour in simulation, not only the force error.</b> Models with excellent force scores can be unstable in molecular dynamics or give wrong structure and dynamics<sup class="mx-cite"><a href="#ref-fu2023">[1]</a></sup>; validation has to rest on predicted physical behaviour<sup class="mx-cite"><a href="#ref-morrow2023">[11]</a></sup>, and benchmarks are starting to score simulation indicators rather than forces alone<sup class="mx-cite"><a href="#ref-kim2023">[24]</a></sup>. <i>Check:</i> stability over the production length, structure against the reference, and the transport or yield observable itself.</li>
+            <li><b>Check the reference before the model.</b> A potential cannot be better than its labels: the functional, dispersion and nuclear treatment<sup class="mx-cite"><a href="#ref-gillan2016">[15]</a></sup><sup class="mx-cite"><a href="#ref-ruizpestana2018">[16]</a></sup>, the numerical settings and the convergence of the reference all pass into the model, and a minority species can carry a reference artefact that a pooled error never shows. Equal errors on training and test frames do not by themselves identify the cause: noisy labels, underfitting and representation limits can look alike. <i>Check:</i> a same-frame convergence ladder, reference consistency between training and test data, and errors resolved by species and environment (the <a href="../../index.html#practice">reference check and per-species tooling</a> of this site).</li>
+            <li><b>Decide whether the observable needs long-range or electronic response.</b> Local models carry electrostatics only inside the cutoff. Explicit long-range models represent charge in different ways, for example Gaussian charges at ionic and Wannier-centroid sites<sup class="mx-cite"><a href="#ref-zhang2022">[6]</a></sup> or charge equilibration with non-local charge transfer<sup class="mx-cite"><a href="#ref-ko2021">[18]</a></sup>, and both need labels beyond energies and forces. Whether a given model reproduces a conducting wall's screening response has to be tested for that model and wall; a conservative ground-state potential omits dissipative electronic friction in any case<sup class="mx-cite"><a href="#ref-kavokine2022">[19]</a></sup>. <i>Check:</i> whether the observable depends on long-range electrostatics, applied fields or the wall's electronic response and, if it does, a model-specific test of that response against the electronic-structure reference.</li>
+            <li><b>Test whether committee disagreement tracks the error.</b> Ensembles of neural-network potentials tend to report less uncertainty than their actual error, and the calibration differs between systems and architectures<sup class="mx-cite"><a href="#ref-kahle2022">[26]</a></sup>. Active learning that selects by disagreement therefore finds <em>unfamiliar</em> configurations, not necessarily the <em>wrong</em> ones. <i>Check:</i> disagreement against independent reference errors, with the miss rate (large errors the committee did not flag) reported with its denominator.</li>
+            <li><b>Test transfer outside the training conditions.</b> A neural-network model that reproduced hydrogen bombardment of a crystalline diamond surface degraded on amorphous carbon and at higher impact energies<sup class="mx-cite"><a href="#ref-draney2025">[27]</a></sup>; process potentials are stated to be reliable only inside the sampled process conditions<sup class="mx-cite"><a href="#ref-natarajan2025">[23]</a></sup>; and a general-purpose foundation model is described by its authors as having qualitative and at times quantitative accuracy<sup class="mx-cite"><a href="#ref-batatia2023">[28]</a></sup>. <i>Check:</i> held-out conditions (temperature, energy, composition, surface state) that were never in training, and a pretrained model's training domain before it is used.</li>
+            <li><b>For energetic collisions, check the short-range physics.</b> Thermal reference data seldom contain close approaches, so an energetic ion's repulsive wall is extrapolated unless a short-range potential such as ZBL is blended in<sup class="mx-cite"><a href="#ref-tanaka2024">[22]</a></sup>; the ion's charge state and its neutralisation lie outside a ground-state potential; and the decisive tests are sputter and etch yields against beam experiments<sup class="mx-cite"><a href="#ref-kounis2025">[13]</a></sup>, which classical force fields must pass too<sup class="mx-cite"><a href="#ref-shim2024">[29]</a></sup>. <i>Check:</i> the short-range treatment and its switching range, the energy range covered by labels, and yields with replica uncertainties.</li>
+            <li><b>Check the transport estimator itself.</b> Green–Kubo friction depends on the order of limits taken in a finite system<sup class="mx-cite"><a href="#ref-bocquet2013">[30]</a></sup>; in a finite tube or slit the running integral decays and the constrained-momentum estimator gives an effective, not an intrinsic, friction<sup class="mx-cite"><a href="#ref-bui2024">[12]</a></sup>; correlated frames from one trajectory leak between training and test sets; and a relaxation time computed from a disputed friction estimate is not independent validation. A short trajectory may not support a reliable uncertainty estimate; assess correlation, sampling length and independent replication. <i>Check:</i> estimator definitions, finite-size behaviour, independent replicas, group-wise data splits, and comparison with a driven measurement under matched conditions.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="disclosure" id="demand">
+        <summary>Evidence I look for before deployment</summary>
+        <div class="disclosure-body">
+          <p>Before a potential is deployed, whether trained here or taken from a paper, I look for the following evidence; each item answers one or more of the checks above.</p>
+          <ol class="mx-demand">
+            <li>The reference method, its numerical settings and a convergence test on the same frames; the functional's known biases for the system stated, with the dispersion and nuclear treatment.</li>
+            <li>Errors per species and per environment with their tails, not one pooled number; the error definition (component or vector RMSE, MAE) and the counts behind it.</li>
+            <li>Test data from configurations and runs the model never influenced, split by origin; the ancestry of every test frame.</li>
+            <li>Stability in production-length dynamics from several starting structures, and structure (coordination, density profiles, g(r)) against the reference.</li>
+            <li>The transport or yield observable with replica uncertainties, its finite-size behaviour, and a statement of what the error bar does not cover.</li>
+            <li>For uncertainty claims: committee disagreement compared with independent reference errors, including the misses.</li>
+            <li>For collisions: the short-range treatment, the label energy range, how the ion's charge was handled, and yields against beam data.</li>
+            <li>A written scope: fields, ensembles, compositions, geometries and conditions the model may and may not be used for.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="disclosure" id="mechanism">
+        <summary>Biological inspiration: the mechanism sets the model requirements</summary>
+        <div class="disclosure-body">
+          <p>Biological channels motivate the questions of hydration, coordination and selectivity. The demonstrations on this site concern water and electrolytes under carbon confinement.</p>
+          <div class="grid-2 mx-mech">
+            <div>
+              <h3>Aquaporin-inspired questions</h3>
+              <p>Water orientation, confinement and single-file water transport are questions of structure and dynamics. Proton transfer along a water chain is different: it breaks and forms bonds, so the model must be able to represent those bonding changes. A rigid classical water model cannot; a machine-learned potential can only where such configurations are in its reference data.</p>
+            </div>
+            <div>
+              <h3>Potassium-channel-inspired questions</h3>
+              <p>Selectivity is governed by hydration, coordination and transfer free energies: the model must describe an ion's water shell being replaced by pore-lining atoms as accurately as hydration in bulk water. An isolated binding energy does not determine selectivity, and a pore diameter alone does not establish that a continuum description is valid.</p>
+            </div>
+          </div>
+          <p class="mx-note">The biological mechanisms and their sources are summarised in the Continuum Lab's <a href="../../lab/continuum/#bio">biological-inspiration notes</a>.</p>
+        </div>
+      </details>
+
+      <details class="disclosure" id="open">
+        <summary>Research opportunities and next tests</summary>
+        <div class="disclosure-body">
+          <ul class="mx-roles">
+            <li><b>Electrostatics under conducting confinement.</b> A local model represents a metallic or semimetallic wall's screening only implicitly, within its cutoff, and explicit long-range models represent charge in different ways<sup class="mx-cite"><a href="#ref-zhang2022">[6]</a></sup><sup class="mx-cite"><a href="#ref-ko2021">[18]</a></sup>. <i>Next test:</i> for a given model and wall, compare the response to a nearby charged ion or an applied field with the electronic-structure reference.</li>
+            <li><b>Electronic friction.</b> A conservative ground-state potential omits the dissipative electronic contribution. If fluctuation-induced quantum friction contributes to water–carbon friction<sup class="mx-cite"><a href="#ref-kavokine2022">[19]</a></sup>, friction computed with such a potential contains only the Born–Oppenheimer contribution. <i>Next test:</i> report it as such, and compare it with measurements together with an estimate of the electronic contribution where one is available.</li>
+            <li><b>Calibrated uncertainty for transport.</b> Committee spread tends to underestimate the actual error<sup class="mx-cite"><a href="#ref-kahle2022">[26]</a></sup>; an uncertainty that propagates to a friction coefficient or a yield with a stated coverage is not yet standard practice. <i>Next test:</i> calibrate committee disagreement against independent reference errors, then propagate it to the transport observable.</li>
+            <li><b>Benchmarks that score the observable.</b> Force-error leaderboards do not score simulation behaviour<sup class="mx-cite"><a href="#ref-fu2023">[1]</a></sup>; simulation-indicator benchmarks exist for semiconductor materials<sup class="mx-cite"><a href="#ref-kim2023">[24]</a></sup>. <i>Next test:</i> a confined-electrolyte benchmark scored on stability, hydration structure and transport.</li>
+            <li><b>Reference data for reactive processes.</b> Generating relevant reference data for reactive etching is still described as a major challenge by a group that has done it<sup class="mx-cite"><a href="#ref-hong2025">[31]</a></sup>, and the etching roadmap asks for more materials, species and patterned surfaces<sup class="mx-cite"><a href="#ref-oehrlein2024">[25]</a></sup>. <i>Next test:</i> sputter and etch yields against beam data across the label energy range, with replica uncertainties.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="disclosure" id="references">
+        <summary>References (31 primary sources)</summary>
+        <div class="disclosure-body">
+          <p class="mx-note">Primary sources for the literature claims on this page, each checked against the paper or a bibliographic record on 1 November 2026 (reference 16 on 4 November 2026). Descriptions summarise the cited papers; numbers quoted are theirs. References 22 and 31 are conference abstracts.</p>
+          <ol class="mx-refs">
+            <li id="ref-fu2023">Fu, X., Wu, Z., Wang, W., Xie, T., Keten, S., Gómez-Bombarelli, R. &amp; Jaakkola, T. (2023). Forces are not enough: benchmark and critical evaluation for machine learning force fields with molecular simulations. <i>Transactions on Machine Learning Research</i>. <a href="https://arxiv.org/abs/2210.07237">arXiv:2210.07237</a></li>
+            <li id="ref-zhang2018">Zhang, L., Han, J., Wang, H., Saidi, W. A., Car, R. &amp; E, W. (2018). End-to-end symmetry preserving inter-atomic potential energy model for finite and extended systems. <i>Advances in Neural Information Processing Systems</i> 31, 4436–4446. <a href="https://arxiv.org/abs/1805.09003">arXiv:1805.09003</a></li>
+            <li id="ref-batzner2022">Batzner, S., Musaelian, A., Sun, L., Geiger, M., Mailoa, J. P., Kornbluth, M., Molinari, N., Smidt, T. E. &amp; Kozinsky, B. (2022). E(3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials. <i>Nat. Commun.</i> 13, 2453. <a href="https://doi.org/10.1038/s41467-022-29939-5">doi:10.1038/s41467-022-29939-5</a></li>
+            <li id="ref-batatia2022">Batatia, I., Kovács, D. P., Simm, G. N. C., Ortner, C. &amp; Csányi, G. (2022). MACE: higher order equivariant message passing neural networks for fast and accurate force fields. <i>Advances in Neural Information Processing Systems</i> 35. <a href="https://arxiv.org/abs/2206.07697">arXiv:2206.07697</a></li>
+            <li id="ref-musaelian2023">Musaelian, A. et al. (2023). Learning local equivariant representations for large-scale atomistic dynamics. <i>Nat. Commun.</i> 14, 579. <a href="https://doi.org/10.1038/s41467-023-36329-y">doi:10.1038/s41467-023-36329-y</a></li>
+            <li id="ref-zhang2022">Zhang, L., Wang, H., Muniz, M. C., Panagiotopoulos, A. Z., Car, R. &amp; E, W. (2022). A deep potential model with long-range electrostatic interactions. <i>J. Chem. Phys.</i> 156, 124107. <a href="https://doi.org/10.1063/5.0083669">doi:10.1063/5.0083669</a></li>
+            <li id="ref-riera2023">Riera, M. et al. (2023). MBX: a many-body energy and force calculator for data-driven many-body simulations. <i>J. Chem. Phys.</i> 159, 054802. <a href="https://doi.org/10.1063/5.0156036">doi:10.1063/5.0156036</a></li>
+            <li id="ref-zeng2025">Zeng, J. et al. (2025). DeePMD-kit v3: a multiple-backend framework for machine learning potentials. <i>J. Chem. Theory Comput.</i> <a href="https://doi.org/10.1021/acs.jctc.5c00340">doi:10.1021/acs.jctc.5c00340</a></li>
+            <li id="ref-zhang2020">Zhang, Y., Wang, H., Chen, W., Zeng, J., Zhang, L., Wang, H. &amp; E, W. (2020). DP-GEN: a concurrent learning platform for the generation of reliable deep learning based potential energy models. <i>Comput. Phys. Commun.</i> 253, 107206. <a href="https://doi.org/10.1016/j.cpc.2020.107206">doi:10.1016/j.cpc.2020.107206</a></li>
+            <li id="ref-raissi2019">Raissi, M., Perdikaris, P. &amp; Karniadakis, G. E. (2019). Physics-informed neural networks: a deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. <i>J. Comput. Phys.</i> 378, 686–707. <a href="https://doi.org/10.1016/j.jcp.2018.10.045">doi:10.1016/j.jcp.2018.10.045</a></li>
+            <li id="ref-morrow2023">Morrow, J. D., Gardner, J. L. A. &amp; Deringer, V. L. (2023). How to validate machine-learned interatomic potentials. <i>J. Chem. Phys.</i> 158, 121501. <a href="https://doi.org/10.1063/5.0139611">doi:10.1063/5.0139611</a></li>
+            <li id="ref-bui2024">Bui, A. T. &amp; Cox, S. J. (2024). Revisiting the Green–Kubo relation for friction in nanofluidics. <i>J. Chem. Phys.</i> 161, 201102. <a href="https://doi.org/10.1063/5.0238363">doi:10.1063/5.0238363</a></li>
+            <li id="ref-kounis2025">Kounis-Melas, A., Vella, J. R., Panagiotopoulos, A. Z. &amp; Graves, D. B. (2025). Deep potential molecular dynamics simulations of low-temperature plasma–surface interactions. <i>J. Vac. Sci. Technol. A</i> 43, 012603. <a href="https://doi.org/10.1116/6.0004027">doi:10.1116/6.0004027</a></li>
+            <li id="ref-hong2024">Hong, C., Oh, S., An, H., Kim, P., Kim, Y., Ko, J., Sue, J., Oh, D., Park, S. &amp; Han, S. (2024). Atomistic simulation of HF etching process of amorphous Si₃N₄ using machine learning potential. <i>ACS Appl. Mater. Interfaces</i> 16, 48457–48469. <a href="https://doi.org/10.1021/acsami.4c07949">doi:10.1021/acsami.4c07949</a></li>
+            <li id="ref-gillan2016">Gillan, M. J., Alfè, D. &amp; Michaelides, A. (2016). Perspective: how good is DFT for water? <i>J. Chem. Phys.</i> 144, 130901. <a href="https://doi.org/10.1063/1.4944633">doi:10.1063/1.4944633</a></li>
+            <li id="ref-ruizpestana2018">Ruiz Pestana, L., Marsalek, O., Markland, T. E. &amp; Head-Gordon, T. (2018). The quest for accurate liquid water properties from first principles. <i>J. Phys. Chem. Lett.</i> 9, 5009–5016. <a href="https://doi.org/10.1021/acs.jpclett.8b02400">doi:10.1021/acs.jpclett.8b02400</a></li>
+            <li id="ref-kapil2022">Kapil, V., Schran, C., Zen, A., Chen, J., Pickard, C. J. &amp; Michaelides, A. (2022). The first-principles phase diagram of monolayer nanoconfined water. <i>Nature</i> 609, 512–516. <a href="https://doi.org/10.1038/s41586-022-05036-x">doi:10.1038/s41586-022-05036-x</a></li>
+            <li id="ref-ko2021">Ko, T. W., Finkler, J. A., Goedecker, S. &amp; Behler, J. (2021). A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer. <i>Nat. Commun.</i> 12, 398. <a href="https://doi.org/10.1038/s41467-020-20427-2">doi:10.1038/s41467-020-20427-2</a></li>
+            <li id="ref-kavokine2022">Kavokine, N., Bocquet, M.-L. &amp; Bocquet, L. (2022). Fluctuation-induced quantum friction in nanoscale water flows. <i>Nature</i> 602, 84–90. <a href="https://doi.org/10.1038/s41586-021-04284-7">doi:10.1038/s41586-021-04284-7</a></li>
+            <li id="ref-schran2021">Schran, C., Thiemann, F. L., Rowe, P., Müller, E. A., Marsalek, O. &amp; Michaelides, A. (2021). Machine learning potentials for complex aqueous systems made simple. <i>Proc. Natl Acad. Sci. USA</i> 118, e2110077118. <a href="https://doi.org/10.1073/pnas.2110077118">doi:10.1073/pnas.2110077118</a></li>
+            <li id="ref-thiemann2022">Thiemann, F. L., Schran, C., Rowe, P., Müller, E. A. &amp; Michaelides, A. (2022). Water flow in single-wall nanotubes: oxygen makes it slip, hydrogen makes it stick. <i>ACS Nano</i> 16. <a href="https://doi.org/10.1021/acsnano.2c02784">doi:10.1021/acsnano.2c02784</a></li>
+            <li id="ref-tanaka2024">Tanaka, S., Hamaguchi, S. &amp; Kino, H. (2024). Machine-learning-based force fields for molecular dynamics simulation of silicon and silicon dioxide ion beam etching. AVS 70, PS1-WeA-2 (conference abstract). <a href="https://avsconferences.org/AVS2024/Sessions/Schedule/82429">avsconferences.org</a></li>
+            <li id="ref-natarajan2025">Kondati Natarajan, S., Schneider, J., Pandey, N., Wellendorff, J. &amp; Smidstrup, S. (2025). On simulating thin-film processes at the atomic scale using machine learned force fields. <a href="https://arxiv.org/abs/2505.01118">arXiv:2505.01118</a></li>
+            <li id="ref-kim2023">Kim, G., Na, B., Kim, G., Cho, H., Kang, S., Lee, H. S., Choi, S., Kim, H., Lee, S. &amp; Kim, Y. (2023). Benchmark of machine learning force fields for semiconductor simulations: datasets, metrics, and comparative analysis. <i>Advances in Neural Information Processing Systems</i> 36, Datasets and Benchmarks Track. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/a1859debfb3b59d094f3504d5ebb6c25-Abstract.html">proceedings.neurips.cc</a></li>
+            <li id="ref-oehrlein2024">Oehrlein, G. S., Brandstadter, S. M., Bruce, R. L. et al. (2024). Future of plasma etching for microelectronics: challenges and opportunities. <i>J. Vac. Sci. Technol. B</i> 42, 041501. <a href="https://doi.org/10.1116/6.0003579">doi:10.1116/6.0003579</a></li>
+            <li id="ref-kahle2022">Kahle, L. &amp; Zipoli, F. (2022). Quality of uncertainty estimates from neural network potential ensembles. <i>Phys. Rev. E</i> 105, 015311. <a href="https://doi.org/10.1103/PhysRevE.105.015311">doi:10.1103/PhysRevE.105.015311</a></li>
+            <li id="ref-draney2025">Draney, J. S., Panagiotopoulos, A. Z. &amp; Graves, D. B. (2025). Development and transferability of neural-network models for plasma–surface interactions. <i>J. Vac. Sci. Technol. A</i> 43, 063002. <a href="https://doi.org/10.1116/6.0004843">doi:10.1116/6.0004843</a></li>
+            <li id="ref-batatia2023">Batatia, I. et al. (2023). A foundation model for atomistic materials chemistry. <a href="https://arxiv.org/abs/2401.00096">arXiv:2401.00096</a></li>
+            <li id="ref-shim2024">Shim, S., Vella, J. R., Draney, J. S., Na, D. &amp; Graves, D. B. (2024). An examination of the performance of molecular dynamics force fields: silicon and silicon dioxide reactive ion etching. <i>J. Vac. Sci. Technol. A</i> 42, 023207. <a href="https://doi.org/10.1116/6.0003425">doi:10.1116/6.0003425</a></li>
+            <li id="ref-bocquet2013">Bocquet, L. &amp; Barrat, J.-L. (2013). On the Green–Kubo relationship of the liquid–solid friction coefficient. <i>J. Chem. Phys.</i> 139, 044704. <a href="https://arxiv.org/abs/1306.2203">arXiv:1306.2203</a></li>
+            <li id="ref-hong2025">Hong, C., An, H., Oh, S. &amp; Han, S. (2025). Atomistic simulation of reactive ion etching using machine learning interatomic potentials. Gaseous Electronics Conference 2025, workshop "Combining Plasma Modeling and Artificial Intelligence" (conference abstract). <a href="https://archive.aps.org/gec/2025/im2/2">archive.aps.org</a></li>
+          </ol>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Website version 2026.11. A guide to model selection and validation, based on the literature and on the methods of Project 2: it reports no new simulation results.</p></div>
+    <div><p>Website code is released under the MIT licence. Text is © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
+  </div>
+</footer>
+<script src="../../js/nav.js" defer></script>
+<script src="../../js/open-target.js" defer></script>
+</body>
+</html>
