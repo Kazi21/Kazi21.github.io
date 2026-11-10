@@ -417,3 +417,26 @@ Accepted:
   Node identical; ranking and controller decisions unchanged; IB13 drawn positions equal to the stored ones). Only
   details that depend on wall-clock time or rendering differ: the marker travel and colour classes of the IB7 frame, and
   the playing time and round-off of IB13. The record for the released files.
+
+
+## Release 2026.12 (10 November 2026; written before the run)
+
+- **No criterion or threshold changed; one test fixture changed (IB10).** The release adds a third experiment, the
+  flow benchmark (`lab/continuum/flow.html`, criteria in `../flow/TOLERANCES.md`). The experiment switch on the ion
+  and water pages therefore has three entries instead of two, with the flow benchmark first. IB10's criterion is
+  unchanged ("both experiment switches link correctly"); its procedure expected exactly two entries and now expects
+  three: the water page marks its entry (the third) as current and no other, the ion page marks its entry (the
+  second), the first entry of both leads to `flow.html`, and the two links between the ion and water pages work as
+  before. The flow page's own entry and links are tested by PB9 of the flow criteria.
+- **Files that the ion page loads changed:** the page itself (switch, version 2026.12) and `ions/ions.css` (on screens
+  narrower than 600 px the switch is a two-column grid, so that three entries fill two tidy rows). No solver, controller,
+  data or 3D file changed. The browser suite IB1–IB13 is run again on the final files; the Node suite (I1–I19) is not
+  rerun, because none of the files it tests changed. The record of run 2 of 2026.11 is kept as
+  `../results/browser_ions.2026.11-run2.json`.
+- **Browser run 1 of 2026.12 (10 Nov 2026): 13 PASS** (`../results/browser_ions.json`, IB1–IB13, Chromium 141.0.7390.37 on
+  a 2-core machine, nothing else running; 10 min 44 s). IB10 with the three-entry switch: both pages show three entries
+  with the flow benchmark first, each marks only its own entry as current, and the links between the ion and water
+  pages work. Every number as in run 2 of 2026.11 (default experiment 3.76 pA, page and Node identical; ranking and
+  controller decisions unchanged; IB13 drawn positions equal to the stored ones). Only details that depend on wall-clock
+  time or rendering differ (the colour classes of the IB7 frame, the playing time and round-off of IB13). The record for
+  the released files; the ion page was rebuilt with it afterwards.

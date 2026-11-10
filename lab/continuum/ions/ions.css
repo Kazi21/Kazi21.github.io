@@ -7,6 +7,12 @@
 .ion-switch a[aria-current="page"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
 .ion-switch a:hover:not([aria-current]) { background: var(--accent-tint); }
 .ion-switch a:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+/* three experiments (release 2026.12): on a narrow screen two entries share the first row and the third takes the second */
+@media (max-width: 599px) {
+  .ion-switch { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .ion-switch a { justify-content: center; text-align: center; }
+  .ion-switch a:nth-child(3) { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--control); }
+}
 .ion-question { font-size: var(--step-2); font-weight: 600; color: var(--heading); margin: 0 0 var(--space-1); max-width: 48ch; line-height: var(--leading-tight); text-wrap: balance; }
 
 .ion-viewbar { display: flex; flex-wrap: wrap; gap: 0.5rem 0.8rem; align-items: center; margin-bottom: 0.6rem; }

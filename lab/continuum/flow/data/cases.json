@@ -1,0 +1,212 @@
+{
+ "schema": "continuum-lab-flow-cases/1",
+ "release": "2026.12",
+ "extracted": "2026-11-10",
+ "extraction": {
+  "method": "Values were taken from the published figures (300 ppi images in the article PDF). Axes were calibrated by a straight-line fit to the detected tick marks; a marker centre is the centroid of its colour-segmented blob (for a triangle, the centre of its bounding box, where the plotting program places the value), or, for a marker partly hidden by another, the centre implied by its visible edge and the marker size; a curve is a least-squares parabola through column-wise centroids.",
+  "uncertainty": "Each stated uncertainty is 2.5 pixels on the figure axis, taken as one standard uncertainty. It is an extraction uncertainty, not a statistical uncertainty of the simulation.",
+  "script": "tools/continuum/flow/digitize_fig.py",
+  "checks": "The horizontal marker positions return the four tube diameters within 0.005 nm. The (6,6) point of Fig. 7a, for which Eq. 5 gives +0.00005 pL/s, reads +0.00004 pL/s."
+ },
+ "cases": [
+  {
+   "id": "pccp2024-water-cnt2020",
+   "enabled": true,
+   "label": "Water in a (20,20) carbon nanotube",
+   "short": "Water · (20,20) tube · 2.712 nm",
+   "evidence": "Reconstruction",
+   "evidence_short": "The inputs were measured in the same driven run as the reference. Not a prediction.",
+   "evidence_note": "The slip velocity was measured in the same driven simulation that supplies the reference points, so the comparison shows how well the model form reconstructs that run. It is not an independent prediction.",
+   "source": {
+    "citation": "K. E. Karim, M. Barisik, C. Bakli and B. Kim, Estimating water transport in carbon nanotubes: a critical review and inclusion of scale effects, Phys. Chem. Chem. Phys. 26, 19069–19082 (2024)",
+    "doi": "10.1039/D4CP01068J",
+    "equations": "Eqs. 1–2 (Hagen–Poiseuille), Eqs. 3 and 5 (slip-velocity form), Eq. 8 (Navier condition)"
+   },
+   "system": "SPC/E water at 300 K in an armchair (20,20) carbon nanotube between two reservoirs; flow driven by moving specular reflection walls (pp. 19071–19074)",
+   "geometry": {
+    "D_nm": {
+     "value": 2.712,
+     "u": null,
+     "source": "text, p. 19071"
+    },
+    "Dp_ratio": {
+     "value": 0.291,
+     "u": 0.008,
+     "source": "Fig. 8a, (D − D′)/D"
+    },
+    "Dp_nm": {
+     "value": 1.923,
+     "u": 0.022,
+     "source": "from Fig. 8a; the D′ curve of Fig. 6a ends at r = 0.966 ± 0.006 nm"
+    },
+    "L_nm": {
+     "value": 6.4,
+     "alt": 6.0,
+     "u": null,
+     "source": "text, pp. 19076–19077 (“6.4 nm CNT”); Fig. 1 gives L = 6 nm for the (6,6) diagram"
+    }
+   },
+   "drives": [
+    {
+     "id": "published",
+     "label": "3.25 MPa (published drive)",
+     "dP_MPa": {
+      "value": 3.25,
+      "u": 0.21,
+      "source": "Fig. 8b"
+     },
+     "planes": "difference between the bulk regions of the feed and permeate reservoirs (p. 19074)",
+     "gradient": "ΔP/L, the source paper's convention"
+    }
+   ],
+   "viscosity_mPa_s": {
+    "interfacial": {
+     "label": "Interfacial viscosity",
+     "value": 0.152,
+     "u": 0.008,
+     "source": "Fig. 8c"
+    },
+    "green_kubo": {
+     "label": "Green–Kubo viscosity",
+     "value": 0.648,
+     "u": 0.008,
+     "source": "Fig. 8c; triangle marker, centre of its bounding box"
+    },
+    "experimental": {
+     "label": "Experimental viscosity",
+     "value": 0.889,
+     "u": 0.008,
+     "source": "Fig. 8c, dashed level"
+    }
+   },
+   "slip_velocity_m_s": {
+    "D": {
+     "value": 3.89,
+     "u": 0.15,
+     "source": "Fig. 5a; marker partly hidden, centre from its visible lower edge"
+    },
+    "Dp": {
+     "value": 4.04,
+     "u": 0.15,
+     "source": "Fig. 5a"
+    }
+   },
+   "md": {
+    "profile": {
+     "r_nm": [
+      0.115,
+      0.343,
+      0.567,
+      0.795,
+      1.022,
+      1.247
+     ],
+     "u_m_s": [
+      3.8,
+      3.62,
+      3.88,
+      3.8,
+      3.8,
+      4.04
+     ],
+     "u_r_nm": 0.006,
+     "u_u_m_s": 0.04,
+     "source": "Fig. 6a, six concentric bins"
+    },
+    "flow_pL_s": {
+     "value": 0.0232,
+     "u": 0.0002,
+     "source": "Fig. 9b; marker partly covered by another, centre from its visible lower edge",
+     "definition": "∂N/∂t × V_water (p. 19077)"
+    }
+   },
+   "source_curves": {
+    "fig6a_D": {
+     "c0_m_s": 5.532,
+     "c2_m_s_nm2": 0.808,
+     "u_c2": 0.032,
+     "r_end_nm": 1.356,
+     "u_end_m_s": 0.04,
+     "samples": 65,
+     "rms_m_s": 0.007,
+     "source": "Fig. 6a, dashed curve “at D”"
+    },
+    "fig6a_Dp": {
+     "c0_m_s": 4.805,
+     "c2_m_s_nm2": 0.82,
+     "u_c2": 0.032,
+     "r_end_nm": 0.966,
+     "u_r_end_nm": 0.006,
+     "u_end_m_s": 0.04,
+     "samples": 45,
+     "rms_m_s": 0.006,
+     "source": "Fig. 6a, solid curve “at D′”"
+    },
+    "flow_pL_s": {
+     "D_experimental": {
+      "value": 0.023,
+      "u": 0.0002,
+      "source": "Fig. 7a, Eq. 5 at D with V_s and experimental viscosity"
+     },
+     "D_green_kubo": {
+      "value": 0.0233,
+      "u": 0.0002,
+      "source": "Fig. 7c, Eq. 5 with Green–Kubo viscosity; triangle marker, centre of its bounding box"
+     },
+     "D_interfacial": {
+      "value": 0.0266,
+      "u": 0.0002,
+      "source": "Fig. 7c, Eq. 5 with interfacial viscosity"
+     },
+     "Dp_experimental": {
+      "value": 0.0114,
+      "u": 0.0002,
+      "source": "Fig. 7a, Eq. 5 at D′; triangle marker, centre of its bounding box"
+     },
+     "D_interfacial_fig9b": {
+      "value": 0.0244,
+      "u": 0.0002,
+      "source": "Fig. 9b, Eq. 5 with D, V_s and interfacial viscosity; triangle marker, centre of its bounding box. Not used by a check"
+     }
+    }
+   },
+   "unresolved": [
+    "Tube length: 6.4 nm in the text (pp. 19076–19077), 6 nm in Fig. 1. The benchmark uses 6.4 nm, which is 26 armchair unit cells; with 6 nm the parabolic part of the model is 6.7 % larger.",
+    "Slip velocity at the wall position: 3.89 ± 0.15 m/s from Fig. 5a (marker partly hidden); the published curve of Fig. 6a ends at 4.05 m/s.",
+    "The published profile curves (Fig. 6a) have the curvature of the interfacial viscosity; the published flow rate of Fig. 7a uses the experimental viscosity. The benchmark uses one viscosity for both outputs.",
+    "Fig. 4a shows a different molecular-dynamics profile for the same tube (nine points, 5.9 to 4.0 m/s). The benchmark uses the six points of Fig. 6a, which agree with the published flow rate.",
+    "Fig. 9b plots Eq. 5 with D, the slip velocity and the interfacial viscosity at 0.0244 pL/s; Fig. 7c plots the same combination at 0.0266 pL/s. The published inputs return the Fig. 7c value.",
+    "Flow definition: the paper converts the molecule count with a molecular volume V_water that it does not state.",
+    "Slip-length forms (Eqs. 4, 6 and 7) are not enabled for this case: the slip-length marker at D is hidden in Fig. 5b and the end-loss coefficient c of Eq. 7 is not stated."
+   ]
+  },
+  {
+   "id": "pccp2024-water-cnt99",
+   "enabled": false,
+   "label": "Water in a (9,9) carbon nanotube",
+   "short": "Water · (9,9) tube · 1.22 nm",
+   "reason": "Not yet enabled: the source curves of Fig. 6b have not been reproduced."
+  },
+  {
+   "id": "pccp2024-water-cnt66",
+   "enabled": false,
+   "label": "Water in a (6,6) carbon nanotube",
+   "short": "Water · (6,6) tube · 0.814 nm",
+   "reason": "Not yet enabled: for this single-file tube the flow definition is unresolved, and the source curves of Fig. 6c have not been reproduced."
+  },
+  {
+   "id": "pccp2024-water-cnt1212",
+   "enabled": false,
+   "label": "Water in a (12,12) carbon nanotube",
+   "short": "Water · (12,12) tube · 1.627 nm",
+   "reason": "Not yet enabled: the paper gives the flow rate but no molecular-dynamics velocity profile for this tube; none will be constructed."
+  },
+  {
+   "id": "pre2021-argon-cnt2020",
+   "enabled": false,
+   "label": "Liquid argon in a (20,20) carbon nanotube (Phys. Rev. E 103, 053115, 2021)",
+   "short": "Liquid argon · (20,20) tube · three pressure drops",
+   "reason": "Not yet enabled as an equilibrium-input comparison: the flow-rate unit of Fig. 9, the viscosity behind the friction-to-slip conversion and the independence of the inputs have to be confirmed first."
+  }
+ ]
+}

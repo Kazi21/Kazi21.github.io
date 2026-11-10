@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Continuum Lab: published molecular-flow benchmark — Kazi Ehsanul Karim</title>
+<meta name="description" content="A continuum flow model with molecular boundary inputs, set against published molecular dynamics of water in a (20,20) carbon nanotube: velocity profile, flow rate and the difference between them, with the case sheet and the checks. Simulation Lab, by Kazi Ehsanul Karim.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="The Continuum Lab: published molecular-flow benchmark">
+<meta property="og:description" content="A continuum flow model with molecular boundary inputs, set against published molecular dynamics of the same nanotube.">
+<meta property="og:image" content="../../assets/icons/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+<meta name="theme-color" content="#F8FAFC">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="stylesheet" href="../../styles/layout.css">
+<link rel="stylesheet" href="../../styles/components.css">
+<link rel="stylesheet" href="continuum.css">
+<link rel="stylesheet" href="ions/ions.css">
+<link rel="stylesheet" href="flow/flow.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../../index.html">Kazi Ehsanul Karim</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <a href="../../index.html#research">Research</a>
+      <a href="../../index.html#lab" aria-current="page">Simulation Lab</a>
+      <a href="../../index.html#practice">Methods</a>
+      <a href="../../index.html#publications">Publications</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="section cl-top fb-top" id="top">
+  <div class="container">
+    <p class="project-kicker">Simulation Lab · published molecular-flow benchmark</p>
+    <h1 class="evidence-title cl-title">The Continuum Lab</h1>
+    <p class="cl-subtitle">Predict nanoflow from molecular boundaries</p>
+    <nav class="ion-switch" aria-label="Continuum Lab experiments">
+      <a href="flow.html" aria-current="page">Flow benchmark</a>
+      <a href="./">Ion transport</a>
+      <a href="water.html">Water flow through a membrane</a>
+    </nav>
+    <p class="cl-lede">A continuum flow model with a molecular boundary condition, set against published molecular dynamics of the same tube.</p>
+
+    <div class="cl-app fb-app" id="flow-lab" data-version="2026.12">
+      <noscript><p class="fb-noscript">This page computes the comparison in your browser and needs JavaScript. The inputs are in <a href="flow/data/cases.json">flow/data/cases.json</a> and the check records in <a href="flow/data/validation.json">flow/data/validation.json</a>.</p></noscript>
+
+      <div class="fb-controls">
+        <div class="cl-field">
+          <label for="fb-case">Case</label>
+          <select id="fb-case" aria-describedby="fb-case-note"><option>Loading the case sheet…</option></select>
+          <p class="cl-small" id="fb-case-note">One case is enabled so far; <a href="#cases">four more are listed</a>.</p>
+        </div>
+        <div class="cl-field">
+          <label for="fb-drive">Pressure drop</label>
+          <select id="fb-drive" aria-describedby="fb-drive-note"><option>–</option></select>
+          <p class="cl-small" id="fb-drive-note">Reservoir to reservoir; one published drive.</p>
+        </div>
+        <div class="fb-status">
+          <p class="cl-label">Evidence status</p>
+          <p class="fb-status-line"><span class="fb-chip" id="fb-evidence">–</span></p>
+          <p class="cl-small"><span id="fb-evidence-note"></span> <a href="#status">What this means</a>.</p>
+        </div>
+      </div>
+
+      <div class="fb-stage">
+        <figure class="fb-fig">
+          <div class="cl-viewport fb-viewport">
+            <canvas id="fb-canvas" class="cl-canvas" role="img" aria-label="Cutaway of the tube along its axis with tracers that move at the velocity of the selected model.">Cutaway of the tube along its axis.</canvas>
+            <p class="cl-vbadge">Model velocity field</p>
+          </div>
+          <figcaption class="fb-cap">
+            <button type="button" class="btn btn-small" id="fb-play">Pause</button>
+            <span id="fb-cutaway-note">Cutaway along the tube axis. The tracers move with the selected model; they are not molecules.</span>
+          </figcaption>
+        </figure>
+        <figure class="fb-fig">
+          <div class="fb-plot-wrap" id="fb-plot-wrap">
+            <svg id="fb-plot" class="fb-plot" viewBox="0 0 560 340" role="img" aria-label="Velocity profile across the tube: the classical model, the selected model and the published molecular-dynamics points." aria-describedby="fb-plot-help" tabindex="0"></svg>
+            <div class="fb-tip" id="fb-tip" hidden></div>
+          </div>
+          <ul class="fb-legend" id="fb-legend"></ul>
+        </figure>
+      </div>
+
+      <div class="cl-strip fb-strip">
+        <div class="cl-tile"><p class="cl-tile-k">Flow rate, model</p><p class="cl-tile-v" id="fb-q">–</p><p class="cl-tile-s" id="fb-q-s">&nbsp;</p></div>
+        <div class="cl-tile"><p class="cl-tile-k">Mean velocity, model</p><p class="cl-tile-v" id="fb-v">–</p><p class="cl-tile-s" id="fb-v-s">&nbsp;</p></div>
+        <div class="cl-tile"><p class="cl-tile-k">Flow-rate difference from molecular dynamics</p><p class="cl-tile-v" id="fb-d">–</p><p class="cl-tile-s" id="fb-d-s">&nbsp;</p></div>
+      </div>
+      <p class="cl-stateline" id="fb-state" role="status" aria-live="polite"></p>
+
+      <details class="cl-card cl-more fb-panel" id="fb-choices">
+        <summary>Model, parameters and sensitivities</summary>
+        <div class="fb-panel-body">
+          <div class="fb-choice-grid">
+            <fieldset class="cl-field"><legend>Model</legend>
+              <div class="cl-radios fb-radios">
+                <label><input type="radio" name="fb-family" value="slip_velocity" checked> Slip-velocity form (Eqs. 3 and 5)</label>
+                <label><input type="radio" name="fb-family" value="classical"> Classical, no slip (Eqs. 1–2)</label>
+              </div>
+            </fieldset>
+            <fieldset class="cl-field"><legend>Where the liquid ends</legend>
+              <div class="cl-radios fb-radios">
+                <label><input type="radio" name="fb-boundary" value="D" checked> <span id="fb-lab-D">Wall position <i>D</i></span></label>
+                <label><input type="radio" name="fb-boundary" value="Dp"> <span id="fb-lab-Dp">First density peak <i>D</i>′</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="cl-field"><legend>Viscosity</legend>
+              <div class="cl-radios fb-radios">
+                <label><input type="radio" name="fb-viscosity" value="interfacial" checked> <span id="fb-lab-interfacial">Interfacial</span></label>
+                <label><input type="radio" name="fb-viscosity" value="green_kubo"> <span id="fb-lab-green_kubo">Green–Kubo</span></label>
+                <label><input type="radio" name="fb-viscosity" value="experimental"> <span id="fb-lab-experimental">Experimental</span></label>
+              </div>
+            </fieldset>
+          </div>
+          <p class="cl-small fb-rule">The default (slip-velocity form at the wall position with the interfacial viscosity) was fixed by rule before the comparison: it is the one combination for which the source shows both the profile (Fig. 6a) and the flow rate (Fig. 7c). Choosing a combination by its agreement would be tuning; the <a href="#agreement">agreement table</a> lists all twelve.</p>
+          <dl class="cl-tube-readout fb-params" id="fb-params"></dl>
+
+          <div class="fb-sens">
+            <div class="fb-sens-item">
+              <label class="cl-check"><input type="checkbox" id="fb-compare"> <span>Compare boundary definitions</span></label>
+              <p class="cl-small">Draws the same model at the other boundary position and shades the difference as “Boundary-choice sensitivity”. The band shows how far the result moves with the definition of where the liquid ends. It is not an uncertainty.</p>
+              <p class="cl-small" id="fb-compare-out" hidden></p>
+            </div>
+            <div class="fb-sens-item">
+              <label class="cl-check"><input type="checkbox" id="fb-ends"> <span>Entrance-resistance sensitivity (<i>c</i> = 3, an assumption)</span></label>
+              <p class="cl-small">Adds a resistance <i>cμ</i>/<i>R</i>³ for the two ends in series with the tube and computes the profile with the interior pressure drop only. This changes the model: the source’s Eqs. 3 and 5 assign the whole pressure drop to the tube. See <a href="#model">Model and equations</a>.</p>
+              <div class="fb-ends-out" id="fb-ends-out" hidden></div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="section section-band" id="details">
+  <div class="container cl-docs">
+    <details class="disclosure" id="status">
+      <summary>Status: a reconstruction, not a prediction</summary>
+      <div class="disclosure-body cl-doc">
+        <p>The slip velocity that enters the model was measured in the same driven simulation that supplies the reference points. The comparison therefore shows how well this model form, with these inputs, reconstructs that one run. It does not test a prediction.</p>
+        <p>Three reports are kept apart:</p>
+        <ol>
+          <li><b>Numerical verification.</b> Does the code solve the stated equations? Pass or fail.</li>
+          <li><b>Source-curve reproduction.</b> With the parameters read from the source paper, does the code return the model curves and flow rates that the paper plots? Pass or fail, within the extraction uncertainty.</li>
+          <li><b>Agreement with molecular dynamics.</b> The differences between the model and the published simulation points. Reported as numbers, without a verdict.</li>
+        </ol>
+        <p>No case is called a qualified prediction until two things exist: an accuracy requirement written down for a stated use, and a test of the model against it with inputs obtained independently of the reference run, on a condition that was not used to choose those inputs. No published case provides such a condition yet.</p>
+        <p>Evidence labels on this page: <b>Reconstruction</b>, the inputs were measured in the same driven run as the reference. <b>Equilibrium-input comparison</b>, the inputs come from equilibrium simulations and are compared with driven runs; no such case is enabled yet.</p>
+      </div>
+    </details>
+
+    <details class="disclosure" id="agreement">
+      <summary>Agreement with molecular dynamics (reported, not judged)</summary>
+      <div class="disclosure-body cl-doc"><div id="fb-agreement"><p>Loading the case sheet…</p></div></div>
+    </details>
+
+    <details class="disclosure" id="case">
+      <summary>Case sheet</summary>
+      <div class="disclosure-body cl-doc"><div id="fb-case-sheet"><p>Loading the case sheet…</p></div></div>
+    </details>
+
+    <details class="disclosure" id="checks">
+      <summary>Checks</summary>
+      <div class="disclosure-body cl-doc"><div id="fb-checks"><p>Loading the check records…</p></div></div>
+    </details>
+
+    <details class="disclosure" id="cases">
+      <summary>Cases not yet enabled</summary>
+      <div class="disclosure-body cl-doc">
+        <p>A case is enabled when its case sheet names the source, units, parameters, pressure planes, flow definition and unresolved items, and when its source-curve reproduction passes. Cases are added one at a time.</p>
+        <div id="fb-disabled"><p>Loading the case sheet…</p></div>
+      </div>
+    </details>
+
+    <details class="disclosure" id="model">
+      <summary>Model and equations</summary>
+      <div class="disclosure-body cl-doc">
+        <h3>Flow in the tube</h3>
+        <p>Steady, fully developed flow of a Newtonian liquid with one viscosity <i>μ</i> in a cylinder of radius <i>R</i>, driven by a pressure gradient <i>G</i>. Two forms of the source paper are enabled for this case.</p>
+        <div class="cl-table-wrap"><table class="cl-table fb-eq-table">
+          <thead><tr><th scope="col">Model</th><th scope="col">Velocity profile</th><th scope="col">Flow rate</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Classical, no slip (Eqs. 1–2)</th><td><i>u</i>(<i>r</i>) = (<i>R</i>²<i>G</i>/4<i>μ</i>)(1 − <i>r</i>²/<i>R</i>²)</td><td><i>Q</i> = π<i>R</i>⁴<i>G</i>/(8<i>μ</i>)</td></tr>
+            <tr><th scope="row">Slip-velocity form (Eqs. 3 and 5)</th><td><i>u</i>(<i>r</i>) = (<i>R</i>²<i>G</i>/4<i>μ</i>)(1 − <i>r</i>²/<i>R</i>²) + <i>u</i><sub>s</sub></td><td><i>Q</i> = π<i>R</i>⁴<i>G</i>/(8<i>μ</i>) + π<i>R</i>²<i>u</i><sub>s</sub></td></tr>
+          </tbody>
+        </table></div>
+        <p>The slip velocity <i>u</i><sub>s</sub> is the liquid velocity at the boundary, taken from the molecular simulation. The pressure gradient is <i>G</i> = Δ<i>P</i>/<i>L</i>, with Δ<i>P</i> the difference between the bulk regions of the two reservoirs and <i>L</i> the tube length. That is the source paper’s convention; it assigns the whole pressure drop to the tube.</p>
+        <h3>Where the liquid ends</h3>
+        <p>The source paper compares two definitions of the radius: half the tube diameter <i>D</i> between carbon centres (wall position) and half the diameter <i>D</i>′ of the first density peak of the water. Each has its own slip velocity. Neither is asserted here to be the correct one. The switch “Compare boundary definitions” shows how far the model moves between them; that band is a sensitivity to a definition, not an uncertainty.</p>
+        <h3>Viscosity</h3>
+        <p>Three values from the source paper (Fig. 8c): the interfacial viscosity from non-equilibrium molecular dynamics (local shear stress over shear rate), the Green–Kubo viscosity from equilibrium molecular dynamics, and the experimental viscosity of water. The source also plots a bulk-liquid viscosity, which lies between the last two for this tube and is not offered separately. The model uses one viscosity across the whole section.</p>
+        <h3>Equivalent slip length</h3>
+        <p>The Navier condition (Eq. 8) relates the slip velocity to the wall shear rate, <i>u</i><sub>s</sub> = <i>L</i><sub>s</sub> |d<i>u</i>/d<i>r</i>| at <i>r</i> = <i>R</i>, which gives <i>L</i><sub>s</sub> = 2<i>μu</i><sub>s</sub>/(<i>GR</i>). The page reports this length for information. The source paper’s own slip-length forms (Eqs. 4 and 6) are not enabled for this case; the case sheet says why.</p>
+        <h3>Entrance-resistance sensitivity</h3>
+        <p>The source paper’s Eq. 7 puts a resistance for the two ends in series with the tube: <i>Q</i> = Δ<i>P</i> / (<i>R</i><sub>ends</sub> + <i>R</i><sub>tube</sub>), with <i>R</i><sub>ends</sub> = <i>cμ</i>/<i>R</i>³ and <i>R</i><sub>tube</sub> = 8<i>μL</i> / [π(<i>R</i>⁴ + 4<i>R</i>³<i>L</i><sub>s</sub>)]. It does not give a value for <i>c</i>. The sensitivity uses <i>c</i> = 3, Sampson’s result for a circular opening in a thin plane wall without slip, both sides together <span class="ion-cite">[<a href="#fb-ref-1">1</a>]</span>, and the equivalent slip length above. The profile is computed with the interior pressure drop only, Δ<i>P</i> <i>R</i><sub>tube</sub>/(<i>R</i><sub>ends</sub> + <i>R</i><sub>tube</sub>), so no loss is counted twice.</p>
+        <p>Because it changes the model, this is reported as a sensitivity, apart from the reproduction of the source curves. The value of <i>c</i> for the geometry of this simulation is not known.</p>
+        <h3>Uncertainty</h3>
+        <p>Every input was read from a published figure and carries an extraction uncertainty of 2.5 pixels on the figure axis, taken as one standard uncertainty. The uncertainty of the model flow rate propagates those of the pressure drop, the viscosity, the slip velocity and, at <i>D</i>′, the boundary diameter to first order. It says how well the figures could be read. It is not a statistical uncertainty of the simulation.</p>
+        <ol class="ion-refs">
+          <li id="fb-ref-1">Sampson, R. A. (1891). On Stokes’s current function. <i>Phil. Trans. R. Soc. A</i> 182, 449.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="disclosure" id="limits">
+      <summary>Limitations</summary>
+      <div class="disclosure-body cl-doc">
+        <ul>
+          <li>One tube, one pressure drop, one temperature, one published simulation. Nothing here says how the result changes with diameter, drive or temperature.</li>
+          <li>The inputs were read from figures, not taken from the simulation files. Each carries an extraction uncertainty; the case sheet lists the items that the original numbers would settle.</li>
+          <li>The model is a continuum description with one viscosity and a sharp boundary. For water in a tube of this size both are definitions with more than one reasonable choice, which is why the page offers three viscosities and two boundary positions and asserts none of them.</li>
+          <li>The slip velocity was measured in the driven run that also supplies the reference, so the comparison cannot count as a prediction.</li>
+          <li>End resistance is not part of the source’s Eqs. 3 and 5. The sensitivity uses an assumed coefficient.</li>
+          <li>The open items of the case sheet (tube length, slip velocity at the wall position, flow definition and others) are unresolved.</li>
+          <li>The page was checked in headless Chromium only; Safari, Firefox, real phones and screen readers were not tested.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="disclosure" id="credits">
+      <summary>Credits and licences</summary>
+      <div class="disclosure-body cl-doc">
+        <p>Model code, checks and page: Kazi Ehsanul Karim (page code MIT). The data are values read from the figures of K. E. Karim, M. Barisik, C. Bakli and B. Kim, <i>Phys. Chem. Chem. Phys.</i> 26, 19069–19082 (2024), <a href="https://doi.org/10.1039/D4CP01068J">doi:10.1039/D4CP01068J</a>; the figures themselves are not reproduced here. Code drafted with AI assistance and checked by the tests listed under Checks; scientific decisions and validation design are the author’s.</p>
+      </div>
+    </details>
+    <p class="cl-back"><a href="../../index.html#lab">Back to the Simulation Lab</a> · <a href="./">Continuum Lab: ion transport</a> · <a href="water.html">Continuum Lab: water flow through a membrane</a></p>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><p class="version">Simulation Lab, The Continuum Lab (flow benchmark). Website version 2026.12.</p></div>
+    <div><p>Page code: MIT. Data: values read from the figures of the cited article.</p></div>
+    <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
+  </div>
+</footer>
+<script src="flow/core.js"></script>
+<script src="flow/app.js"></script>
+<script src="../../js/nav.js" defer></script>
+</body>
+</html>

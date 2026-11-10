@@ -4,6 +4,7 @@
 // IB1 procedure amended for release 2026.10 (criterion unchanged): a dedicated worker is also counted through
 // Playwright's 'worker' event, because the 'request' event of the Chromium build used for 2026.10 does not report it. WebGL runs on SwiftShader in headless Chromium. Numbers are compared with the Node solver
 // (lab/continuum/ions/core.js, params.js) run on the same inputs; the page state is read through window.__ionLab.
+// IB10 fixture for release 2026.12 (criterion unchanged): the experiment switch has three entries, the flow benchmark first.
 // Usage: node tools/continuum/ions/browser_ions.js [base URL]   (serve the repository root first)
 // Writes tools/continuum/results/browser_ions.json; exits 1 if any test fails.
 'use strict';
@@ -237,8 +238,10 @@ const req = (p) => p.evaluate(() => (window.__ionLab ? window.__ionLab.state().r
   await wc.close();
   const allReq = reqs.map((r) => r.url).concat(wreq);
   const external = [...new Set(allReq.filter((u) => !u.startsWith(BASE) && !u.startsWith('data:') && !u.startsWith('blob:')))];
-  const switchesOK = sw1.length === 2 && sw1[1].cur === 'page' && sw2.length === 2 && sw2[0].cur === 'page' && atIon && atWater;
-  rec('IB10', 'Water experiment', wQ > 0 && switchesOK && external.length === 0 && ew.length === 0, `water.html converged, Q = ${e2(wQ)} m³ s⁻¹; switch on the water page marks it current and leads to the ion page: ${atIon}; switch on the ion page leads back: ${atWater}; external requests from both pages: ${external.length ? external.join(', ') : 'none'}; page errors ${ew.length}`);
+  // release 2026.12: the switch has three entries (flow benchmark, ion transport, water flow); criterion unchanged
+  const one = (sw, i) => sw.length === 3 && sw[i].cur === 'page' && sw.filter((a) => a.cur).length === 1 && /\/lab\/continuum\/flow\.html$/.test(sw[0].href);
+  const switchesOK = one(sw1, 2) && one(sw2, 1) && atIon && atWater;
+  rec('IB10', 'Water experiment', wQ > 0 && switchesOK && external.length === 0 && ew.length === 0, `water.html converged, Q = ${e2(wQ)} m³ s⁻¹; switches with ${sw1.length} and ${sw2.length} entries, the flow benchmark first: ${/flow\.html$/.test((sw1[0] || {}).href || '') && /flow\.html$/.test((sw2[0] || {}).href || '')}; switch on the water page marks it current and leads to the ion page: ${atIon}; switch on the ion page marks it current and leads back: ${atWater}; external requests from both pages: ${external.length ? external.join(', ') : 'none'}; page errors ${ew.length}`);
 
   // ===================================================== IB11 the numerical controller in the page (release 2026.10)
   {

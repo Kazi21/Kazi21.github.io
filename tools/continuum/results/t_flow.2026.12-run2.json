@@ -1,0 +1,1329 @@
+{
+ "suite": "flow benchmark: numerical verification and source-curve reproduction",
+ "date": "2026-11-10T11:14:23.955Z",
+ "environment": "Node v22.22.0 on linux; Python 3.13.16, SciPy 1.18.1; case file of release 2026.12",
+ "case": "pccp2024-water-cnt2020",
+ "items": [
+  {
+   "id": "P1",
+   "name": "Zero drive",
+   "verdict": "PASS",
+   "detail": "largest |u| at 201 radii 0; Q = 0"
+  },
+  {
+   "id": "P2",
+   "name": "Reversal",
+   "verdict": "PASS",
+   "detail": "largest relative deviation of −u(r) and −Q under reversal 0.00e+0 (limit 1e-12)"
+  },
+  {
+   "id": "P3",
+   "name": "No-slip limit",
+   "verdict": "PASS",
+   "detail": "D: u(0) = 1.535745e+0 m/s, Q = 4.435662e-18 m³/s; Dp: u(0) = 7.721441e-1 m/s, Q = 1.121287e-18 m³/s; largest relative deviation from Hagen–Poiseuille 0.00e+0 (limit 1e-12)"
+  },
+  {
+   "id": "P4",
+   "name": "Flow rate equals the integral of the profile",
+   "verdict": "PASS",
+   "detail": "12 combinations; largest relative difference between Q and 2π∫u r dr (Simpson, 2000 intervals) 1.94e-15 (limit 1e-9)"
+  },
+  {
+   "id": "P5",
+   "name": "Mean velocity",
+   "verdict": "PASS",
+   "detail": "12 combinations; largest relative difference between Q/(πR²) and u_s + R²G/(8μ) 2.11e-16 (limit 1e-12)"
+  },
+  {
+   "id": "P6",
+   "name": "Equivalent slip length",
+   "verdict": "PASS",
+   "detail": "L_s = 2μu_s/(GR) = 1.7174 nm; largest relative difference between the slip-length and slip-velocity forms 2.21e-16 (limit 1e-12)"
+  },
+  {
+   "id": "P7",
+   "name": "Entrance resistance without double counting",
+   "verdict": "PASS",
+   "detail": "c = 3: interior fraction 0.397754, Q = 1.070216e-17 m³/s; c = 1: interior fraction 0.664582, Q = 1.788156e-17 m³/s; largest relative deviation among Q = ΔP/(R_ends + R_tube), the pressure-drop sum, the profile integral and the interior gradient 1.30e-15 (limit 1e-9)"
+  },
+  {
+   "id": "P8",
+   "name": "Units",
+   "verdict": "PASS",
+   "detail": "1 pL/s = 1e-15 m³/s; 1 MPa/nm = 1e+15 Pa/m; largest round-trip deviation 1.50e-16 (limit 1e-15)"
+  },
+  {
+   "id": "P9",
+   "name": "Independent implementation",
+   "verdict": "PASS",
+   "detail": "48 combinations (2 lengths × 2 families × 2 boundaries × 3 viscosities × with and without end resistance) compared with reference_flow.py (force balance and quadrature; Python 3.13.16, SciPy 1.18.1): largest relative difference 1.10e-15 at alt|classical|D|interfacial|no_ends (limit 1e-9)"
+  },
+  {
+   "id": "P10",
+   "name": "Guards",
+   "verdict": "PASS",
+   "detail": "8 of 8 probes refused (radius 0; viscosity −1; length 0; family \"plug\"; boundary \"X\"; viscosity \"bulk\"; a case that is not enabled; end resistance at zero drive)"
+  },
+  {
+   "id": "PR1",
+   "name": "Fig. 6a, curve at D: curvature",
+   "verdict": "PASS",
+   "detail": "curvature: model 0.835 ± 0.070 m s⁻¹ nm⁻², published 0.808 ± 0.032, z = +0.36 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)"
+  },
+  {
+   "id": "PR2",
+   "name": "Fig. 6a, curve at D: wall value",
+   "verdict": "PASS",
+   "detail": "wall value: model 3.89 ± 0.15 m/s, published 4.05 ± 0.040, z = −1.01 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)"
+  },
+  {
+   "id": "PR3",
+   "name": "Fig. 6a, curve at D′",
+   "verdict": "PASS",
+   "detail": "curvature: model 0.835 ± 0.070 m s⁻¹ nm⁻², published 0.820 ± 0.032, z = +0.20; end radius: model 0.962 ± 0.011 nm, published 0.966 ± 0.0060, z = −0.36; wall value: model 4.04 ± 0.15 m/s, published 4.04 ± 0.040, z = +0.00 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)"
+  },
+  {
+   "id": "PR4",
+   "name": "Fig. 7a, Eq. 5 at D, experimental viscosity",
+   "verdict": "PASS",
+   "detail": "D, experimental viscosity: model 0.0232 ± 0.00087 pL/s, published 0.0230 ± 0.00020, z = +0.26 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)"
+  },
+  {
+   "id": "PR5",
+   "name": "Fig. 7c, Eq. 5 at D, Green–Kubo and interfacial viscosity",
+   "verdict": "PASS",
+   "detail": "D, Green–Kubo viscosity: model 0.0235 ± 0.00087 pL/s, published 0.0231 ± 0.00020, z = +0.48; D, interfacial viscosity: model 0.0269 ± 0.00094 pL/s, published 0.0266 ± 0.00020, z = +0.32 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)"
+  },
+  {
+   "id": "PR6",
+   "name": "Fig. 7a, Eq. 5 at D′, experimental viscosity",
+   "verdict": "PASS",
+   "detail": "D′, experimental viscosity: model 0.0119 ± 0.00051 pL/s, published 0.0112 ± 0.00020, z = +1.32 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)"
+  }
+ ],
+ "counts": {
+  "PASS": 16,
+  "FAIL": 0
+ },
+ "verdict": "PASS",
+ "reproduction": {
+  "PR1": [
+   {
+    "what": "curvature",
+    "model": 0.8352179276315788,
+    "uModel": 0.06960543568728153,
+    "source": 0.808,
+    "uSource": 0.032,
+    "unit": "m s⁻¹ nm⁻²",
+    "z": 0.35528435455517005
+   }
+  ],
+  "PR2": [
+   {
+    "what": "wall value",
+    "model": 3.89,
+    "uModel": 0.15,
+    "source": 4.046301312,
+    "uSource": 0.04,
+    "unit": "m/s",
+    "z": -1.0068252583994346
+   }
+  ],
+  "PR3": [
+   {
+    "what": "curvature",
+    "model": 0.8352179276315788,
+    "uModel": 0.06960543568728153,
+    "source": 0.82,
+    "uSource": 0.032,
+    "unit": "m s⁻¹ nm⁻²",
+    "z": 0.19864449892870714
+   },
+   {
+    "what": "end radius",
+    "model": 0.9615,
+    "uModel": 0.011,
+    "source": 0.966,
+    "uSource": 0.006,
+    "unit": "nm",
+    "z": -0.3591390980104259
+   },
+   {
+    "what": "wall value",
+    "model": 4.04,
+    "uModel": 0.15,
+    "source": 4.03981208,
+    "uSource": 0.04,
+    "unit": "m/s",
+    "z": 0.0012104991323332085
+   }
+  ],
+  "PR4": [
+   {
+    "what": "D, experimental viscosity",
+    "model": 0.02322921988935361,
+    "uModel": 0.0008678953946335639,
+    "source": 0.023,
+    "uSource": 0.0002,
+    "unit": "pL/s",
+    "z": 0.2573649104831741
+   }
+  ],
+  "PR5": [
+   {
+    "what": "D, Green–Kubo viscosity",
+    "model": 0.023524286211167502,
+    "uModel": 0.000869253342504803,
+    "source": 0.0231,
+    "uSource": 0.0002,
+    "unit": "pL/s",
+    "z": 0.47567590795067116
+   },
+   {
+    "what": "D, interfacial viscosity",
+    "model": 0.026906478467697933,
+    "uModel": 0.0009420416604997126,
+    "source": 0.0266,
+    "uSource": 0.0002,
+    "unit": "pL/s",
+    "z": 0.3182412511431522
+   }
+  ],
+  "PR6": [
+   {
+    "what": "D′, experimental viscosity",
+    "model": 0.011925276581137003,
+    "uModel": 0.0005119615990888277,
+    "source": 0.0112,
+    "uSource": 0.0002,
+    "unit": "pL/s",
+    "z": 1.3195471976601205
+   }
+  ]
+ },
+ "reported": {
+  "note": "Retrospective differences between the model and the published molecular-dynamics points. Reported, not judged.",
+  "default_combination": "slip-velocity form at the wall position D with the interfacial viscosity, tube length 6.4 nm",
+  "flow_rate": {
+   "model_pL_s": 0.026906478467697933,
+   "md_pL_s": 0.0232,
+   "rel": 0.15976200291801446
+  },
+  "mean_velocity": {
+   "model_m_s": 4.65787263569079,
+   "md_m_s": 4.01623145435992
+  },
+  "profile": [
+   {
+    "r_nm": 0.115,
+    "md_m_s": 3.8,
+    "model_m_s": 5.414699514288651,
+    "rel": 0.42492092481280297
+   },
+   {
+    "r_nm": 0.343,
+    "md_m_s": 3.62,
+    "model_m_s": 5.327482717413652,
+    "rel": 0.4716803086778043
+   },
+   {
+    "r_nm": 0.567,
+    "md_m_s": 3.88,
+    "model_m_s": 5.15723189504523,
+    "rel": 0.32918347810444093
+   },
+   {
+    "r_nm": 0.795,
+    "md_m_s": 3.8,
+    "model_m_s": 4.89786666067023,
+    "rel": 0.28891227912374484
+   },
+   {
+    "r_nm": 1.022,
+    "md_m_s": 3.8,
+    "model_m_s": 4.553373509457237,
+    "rel": 0.19825618669927292
+   },
+   {
+    "r_nm": 1.247,
+    "md_m_s": 4.04,
+    "model_m_s": 4.126973876953125,
+    "rel": 0.02152818736463491
+   }
+  ],
+  "profile_rms_rel": 0.32522842014992936,
+  "profile_worst_rel": 0.4716803086778043,
+  "entrance_resistance_c3": {
+   "interior_fraction": 0.39775405210103304,
+   "Q_pL_s": 0.010702160838296048,
+   "Q_rel_to_md": -0.5386999638665497,
+   "equivalent_slip_length_nm": 1.7173551168595418
+  },
+  "by_combination": [
+   {
+    "family": "classical",
+    "boundary": "D",
+    "viscosity": "interfacial",
+    "Q_pL_s": 0.004435661975777614,
+    "Q_rel": -0.8088076734578615,
+    "profile_rms_rel": 0.739686827445254,
+    "profile_worst_rel": -0.9413430997640779,
+    "mean_velocity_m_s": 0.7678726356907897
+   },
+   {
+    "family": "classical",
+    "boundary": "D",
+    "viscosity": "green_kubo",
+    "Q_pL_s": 0.0010534697192471833,
+    "Q_rel": -0.9545918224462421,
+    "profile_rms_rel": 0.936194500065683,
+    "profile_worst_rel": -0.9860689861939685,
+    "mean_velocity_m_s": 0.18236975097656255
+   },
+   {
+    "family": "classical",
+    "boundary": "D",
+    "viscosity": "experimental",
+    "Q_pL_s": 0.0007584033974332929,
+    "Q_rel": -0.967310198386496,
+    "profile_rms_rel": 0.9539698536166296,
+    "profile_worst_rel": -0.9899709236941956,
+    "mean_velocity_m_s": 0.13128980947694044
+   },
+   {
+    "family": "classical",
+    "boundary": "Dp",
+    "viscosity": "interfacial",
+    "Q_pL_s": 0.0011212871342591503,
+    "Q_rel": -0.9516686580060711,
+    "profile_rms_rel": 0.8565479010430412,
+    "profile_worst_rel": -0.9357195951932025,
+    "mean_velocity_m_s": 0.38607207448858966
+   },
+   {
+    "family": "classical",
+    "boundary": "Dp",
+    "viscosity": "green_kubo",
+    "Q_pL_s": 0.0002663056943865482,
+    "Q_rel": -0.9885213062764419,
+    "profile_rms_rel": 0.9656152031966887,
+    "profile_worst_rel": -0.9847334038583856,
+    "mean_velocity_m_s": 0.09169211769104002
+   },
+   {
+    "family": "classical",
+    "boundary": "Dp",
+    "viscosity": "experimental",
+    "Q_pL_s": 0.0001917161354413845,
+    "Q_rel": -0.9917363734723541,
+    "profile_rms_rel": 0.9752286821583676,
+    "profile_worst_rel": -0.9890094245999627,
+    "mean_velocity_m_s": 0.06601007347836402
+   },
+   {
+    "family": "slip_velocity",
+    "boundary": "D",
+    "viscosity": "interfacial",
+    "Q_pL_s": 0.026906478467697933,
+    "Q_rel": 0.15976200291801446,
+    "profile_rms_rel": 0.32522842014992936,
+    "profile_worst_rel": 0.4716803086778043,
+    "mean_velocity_m_s": 4.65787263569079
+   },
+   {
+    "family": "slip_velocity",
+    "boundary": "D",
+    "viscosity": "green_kubo",
+    "Q_pL_s": 0.023524286211167502,
+    "Q_rel": 0.013977853929633799,
+    "profile_rms_rel": 0.10115962963595802,
+    "profile_worst_rel": 0.16889562027230465,
+    "mean_velocity_m_s": 4.072369750976563
+   },
+   {
+    "family": "slip_velocity",
+    "boundary": "D",
+    "viscosity": "experimental",
+    "Q_pL_s": 0.02322921988935361,
+    "Q_rel": 0.0012594779893797536,
+    "profile_rms_rel": 0.08225574075768302,
+    "profile_worst_rel": 0.1424803376588244,
+    "mean_velocity_m_s": 4.021289809476941
+   },
+   {
+    "family": "slip_velocity",
+    "boundary": "Dp",
+    "viscosity": "interfacial",
+    "Q_pL_s": 0.012854847579954769,
+    "Q_rel": -0.44591174224332897,
+    "profile_rms_rel": 0.22705185887704873,
+    "profile_worst_rel": 0.30217723619040093,
+    "mean_velocity_m_s": 4.42607207448859
+   },
+   {
+    "family": "slip_velocity",
+    "boundary": "Dp",
+    "viscosity": "green_kubo",
+    "Q_pL_s": 0.011999866140082166,
+    "Q_rel": -0.4827643905136997,
+    "profile_rms_rel": 0.11099442955364423,
+    "profile_worst_rel": 0.16023394442394934,
+    "mean_velocity_m_s": 4.13169211769104
+   },
+   {
+    "family": "slip_velocity",
+    "boundary": "Dp",
+    "viscosity": "experimental",
+    "Q_pL_s": 0.011925276581137003,
+    "Q_rel": -0.48597945770961193,
+    "profile_rms_rel": 0.10107989794988351,
+    "profile_worst_rel": 0.1478506492618208,
+    "mean_velocity_m_s": 4.106010073478364
+   }
+  ],
+  "alternative_length_reproduction": {
+   "length_nm": 6,
+   "note": "recorded for information, not judged",
+   "comparisons": [
+    {
+     "id": "PR1",
+     "text": "curvature: model 0.891 ± 0.074 m s⁻¹ nm⁻², published 0.808 ± 0.032, z = +1.03"
+    },
+    {
+     "id": "PR2",
+     "text": "wall value: model 3.89 ± 0.15 m/s, published 4.05 ± 0.040, z = −1.01"
+    },
+    {
+     "id": "PR3",
+     "text": "curvature: model 0.891 ± 0.074 m s⁻¹ nm⁻², published 0.820 ± 0.032, z = +0.88; end radius: model 0.962 ± 0.011 nm, published 0.966 ± 0.0060, z = −0.36; wall value: model 4.04 ± 0.15 m/s, published 4.04 ± 0.040, z = +0.00"
+    },
+    {
+     "id": "PR4",
+     "text": "D, experimental viscosity: model 0.0233 ± 0.00087 pL/s, published 0.0230 ± 0.00020, z = +0.31"
+    },
+    {
+     "id": "PR5",
+     "text": "D, Green–Kubo viscosity: model 0.0236 ± 0.00087 pL/s, published 0.0231 ± 0.00020, z = +0.55; D, interfacial viscosity: model 0.0272 ± 0.00095 pL/s, published 0.0266 ± 0.00020, z = +0.62"
+    },
+    {
+     "id": "PR6",
+     "text": "D′, experimental viscosity: model 0.0119 ± 0.00051 pL/s, published 0.0112 ± 0.00020, z = +1.34"
+    }
+   ]
+  }
+ },
+ "expected": {
+  "default|classical|D|interfacial|no_ends": {
+   "Q_m3_s": 4.435661975777614e-18,
+   "mean_velocity_m_s": 0.7678726356907897,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 1.5357452713815791,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    1.5246995142886515,
+    1.4374827174136515,
+    1.2672318950452306,
+    1.0078666606702305,
+    0.6633735094572372,
+    0.23697387695312505
+   ],
+   "Q_rel": -0.8088076734578615,
+   "profile_rms_rel": 0.739686827445254,
+   "profile_worst_rel": -0.9413430997640779
+  },
+  "default|classical|D|interfacial|ends": {
+   "Q_m3_s": 3.549638902967651e-18,
+   "mean_velocity_m_s": 0.6144901471430311,
+   "interior_fraction": 0.800250091722863,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 1.228980294286062,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    1.2201409261592981,
+    1.150345676460305,
+    1.0141024402440832,
+    0.8065453876457677,
+    0.5308647117896717,
+    0.1896383667676608
+   ],
+   "Q_rel": -0.8469983231479461,
+   "profile_rms_rel": 0.7896115370261808,
+   "profile_worst_rel": -0.9530598102060246
+  },
+  "default|classical|D|green_kubo|no_ends": {
+   "Q_m3_s": 1.0534697192471834e-18,
+   "mean_velocity_m_s": 0.18236975097656255,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.36473950195312504,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.36211613464355474,
+    0.34140214538574226,
+    0.30096757507324223,
+    0.23936833190917975,
+    0.15755120849609383,
+    0.0562812957763672
+   ],
+   "Q_rel": -0.9545918224462421,
+   "profile_rms_rel": 0.936194500065683,
+   "profile_worst_rel": -0.9860689861939685
+  },
+  "default|classical|D|green_kubo|ends": {
+   "Q_m3_s": 8.430392394548173e-19,
+   "mean_velocity_m_s": 0.14594140994646987,
+   "interior_fraction": 0.800250091722863,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.2918828198929397,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.2897834699628333,
+    0.2732070981593224,
+    0.24084932955796975,
+    0.1915545295658698,
+    0.126080369050047,
+    0.04503911210731943
+   ],
+   "Q_rel": -0.9636621017476372,
+   "profile_rms_rel": 0.9488631856504881,
+   "profile_worst_rel": -0.9888517049239308
+  },
+  "default|classical|D|experimental|no_ends": {
+   "Q_m3_s": 7.584033974332929e-19,
+   "mean_velocity_m_s": 0.13128980947694044,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.2625796189538808,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.26069103056453885,
+    0.24577882232494383,
+    0.21666957035643988,
+    0.17232365851729478,
+    0.11342269228065249,
+    0.040517468275449955
+   ],
+   "Q_rel": -0.967310198386496,
+   "profile_rms_rel": 0.9539698536166296,
+   "profile_worst_rel": -0.9899709236941956
+  },
+  "default|classical|D|experimental|ends": {
+   "Q_m3_s": 6.069123883589235e-19,
+   "mean_velocity_m_s": 0.10506468207619879,
+   "interior_fraction": 0.800250091722863,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.21012936415239752,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.20861802112059988,
+    0.19668452510907353,
+    0.17338984355129433,
+    0.13790202353448444,
+    0.09076651990104621,
+    0.03242410770380701
+   ],
+   "Q_rel": -0.9738399832603912,
+   "profile_rms_rel": 0.9631260637340081,
+   "profile_worst_rel": -0.9919742307663844
+  },
+  "default|classical|Dp|interfacial|no_ends": {
+   "Q_m3_s": 1.1212871342591504e-18,
+   "mean_velocity_m_s": 0.38607207448858966,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.7721441489771793,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.7610983918842517,
+    0.6738815950092516,
+    0.5036307726408307,
+    0.24426553826583064,
+    null,
+    null
+   ],
+   "Q_rel": -0.9516686580060711,
+   "profile_rms_rel": 0.8565479010430412,
+   "profile_worst_rel": -0.9357195951932025
+  },
+  "default|classical|Dp|interfacial|ends": {
+   "Q_m3_s": 9.5267288952188e-19,
+   "mean_velocity_m_s": 0.32801624805029256,
+   "interior_fraction": 0.8496243829207261,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.6560324961005851,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.6466477515466142,
+    0.57254623432137,
+    0.42789698442485424,
+    0.20753395721790535,
+    null,
+    null
+   ],
+   "Q_rel": -0.9589365133826776,
+   "profile_rms_rel": 0.8778752067112487,
+   "profile_worst_rel": -0.9453858007321302
+  },
+  "default|classical|Dp|green_kubo|no_ends": {
+   "Q_m3_s": 2.663056943865482e-19,
+   "mean_velocity_m_s": 0.09169211769104002,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.18338423538208007,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.18076086807250977,
+    0.16004687881469726,
+    0.11961230850219727,
+    0.05801306533813477,
+    null,
+    null
+   ],
+   "Q_rel": -0.9885213062764419,
+   "profile_rms_rel": 0.9656152031966887,
+   "profile_worst_rel": -0.9847334038583856
+  },
+  "default|classical|Dp|green_kubo|ends": {
+   "Q_m3_s": 2.2625981126144647e-19,
+   "mean_velocity_m_s": 0.07790385891194447,
+   "interior_fraction": 0.8496243829207261,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.15580771782388897,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.1535788409923209,
+    0.13597973065132538,
+    0.10162553380090288,
+    0.04928931483925252,
+    null,
+    null
+   ],
+   "Q_rel": -0.9902474219283859,
+   "profile_rms_rel": 0.9707747891226113,
+   "profile_worst_rel": -0.987029127673881
+  },
+  "default|classical|Dp|experimental|no_ends": {
+   "Q_m3_s": 1.9171613544138452e-19,
+   "mean_velocity_m_s": 0.06601007347836402,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.13202014695672806,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.13013155856738612,
+    0.11521935032779104,
+    0.08611009835928712,
+    0.04176418652014202,
+    null,
+    null
+   ],
+   "Q_rel": -0.9917363734723541,
+   "profile_rms_rel": 0.9752286821583676,
+   "profile_worst_rel": -0.9890094245999627
+  },
+  "default|classical|Dp|experimental|ends": {
+   "Q_m3_s": 1.6288670327033265e-19,
+   "mean_velocity_m_s": 0.056083767945606815,
+   "interior_fraction": 0.8496243829207261,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.11216753589121366,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.11056294514632775,
+    0.09789316942277643,
+    0.07316123918175235,
+    0.03548387120036177,
+    null,
+    null
+   ],
+   "Q_rel": -0.9929790214107616,
+   "profile_rms_rel": 0.9789480618294106,
+   "profile_worst_rel": -0.9906621391577995
+  },
+  "default|slip_velocity|D|interfacial|no_ends": {
+   "Q_m3_s": 2.6906478467697933e-17,
+   "mean_velocity_m_s": 4.65787263569079,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 1.7173551168595417e-9,
+   "amplitude_m_s": 1.5357452713815791,
+   "wall_velocity_m_s": 3.89,
+   "profile_m_s": [
+    5.414699514288651,
+    5.327482717413652,
+    5.15723189504523,
+    4.89786666067023,
+    4.553373509457237,
+    4.126973876953125
+   ],
+   "Q_rel": 0.15976200291801446,
+   "profile_rms_rel": 0.32522842014992936,
+   "profile_worst_rel": 0.4716803086778043
+  },
+  "default|slip_velocity|D|interfacial|ends": {
+   "Q_m3_s": 1.0702160838296047e-17,
+   "mean_velocity_m_s": 1.8526877150165306,
+   "interior_fraction": 0.39775405210103304,
+   "equivalent_slip_length_m": 1.7173551168595417e-9,
+   "amplitude_m_s": 0.6108489046870238,
+   "wall_velocity_m_s": 1.5472632626730185,
+   "profile_m_s": [
+    2.1537186727178064,
+    2.1190278383495027,
+    2.05130988387893,
+    1.9481463109321395,
+    1.8111227641161176,
+    1.6415205824732155
+   ],
+   "Q_rel": -0.5386999638665497,
+   "profile_rms_rel": 0.4908549080614197,
+   "profile_worst_rel": -0.5936830241402932
+  },
+  "default|slip_velocity|D|green_kubo|no_ends": {
+   "Q_m3_s": 2.3524286211167502e-17,
+   "mean_velocity_m_s": 4.072369750976563,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 7.230968913092808e-9,
+   "amplitude_m_s": 0.36473950195312504,
+   "wall_velocity_m_s": 3.89,
+   "profile_m_s": [
+    4.252116134643555,
+    4.231402145385743,
+    4.190967575073242,
+    4.12936833190918,
+    4.047551208496094,
+    3.9462812957763673
+   ],
+   "Q_rel": 0.013977853929633799,
+   "profile_rms_rel": 0.10115962963595802,
+   "profile_worst_rel": 0.16889562027230465
+  },
+  "default|slip_velocity|D|green_kubo|ends": {
+   "Q_m3_s": 3.578464260712098e-18,
+   "mean_velocity_m_s": 0.6194802035420148,
+   "interior_fraction": 0.15211786783198214,
+   "equivalent_slip_length_m": 7.230968913092808e-9,
+   "amplitude_m_s": 0.05548339535120847,
+   "wall_velocity_m_s": 0.5917385058664105,
+   "profile_m_s": [
+    0.646822840175947,
+    0.6436718722957541,
+    0.6375210516731141,
+    0.6281507061429331,
+    0.6157048597771884,
+    0.6002998965787326
+   ],
+   "Q_rel": -0.8457558508313751,
+   "profile_rms_rel": 0.8353375921948721,
+   "profile_worst_rel": -0.8514109166884325
+  },
+  "default|slip_velocity|D|experimental|no_ends": {
+   "Q_m3_s": 2.322921988935361e-17,
+   "mean_velocity_m_s": 4.021289809476941,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 1.0044267755842978e-8,
+   "amplitude_m_s": 0.2625796189538808,
+   "wall_velocity_m_s": 3.89,
+   "profile_m_s": [
+    4.150691030564539,
+    4.135778822324944,
+    4.10666957035644,
+    4.062323658517295,
+    4.003422692280653,
+    3.93051746827545
+   ],
+   "Q_rel": 0.0012594779893797536,
+   "profile_rms_rel": 0.08225574075768302,
+   "profile_worst_rel": 0.1424803376588244
+  },
+  "default|slip_velocity|D|experimental|ends": {
+   "Q_m3_s": 2.686915173569692e-18,
+   "mean_velocity_m_s": 0.4651410877279112,
+   "interior_fraction": 0.1156696258577825,
+   "equivalent_slip_length_m": 1.0044267755842978e-8,
+   "amplitude_m_s": 0.030372486282274486,
+   "wall_velocity_m_s": 0.4499548445867739,
+   "profile_m_s": [
+    0.48010887855665385,
+    0.4783839890088666,
+    0.4750169327246698,
+    0.4698874576939137,
+    0.4630744049666594,
+    0.4546414849828998
+   ],
+   "Q_rel": -0.8841846907944099,
+   "profile_rms_rel": 0.8768574317446537,
+   "profile_worst_rel": -0.8874649789646287
+  },
+  "default|slip_velocity|Dp|interfacial|no_ends": {
+   "Q_m3_s": 1.2854847579954769e-17,
+   "mean_velocity_m_s": 4.42607207448859,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 2.5153722948917963e-9,
+   "amplitude_m_s": 0.7721441489771793,
+   "wall_velocity_m_s": 4.04,
+   "profile_m_s": [
+    4.801098391884252,
+    4.713881595009251,
+    4.543630772640831,
+    4.284265538265831,
+    null,
+    null
+   ],
+   "Q_rel": -0.44591174224332897,
+   "profile_rms_rel": 0.22705185887704873,
+   "profile_worst_rel": 0.30217723619040093
+  },
+  "default|slip_velocity|Dp|interfacial|ends": {
+   "Q_m3_s": 4.243803488287369e-18,
+   "mean_velocity_m_s": 1.4611904180346633,
+   "interior_fraction": 0.33013254042038986,
+   "equivalent_slip_length_m": 2.5153722948917963e-9,
+   "amplitude_m_s": 0.2549099094725762,
+   "wall_velocity_m_s": 1.3337354632983751,
+   "profile_m_s": [
+    1.5849988089209965,
+    1.5562057062013237,
+    1.5000003697041764,
+    1.4143754659832277,
+    null,
+    null
+   ],
+   "Q_rel": -0.8170774358496824,
+   "profile_rms_rel": 0.5989951009196537,
+   "profile_worst_rel": -0.6277959300044138
+  },
+  "default|slip_velocity|Dp|green_kubo|no_ends": {
+   "Q_m3_s": 1.1999866140082166e-17,
+   "mean_velocity_m_s": 4.13169211769104,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 1.0591041241649669e-8,
+   "amplitude_m_s": 0.18338423538208007,
+   "wall_velocity_m_s": 4.04,
+   "profile_m_s": [
+    4.22076086807251,
+    4.200046878814697,
+    4.159612308502197,
+    4.098013065338135,
+    null,
+    null
+   ],
+   "Q_rel": -0.4827643905136997,
+   "profile_rms_rel": 0.11099442955364423,
+   "profile_worst_rel": 0.16023394442394934
+  },
+  "default|slip_velocity|Dp|green_kubo|ends": {
+   "Q_m3_s": 1.336989458447104e-18,
+   "mean_velocity_m_s": 0.4603408690077344,
+   "interior_fraction": 0.11141703106014392,
+   "equivalent_slip_length_m": 1.0591041241649669e-8,
+   "amplitude_m_s": 0.02043212704950596,
+   "wall_velocity_m_s": 0.45012480548298145,
+   "profile_m_s": [
+    0.47026464473547486,
+    0.46795675355095767,
+    0.4634516537745463,
+    0.4565884489856546,
+    null,
+    null
+   ],
+   "Q_rel": -0.9423711440324524,
+   "profile_rms_rel": 0.8768524171450922,
+   "profile_worst_rel": -0.880553697480787
+  },
+  "default|slip_velocity|Dp|experimental|no_ends": {
+   "Q_m3_s": 1.1925276581137003e-17,
+   "mean_velocity_m_s": 4.106010073478364,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 1.4711618224728992e-8,
+   "amplitude_m_s": 0.13202014695672806,
+   "wall_velocity_m_s": 4.04,
+   "profile_m_s": [
+    4.170131558567386,
+    4.155219350327791,
+    4.1261100983592875,
+    4.081764186520142,
+    null,
+    null
+   ],
+   "Q_rel": -0.48597945770961193,
+   "profile_rms_rel": 0.10107989794988351,
+   "profile_worst_rel": 0.1478506492618208
+  },
+  "default|slip_velocity|Dp|experimental|ends": {
+   "Q_m3_s": 9.930023324218118e-19,
+   "mean_velocity_m_s": 0.3419021397256957,
+   "interior_fraction": 0.08326870455923086,
+   "equivalent_slip_length_m": 1.4711618224728992e-8,
+   "amplitude_m_s": 0.01099314661280603,
+   "wall_velocity_m_s": 0.33640556641929265,
+   "profile_m_s": [
+    0.34724145272347257,
+    0.345999732461244,
+    0.34357584275913844,
+    0.339883216127795,
+    null,
+    null
+   ],
+   "Q_rel": -0.9571981753266461,
+   "profile_rms_rel": 0.908765834508186,
+   "profile_worst_rel": -0.9114495250620778
+  },
+  "alt|classical|D|interfacial|no_ends": {
+   "Q_m3_s": 4.731372774162789e-18,
+   "mean_velocity_m_s": 0.8190641447368424,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 1.6381282894736846,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    1.6263461485745618,
+    1.533314898574562,
+    1.3517140213815795,
+    1.0750577713815794,
+    0.7075984100877197,
+    0.25277213541666677
+   ],
+   "Q_rel": -0.7960615183550522,
+   "profile_rms_rel": 0.7233412418703349,
+   "profile_worst_rel": -0.9374326397483498
+  },
+  "alt|classical|D|interfacial|ends": {
+   "Q_m3_s": 3.736523481649834e-18,
+   "mean_velocity_m_s": 0.6468423765929526,
+   "interior_fraction": 0.7897334790558767,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 1.293684753185905,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    1.2843800020629144,
+    1.2109101093394972,
+    1.0674938167942842,
+    0.8490091139792318,
+    0.5588141541729817,
+    0.1996226179109874
+   ],
+   "Q_rel": -0.8389429533771624,
+   "profile_rms_rel": 0.7789711925416269,
+   "profile_worst_rel": -0.9505884609131219
+  },
+  "alt|classical|D|green_kubo|no_ends": {
+   "Q_m3_s": 1.1237010338636624e-18,
+   "mean_velocity_m_s": 0.1945277343750001,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.3890554687500001,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.38625721028645843,
+    0.3641622884114584,
+    0.3210320800781251,
+    0.2553262207031251,
+    0.16805462239583344,
+    0.06003338216145835
+   ],
+   "Q_rel": -0.951564610609325,
+   "profile_rms_rel": 0.9319754313137242,
+   "profile_worst_rel": -0.9851402519402331
+  },
+  "alt|classical|D|green_kubo|ends": {
+   "Q_m3_s": 8.874243268918354e-19,
+   "mean_velocity_m_s": 0.15362506444082624,
+   "interior_fraction": 0.7897334790558765,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.30725012888165243,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.3050402504899421,
+    0.2875911509681306,
+    0.25352978148864247,
+    0.20163966457006754,
+    0.13271836161608316,
+    0.0474103717538595
+   ],
+   "Q_rel": -0.9617489514270761,
+   "profile_rms_rel": 0.9461876844974034,
+   "profile_worst_rel": -0.9882647594668664
+  },
+  "alt|classical|D|experimental|no_ends": {
+   "Q_m3_s": 8.0896362392884575e-19,
+   "mean_velocity_m_s": 0.1400424634420698,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.28008492688413955,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.2780704326021748,
+    0.2621640771466068,
+    0.23111420838020255,
+    0.18381190241844775,
+    0.12098420509936265,
+    0.04321863282714662
+   ],
+   "Q_rel": -0.9651308782789291,
+   "profile_rms_rel": 0.9509184379653572,
+   "profile_worst_rel": -0.9893023186071419
+  },
+  "alt|classical|D|experimental|ends": {
+   "Q_m3_s": 6.388656571549772e-19,
+   "mean_velocity_m_s": 0.11059622186966121,
+   "interior_fraction": 0.7897334790558767,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.22119244373932237,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.21960153016148817,
+    0.207039748728463,
+    0.18251862784334222,
+    0.14516241318880005,
+    0.0955452772039294,
+    0.03413120126262102
+   ],
+   "Q_rel": -0.9724626871915958,
+   "profile_rms_rel": 0.9611931329087542,
+   "profile_worst_rel": -0.9915516828557869
+  },
+  "alt|classical|Dp|interfacial|no_ends": {
+   "Q_m3_s": 1.196039609876427e-18,
+   "mean_velocity_m_s": 0.4118102127878289,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.823620425575658,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.8118382846765352,
+    0.7188070346765351,
+    0.5372061574835527,
+    0.26054990748355267,
+    null,
+    null
+   ],
+   "Q_rel": -0.9484465685398091,
+   "profile_rms_rel": 0.8471254222672225,
+   "profile_worst_rel": -0.9314342348727493
+  },
+  "alt|classical|Dp|interfacial|ends": {
+   "Q_m3_s": 1.0060982392520123e-18,
+   "mean_velocity_m_s": 0.34641121127638763,
+   "interior_fraction": 0.8411914044853087,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.6928224225527754,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.6829113869019985,
+    0.6046542990534746,
+    0.45189320211174566,
+    0.21917234261460694,
+    null,
+    null
+   ],
+   "Q_rel": -0.956633696583965,
+   "profile_rms_rel": 0.8711069198315441,
+   "profile_worst_rel": -0.9423230677329981
+  },
+  "alt|classical|Dp|green_kubo|no_ends": {
+   "Q_m3_s": 2.840594073456514e-19,
+   "mean_velocity_m_s": 0.09780492553710937,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.19560985107421874,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.19281159261067707,
+    0.17071667073567706,
+    0.12758646240234375,
+    0.06188060302734376,
+    null,
+    null
+   ],
+   "Q_rel": -0.9877560600282047,
+   "profile_rms_rel": 0.9633290807896887,
+   "profile_worst_rel": -0.983715630782278
+  },
+  "alt|classical|Dp|green_kubo|ends": {
+   "Q_m3_s": 2.3894833182235294e-19,
+   "mean_velocity_m_s": 0.08227266267814207,
+   "interior_fraction": 0.8411914044853087,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.16454532535628416,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.16219145438922464,
+    0.1436053960252002,
+    0.1073246355015396,
+    0.05205343137096915,
+    null,
+    null
+   ],
+   "Q_rel": -0.9897005029386917,
+   "profile_rms_rel": 0.9691395398155903,
+   "profile_worst_rel": -0.986301728586587
+  },
+  "alt|classical|Dp|experimental|no_ends": {
+   "Q_m3_s": 2.0449721113747684e-19,
+   "mean_velocity_m_s": 0.0704107450435883,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.14082149008717662,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.13880699580521186,
+    0.1229006403496438,
+    0.09185077158323962,
+    0.044548465621484824,
+    null,
+    null
+   ],
+   "Q_rel": -0.9911854650371777,
+   "profile_rms_rel": 0.9735804076667249,
+   "profile_worst_rel": -0.9882767195732934
+  },
+  "alt|classical|Dp|experimental|ends": {
+   "Q_m3_s": 1.720212962500629e-19,
+   "mean_velocity_m_s": 0.05922891351407304,
+   "interior_fraction": 0.8411914044853088,
+   "equivalent_slip_length_m": 0,
+   "amplitude_m_s": 0.11845782702814608,
+   "wall_velocity_m_s": 0,
+   "profile_m_s": [
+    0.11676325175377253,
+    0.10338296226786067,
+    0.07726407955116461,
+    0.03747378636380232,
+    null,
+    null
+   ],
+   "Q_rel": -0.9925852889547386,
+   "profile_rms_rel": 0.9777693577102231,
+   "profile_worst_rel": -0.9901384772726836
+  },
+  "alt|slip_velocity|D|interfacial|no_ends": {
+   "Q_m3_s": 2.7202189266083106e-17,
+   "mean_velocity_m_s": 4.709064144736843,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 1.61002042205582e-9,
+   "amplitude_m_s": 1.6381282894736846,
+   "wall_velocity_m_s": 3.89,
+   "profile_m_s": [
+    5.516346148574562,
+    5.423314898574562,
+    5.241714021381579,
+    4.96505777138158,
+    4.59759841008772,
+    4.142772135416667
+   ],
+   "Q_rel": 0.17250815802082364,
+   "profile_rms_rel": 0.34497251481780494,
+   "profile_worst_rel": 0.49815328689905014
+  },
+  "alt|slip_velocity|D|interfacial|ends": {
+   "Q_m3_s": 1.074863711615421e-17,
+   "mean_velocity_m_s": 1.86073338264651,
+   "interior_fraction": 0.39513867839880396,
+   "equivalent_slip_length_m": 1.61002042205582e-9,
+   "amplitude_m_s": 0.6472878473503251,
+   "wall_velocity_m_s": 1.5370894589713475,
+   "profile_m_s": [
+    2.1797217267380846,
+    2.142961481563296,
+    2.0712039509531976,
+    1.9618863659574282,
+    1.816688959570504,
+    1.6369695064959326
+   ],
+   "Q_rel": -0.5366966760278358,
+   "profile_rms_rel": 0.4874764380352136,
+   "profile_worst_rel": -0.5948095280950662
+  },
+  "alt|slip_velocity|D|green_kubo|no_ends": {
+   "Q_m3_s": 2.359451752578398e-17,
+   "mean_velocity_m_s": 4.084527734375,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 6.779033356024506e-9,
+   "amplitude_m_s": 0.3890554687500001,
+   "wall_velocity_m_s": 3.89,
+   "profile_m_s": [
+    4.276257210286459,
+    4.254162288411458,
+    4.211032080078125,
+    4.145326220703125,
+    4.058054622395834,
+    3.9500333821614584
+   ],
+   "Q_rel": 0.01700506576655081,
+   "profile_rms_rel": 0.1057054472347761,
+   "profile_worst_rel": 0.17518295259985028
+  },
+  "alt|slip_velocity|D|green_kubo|ends": {
+   "Q_m3_s": 3.580085299103469e-18,
+   "mean_velocity_m_s": 0.6197608270496074,
+   "interior_fraction": 0.1517337786284957,
+   "equivalent_slip_length_m": 6.779033356024506e-9,
+   "amplitude_m_s": 0.05903285636951814,
+   "wall_velocity_m_s": 0.5902443988648484,
+   "profile_m_s": [
+    0.6488526649041142,
+    0.645500118919519,
+    0.6389558094360681,
+    0.6289860111150668,
+    0.6157439617369532,
+    0.599353490784055
+   ],
+   "Q_rel": -0.8456859784869195,
+   "profile_rms_rel": 0.835106163308117,
+   "profile_worst_rel": -0.8516451755485013
+  },
+  "alt|slip_velocity|D|experimental|no_ends": {
+   "Q_m3_s": 2.3279780115849162e-17,
+   "mean_velocity_m_s": 4.0300424634420695,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 9.41650102110279e-9,
+   "amplitude_m_s": 0.28008492688413955,
+   "wall_velocity_m_s": 3.89,
+   "profile_m_s": [
+    4.168070432602175,
+    4.152164077146607,
+    4.121114208380202,
+    4.073811902418448,
+    4.010984205099363,
+    3.933218632827147
+   ],
+   "Q_rel": 0.0034387980969465826,
+   "profile_rms_rel": 0.08546735633844502,
+   "profile_worst_rel": 0.1470066511454715
+  },
+  "alt|slip_velocity|D|experimental|ends": {
+   "Q_m3_s": 2.687590342640942e-18,
+   "mean_velocity_m_s": 0.46525796855812523,
+   "interior_fraction": 0.11544741098354264,
+   "equivalent_slip_length_m": 9.41650102110279e-9,
+   "amplitude_m_s": 0.03233507966428875,
+   "wall_velocity_m_s": 0.4490904287259809,
+   "profile_m_s": [
+    0.48119294024097564,
+    0.47935659268544634,
+    0.47577196572498626,
+    0.47031103696815024,
+    0.4630577419746042,
+    0.4540799079921233
+   ],
+   "Q_rel": -0.8841555886792698,
+   "profile_rms_rel": 0.8767389060129245,
+   "profile_worst_rel": -0.8876039831702666
+  },
+  "alt|slip_velocity|Dp|interfacial|no_ends": {
+   "Q_m3_s": 1.2929600055572045e-17,
+   "mean_velocity_m_s": 4.451810212787829,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 2.3581615264610588e-9,
+   "amplitude_m_s": 0.823620425575658,
+   "wall_velocity_m_s": 4.04,
+   "profile_m_s": [
+    4.8518382846765356,
+    4.758807034676535,
+    4.577206157483553,
+    4.3005499074835525,
+    null,
+    null
+   ],
+   "Q_rel": -0.44268965277706696,
+   "profile_rms_rel": 0.23728873924392366,
+   "profile_worst_rel": 0.3145875786399268
+  },
+  "alt|slip_velocity|Dp|interfacial|ends": {
+   "Q_m3_s": 4.2519189606123195e-18,
+   "mean_velocity_m_s": 1.4639846686242044,
+   "interior_fraction": 0.3288515454722007,
+   "equivalent_slip_length_m": 2.3581615264610588e-9,
+   "amplitude_m_s": 0.27084884983302676,
+   "wall_velocity_m_s": 1.3285602437076909,
+   "profile_m_s": [
+    1.59553451829707,
+    1.564941047957359,
+    1.5052213188333396,
+    1.414242483456296,
+    null,
+    null
+   ],
+   "Q_rel": -0.8167276310080896,
+   "profile_rms_rel": 0.5974121985257951,
+   "profile_worst_rel": -0.6278309254062379
+  },
+  "alt|slip_velocity|Dp|green_kubo|no_ends": {
+   "Q_m3_s": 1.201761985304127e-17,
+   "mean_velocity_m_s": 4.137804925537109,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 9.929101164046563e-9,
+   "amplitude_m_s": 0.19560985107421874,
+   "wall_velocity_m_s": 4.04,
+   "profile_m_s": [
+    4.232811592610677,
+    4.210716670735677,
+    4.167586462402344,
+    4.101880603027344,
+    null,
+    null
+   ],
+   "Q_rel": -0.48199914426546253,
+   "profile_rms_rel": 0.11336418769612185,
+   "profile_worst_rel": 0.16318140075571197
+  },
+  "alt|slip_velocity|Dp|green_kubo|ends": {
+   "Q_m3_s": 1.3372095593307027e-18,
+   "mean_velocity_m_s": 0.4604166522769181,
+   "interior_fraction": 0.11127074875748365,
+   "equivalent_slip_length_m": 9.929101164046563e-9,
+   "amplitude_m_s": 0.021765654593368187,
+   "wall_velocity_m_s": 0.4495338249802339,
+   "profile_m_s": [
+    0.47098811525914686,
+    0.4685295967583775,
+    0.46373046618306124,
+    0.45641932601265106,
+    null,
+    null
+   ],
+   "Q_rel": -0.9423616569254007,
+   "profile_rms_rel": 0.8767586972173343,
+   "profile_worst_rel": -0.8804818386126131
+  },
+  "alt|slip_velocity|Dp|experimental|no_ends": {
+   "Q_m3_s": 1.1938057656833096e-17,
+   "mean_velocity_m_s": 4.1104107450435885,
+   "interior_fraction": 1,
+   "equivalent_slip_length_m": 1.3792142085683429e-8,
+   "amplitude_m_s": 0.14082149008717662,
+   "wall_velocity_m_s": 4.04,
+   "profile_m_s": [
+    4.178806995805212,
+    4.162900640349644,
+    4.13185077158324,
+    4.084548465621485,
+    null,
+    null
+   ],
+   "Q_rel": -0.4854285492744356,
+   "profile_rms_rel": 0.10277350453844894,
+   "profile_worst_rel": 0.14997255258277464
+  },
+  "alt|slip_velocity|Dp|experimental|ends": {
+   "Q_m3_s": 9.93090865289199e-19,
+   "mean_velocity_m_s": 0.3419326226115938,
+   "interior_fraction": 0.08318697177013337,
+   "equivalent_slip_length_m": 1.3792142085683429e-8,
+   "amplitude_m_s": 0.011714513320510078,
+   "wall_velocity_m_s": 0.3360753659513388,
+   "profile_m_s": [
+    0.347622299592884,
+    0.3462990980506359,
+    0.34371615349409873,
+    0.339781217903396,
+    null,
+    null
+   ],
+   "Q_rel": -0.9571943592547759,
+   "profile_rms_rel": 0.9087178648778642,
+   "profile_worst_rel": -0.9114133625015209
+  }
+ }
+}

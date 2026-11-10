@@ -1,7 +1,10 @@
 # The Continuum Lab
 
-Two experiments since release 2026.9, with a switch between them:
+Three experiments since release 2026.12, with a switch between them:
 
+- **Published molecular-flow benchmark** (`lab/continuum/flow.html`; release 2026.12): a continuum flow model with a
+  molecular boundary condition, set against published molecular dynamics of the same tube. Described in Part 3 at the
+  end of this file.
 - **Ion transport** (`lab/continuum/`, the main page): "Why does a pore pass one ion and resist another?" — described in
   the first part of this file.
 - **Water flow through a nanotube membrane** (`lab/continuum/water.html`; release 2026.6, 3D pore view 2026.7–2026.8):
@@ -206,8 +209,9 @@ NODE_PATH=<katex> node tools/continuum/build_page.js    # rebuild the page with 
 <!-- BEGIN:results (written by tools/continuum/make_qa_report.py --readme) -->
 ## Results of this release (generated)
 
-82 PASS, 3 FAIL, 0 NOT_RUN of 85 acceptance checks (both experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
+108 PASS, 3 FAIL, 0 NOT_RUN of 111 acceptance checks (three experiments); every number and verdict is in `tools/continuum/QA_REPORT.md` and `tools/continuum/results/`.
 
+- Flow benchmark: numerical verification P1–P11 11 of 11 PASS, source-curve reproduction PR1–PR6 6 of 6 PASS, browser PB1–PB9 9 of 9 PASS. Reported without a verdict: flow rate of the default combination +16.0 ± 4.2 % from the published molecular dynamics (extraction uncertainty), profile rms 32.5 %.
 - Ion experiment: solver I1–I19 19 of 19 PASS, browser IB1–IB13 13 of 13 PASS; independent SciPy reference: b +100 mV ((9,9), rims + molecular solvation + confined mobility): I 7.87565 vs 7.87904 pA (4.30e-4), Na⁺ 5.06e-4, Cl⁻ 2.07e-3. Earlier failing runs kept (`results/t_ions.run1.json`: I5; `results/t_ions.run2.json`: I14; `results/browser_ions.2026-10-22-baseline.json`: IB1, the unchanged suite under Chromium 131, before the procedure amendment).
 - F1 Developed duct: **PASS** — relative Q difference 4.07 × 10⁻¹¹, velocity normalised L2 4.30 × 10⁻¹¹.
 - F2 Uniform resistance interface (porousBafflePressure): **FAIL** — relative Q difference 0.0212, velocity normalised L2 0.0843.
@@ -235,3 +239,73 @@ NODE_PATH=<katex> node tools/continuum/build_page.js    # rebuild the page with 
 Page code: MIT (Kazi Ehsanul Karim; code drafted with AI assistance and checked by the tests). The recorded trajectory
 is the author's CP2K calculation. OpenFOAM (OpenCFD, GPL-3.0) and LAMMPS (GPL-2.0) are used only offline; no code of
 either is part of the page.
+
+# Part 3. Published molecular-flow benchmark (`lab/continuum/flow.html`, release 2026.12)
+
+Status: **one case enabled, labelled "Reconstruction"; no case is called a prediction.** Every input was read from the
+figures of a published article with a stated extraction uncertainty; nothing unpublished enters the page.
+
+## What the page does
+
+- **Case.** Water (SPC/E, 300 K) in a (20,20) carbon nanotube, K. E. Karim, M. Barisik, C. Bakli and B. Kim,
+  Phys. Chem. Chem. Phys. 26, 19069–19082 (2024), doi:10.1039/D4CP01068J. Four further cases are listed in the case
+  file as not yet enabled, each with its reason ((9,9), (6,6) and (12,12) water; liquid argon, Phys. Rev. E 103,
+  053115, 2021). A case is enabled when its sheet names source, units, parameters, pressure planes, flow definition and
+  unresolved items, and when its source-curve reproduction passes.
+- **Model** (`lab/continuum/flow/core.js`, pure functions, SI units): classical Hagen–Poiseuille flow (source Eqs. 1–2)
+  and the slip-velocity form (Eqs. 3 and 5), with the radius at the wall position D or at the first density peak D′, one
+  of three viscosities (interfacial, Green–Kubo, experimental) and the gradient ΔP/L of the source. Default: slip-velocity
+  form at D with the interfacial viscosity, fixed by rule before the comparison (the one combination for which the
+  source shows both the profile, Fig. 6a, and the flow rate, Fig. 7c).
+- **Sensitivities, both off on load.** "Compare boundary definitions" draws the same model at the other boundary and
+  shades the difference as "Boundary-choice sensitivity" (a sensitivity to a definition, not an uncertainty).
+  "Entrance-resistance sensitivity" puts cμ/R³ with c = 3 (Sampson; an assumption, the source's Eq. 7 gives no value)
+  in series with the tube, using the slip length equivalent to the measured slip velocity, and computes the profile
+  with the interior pressure drop only. The page also states the end pressure drop that c = 3 would imply at the
+  molecular-dynamics flow rate.
+- **Uncertainty.** `flowUncertainty` propagates the extraction uncertainties of ΔP, viscosity, slip velocity and D′ to
+  the flow rate (first order). These are reading uncertainties (2.5 px on the figure axis, one standard uncertainty),
+  not statistical uncertainties of the simulation.
+- **Three reports, kept apart.** Numerical verification (P1–P11) and source-curve reproduction (PR1–PR6) are judged;
+  the agreement with molecular dynamics is reported as numbers without PASS or FAIL. No case is called a qualified
+  prediction until an accuracy requirement for a stated use has been written down and tested on an independent
+  condition.
+
+## Files (flow benchmark)
+
+```
+lab/continuum/flow.html              the page (static; version number in its footer and data-version)
+lab/continuum/flow/core.js           model, comparison with the reference, uncertainty propagation (ContinuumFlow)
+lab/continuum/flow/app.js            page logic, velocity plot (SVG), cutaway (canvas); test hook window.__flowLab
+lab/continuum/flow/flow.css          styles (with continuum.css and ions/ions.css for the experiment switch)
+lab/continuum/flow/data/cases.json   case sheets: inputs, uncertainties, sources, unresolved items
+lab/continuum/flow/data/validation.json  check records shown on the page (written by make_flow_validation.js)
+tools/continuum/flow/TOLERANCES.md   criteria, written before the first formal run, and the record of runs
+tools/continuum/flow/t_flow.js       P1–P11, PR1–PR6 and the reported agreement (Node)
+tools/continuum/flow/reference_flow.py   independent implementation for P9 (force balance and quadrature; SciPy)
+tools/continuum/flow/browser_flow.js PB1–PB9 (Chromium through Playwright)
+tools/continuum/flow/make_flow_validation.js   writes validation.json from the records
+tools/continuum/flow/digitize_fig.py figure-reading functions (needs the article's figure images, which are not
+                                     redistributed here)
+```
+
+## Reproduce the checks (flow benchmark)
+
+```
+node tools/continuum/flow/t_flow.js                      # P1-P11, PR1-PR6 (runs reference_flow.py; needs Python 3 with SciPy)
+python3 -m http.server 8765 &                            # from the repository root, then:
+node tools/continuum/flow/browser_flow.js                # PB1-PB9 (needs Playwright + Chromium)
+node tools/continuum/flow/make_flow_validation.js        # rewrite the page's check records
+python3 tools/continuum/make_qa_report.py --readme       # QA report and the results block above
+```
+
+A new release changes the version in `flow.html` (footer and `data-version`) and `cases.json` (`release`); PB1 checks
+the footer.
+
+## Known limitations (flow benchmark)
+
+- One tube, one pressure drop, one temperature, one published simulation.
+- Inputs read from figures; the unresolved items are listed in the case sheet (tube length 6.4 or 6.0 nm, slip
+  velocity at D, the molecular volume in the flow definition, a second profile in Fig. 4a, the Fig. 9b point).
+- Slip-length forms (source Eqs. 4, 6 and 7 as published) are not enabled; the end-loss coefficient c is assumed.
+- Headless Chromium only; no Safari, Firefox, real phones or screen readers.

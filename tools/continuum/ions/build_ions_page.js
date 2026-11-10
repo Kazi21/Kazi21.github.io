@@ -9,7 +9,7 @@
 const fs = require('fs'), path = require('path');
 const katex = require('katex');
 const ROOT = path.resolve(__dirname, '../../..');
-const VERSION = '2026.11';
+const VERSION = '2026.12';
 const Core = require(path.join(ROOT, 'lab/continuum/ions/core.js'));
 const Pm = require(path.join(ROOT, 'lab/continuum/ions/params.js'));
 const Ctl = require(path.join(ROOT, 'lab/continuum/ions/controller.js'));

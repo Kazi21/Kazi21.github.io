@@ -278,3 +278,15 @@ alone and from the intact-membrane table for a modified membrane.
   of 153022 bytes (its size has varied by a few bytes in every record, because it carries time stamps; recomputed and
   exported flow rates are identical), the B14 frame has other colour-class counts, and the CNT inspector advanced
   8 fs instead of 4 fs after Play (R1).
+- 10 Nov 2026 (release 2026.12; written before the run): the release adds a third experiment, the flow benchmark
+  (`lab/continuum/flow.html`; its own criteria are in `flow/TOLERANCES.md`). The water page changed in its experiment
+  switch (three entries, the flow benchmark first) and its version number; `ions/ions.css`, which the water page loads
+  for that switch, gained a rule for screens narrower than 600 px; the home page, which R1 loads, changed in its
+  Simulation Lab introduction, research map, Continuum Lab card and footer, and keeps a link to `lab/continuum/`.
+  No criterion, threshold or test of B1–B16 and R1 changed. The suite is run again on the final files; the record of
+  run 2 of 2026.11 is kept as `results/browser.2026.11-run2.json`.
+  Run 1 of 2026.12, on the final files with nothing else running: 17 of 17 PASS (`results/browser.json`), in 3 min 23 s.
+  Details as in run 2 of 2026.11 except those that depend on wall-clock time or rendering: the B7 export is 153013
+  bytes (recomputed and exported flow rates identical), the B9 and B10 timings are 167 ms and 78 ms, the B14 frame has
+  other colour-class counts, and the CNT inspector advanced 12 fs after Play (R1). The water page was rebuilt with
+  this record afterwards.
