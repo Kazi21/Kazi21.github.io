@@ -1,0 +1,69 @@
+{
+ "id": "browser_flow",
+ "name": "Flow benchmark browser checks PB1–PB9",
+ "verdict": "PASS",
+ "chromium": "141.0.7390.37",
+ "items": [
+  {
+   "id": "PB1",
+   "name": "Load",
+   "verdict": "PASS",
+   "detail": "HTTP 200; page errors 0; 16 requests, outside the site: none; footer “Simulation Lab, The Continuum Lab (flow benchmark). Website version 2026.12.”"
+  },
+  {
+   "id": "PB2",
+   "name": "Default state",
+   "verdict": "PASS",
+   "detail": "case pccp2024-water-cnt2020, slip_velocity at D with interfacial viscosity; largest relative difference from the Node record (flow rate, mean velocity, difference from MD) 0.00e+0 (limit 1e-12); shown “0.0269 pL/s”, “4.66 m/s”, “+16.0 %” (expected “0.0269 pL/s”, “4.66 m/s”, “+16.0 %”); evidence label “Reconstruction”"
+  },
+  {
+   "id": "PB3",
+   "name": "Plot",
+   "verdict": "PASS",
+   "detail": "6 molecular-dynamics points, 1 classical curve, 1 model curve, boundary band absent; model at the six radii against the Node record: largest relative difference 0.00e+0 (limit 1e-12)"
+  },
+  {
+   "id": "PB4",
+   "name": "Model choices",
+   "verdict": "PASS",
+   "detail": "12 combinations selected through the radio buttons; flow rate and mean velocity against the Node record: largest relative difference 0.00e+0 (limit 1e-12)"
+  },
+  {
+   "id": "PB5",
+   "name": "Boundary comparison",
+   "verdict": "PASS",
+   "detail": "off on load: true; on: 1 second curve (its flow rate against the Node record at D′: 0.00e+0), 1 band labelled “Boundary-choice sensitivity”, named in the legend: true; off again: 0 second curve, 0 band"
+  },
+  {
+   "id": "PB6",
+   "name": "Entrance-resistance sensitivity",
+   "verdict": "PASS",
+   "detail": "off on load: true; on: remaining fraction 0.397754 against the Node record 0.00e+0, flow rate against fraction × the value without end resistance 0.00e+0, against the Node record 0.00e+0 (limit 1e-12); label “Entrance-resistance sensitivity (c = 3, an assumption)”; fraction shown as 39.8 %: true; off again restores the default flow rate"
+  },
+  {
+   "id": "PB7",
+   "name": "Cases not yet enabled",
+   "verdict": "PASS",
+   "detail": "4 cases listed with their reasons; 4 of 5 options disabled; selecting each of them from a script leaves the page on pccp2024-water-cnt2020 with the message “Water in a (9,9) carbon nanotube is not yet enabled: the source curves of Fig. 6b have not been reproduced.”"
+  },
+  {
+   "id": "PB8",
+   "name": "Layout, keyboard and motion",
+   "verdict": "PASS",
+   "detail": "horizontal overflow (px) on load / with every panel open and both sensitivities on: 360 px 0/0, 390 px 0/0, 768 px 0/0, 1440 px 0/0; Tab reached 10 of 10 controls in 24 steps, focused elements without an outline: none; reduced motion: two frames 600 ms apart identical true, clock advance 0 s, button “Play”; default: frames differ true, clock advances by more than 0.3 s",
+   "data": {
+    "clock_advance_s": 0.6,
+    "tab_steps": 24
+   }
+  },
+  {
+   "id": "PB9",
+   "name": "Experiment switch",
+   "verdict": "PASS",
+   "detail": "entries on the benchmark, ion and water pages: 3, 3, 3 (Flow benchmark | Ion transport | Water flow through a membrane); current entry: 1, 2, 3; from the benchmark the links open the ion page true and the water page true; both lead back true; page errors 0"
+  }
+ ],
+ "pageErrors": [],
+ "environment": "Chromium 141.0.7390.37 (headless shell, Playwright) on Intel(R) Xeon(R) Processor @ 2.10GHz (2 cores); local static server; no Safari, Firefox, real phones or screen readers",
+ "date": "2026-11-10T11:41:46.096Z"
+}

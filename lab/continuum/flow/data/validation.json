@@ -1,0 +1,362 @@
+{
+ "schema": "continuum-lab-flow-validation/1",
+ "release": "2026.12.2",
+ "case": "pccp2024-water-cnt2020",
+ "criteria": "tools/continuum/flow/TOLERANCES.md",
+ "numerical": {
+  "command": "node tools/continuum/flow/t_flow.js",
+  "date": "2026-11-16",
+  "environment": "Node v22.22.0 on linux; Python 3.13.16, SciPy 1.18.1; case file of release 2026.12.2",
+  "counts": {
+   "PASS": 11,
+   "FAIL": 0
+  },
+  "items": [
+   {
+    "id": "P1",
+    "name": "Zero drive",
+    "verdict": "PASS",
+    "detail": "largest |u| at 201 radii 0; Q = 0"
+   },
+   {
+    "id": "P2",
+    "name": "Reversal",
+    "verdict": "PASS",
+    "detail": "largest relative deviation of −u(r) and −Q under reversal 0.00e+0 (limit 1e-12)"
+   },
+   {
+    "id": "P3",
+    "name": "No-slip limit",
+    "verdict": "PASS",
+    "detail": "D: u(0) = 1.535745e+0 m/s, Q = 4.435662e-18 m³/s; Dp: u(0) = 7.721441e-1 m/s, Q = 1.121287e-18 m³/s; largest relative deviation from Hagen–Poiseuille 0.00e+0 (limit 1e-12)"
+   },
+   {
+    "id": "P4",
+    "name": "Flow rate equals the integral of the profile",
+    "verdict": "PASS",
+    "detail": "12 combinations; largest relative difference between Q and 2π∫u r dr (Simpson, 2000 intervals) 1.94e-15 (limit 1e-9)"
+   },
+   {
+    "id": "P5",
+    "name": "Mean velocity",
+    "verdict": "PASS",
+    "detail": "12 combinations; largest relative difference between Q/(πR²) and u_s + R²G/(8μ) 2.11e-16 (limit 1e-12)"
+   },
+   {
+    "id": "P6",
+    "name": "Equivalent slip length",
+    "verdict": "PASS",
+    "detail": "L_s = 2μu_s/(GR) = 1.7174 nm; largest relative difference between the slip-length and slip-velocity forms 2.21e-16 (limit 1e-12)"
+   },
+   {
+    "id": "P7",
+    "name": "Entrance resistance without double counting",
+    "verdict": "PASS",
+    "detail": "c = 3: interior fraction 0.397754, Q = 1.070216e-17 m³/s; c = 1: interior fraction 0.664582, Q = 1.788156e-17 m³/s; largest relative deviation among Q = ΔP/(R_ends + R_tube), the pressure-drop sum, the profile integral and the interior gradient 1.30e-15 (limit 1e-9)"
+   },
+   {
+    "id": "P8",
+    "name": "Units",
+    "verdict": "PASS",
+    "detail": "1 pL/s = 1e-15 m³/s; 1 MPa/nm = 1e+15 Pa/m; largest round-trip deviation 1.50e-16 (limit 1e-15)"
+   },
+   {
+    "id": "P9",
+    "name": "Independent implementation",
+    "verdict": "PASS",
+    "detail": "48 combinations (2 lengths × 2 families × 2 boundaries × 3 viscosities × with and without end resistance) compared with reference_flow.py (force balance and quadrature; Python 3.13.16, SciPy 1.18.1): largest relative difference 1.19e-15 at alt|classical|D|green_kubo|ends (limit 1e-9)"
+   },
+   {
+    "id": "P10",
+    "name": "Guards",
+    "verdict": "PASS",
+    "detail": "8 of 8 probes refused (radius 0; viscosity −1; length 0; family \"plug\"; boundary \"X\"; viscosity \"bulk\"; a case that is not enabled; end resistance at zero drive)"
+   },
+   {
+    "id": "P11",
+    "name": "Uncertainty propagation",
+    "verdict": "PASS",
+    "detail": "12 combinations; largest relative difference between the module's first-order uncertainty of Q and central finite differences on ΔP, viscosity, slip velocity and D′ 2.84e-11 at classical|Dp|green_kubo (limit 1e-6); default combination u(Q) = 0.000942 pL/s"
+   }
+  ]
+ },
+ "reproduction": {
+  "command": "node tools/continuum/flow/t_flow.js",
+  "date": "2026-11-16",
+  "counts": {
+   "PASS": 6,
+   "FAIL": 0
+  },
+  "items": [
+   {
+    "id": "PR1",
+    "name": "Fig. 6a, curve at D: curvature",
+    "verdict": "PASS",
+    "detail": "curvature: model 0.835 ± 0.070 m s⁻¹ nm⁻², published 0.808 ± 0.032, z = +0.36 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)",
+    "comparisons": [
+     {
+      "what": "curvature",
+      "unit": "m s⁻¹ nm⁻²",
+      "model": 0.835218,
+      "u_model": 0.0696054,
+      "published": 0.808,
+      "u_published": 0.032,
+      "z": 0.355284
+     }
+    ]
+   },
+   {
+    "id": "PR2",
+    "name": "Fig. 6a, curve at D: wall value",
+    "verdict": "PASS",
+    "detail": "wall value: model 3.89 ± 0.15 m/s, published 4.05 ± 0.040, z = −1.01 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)",
+    "comparisons": [
+     {
+      "what": "wall value",
+      "unit": "m/s",
+      "model": 3.89,
+      "u_model": 0.15,
+      "published": 4.0463,
+      "u_published": 0.04,
+      "z": -1.00683
+     }
+    ]
+   },
+   {
+    "id": "PR3",
+    "name": "Fig. 6a, curve at D′",
+    "verdict": "PASS",
+    "detail": "curvature: model 0.835 ± 0.070 m s⁻¹ nm⁻², published 0.820 ± 0.032, z = +0.20; end radius: model 0.962 ± 0.011 nm, published 0.966 ± 0.0060, z = −0.36; wall value: model 4.04 ± 0.15 m/s, published 4.04 ± 0.040, z = +0.00 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)",
+    "comparisons": [
+     {
+      "what": "curvature",
+      "unit": "m s⁻¹ nm⁻²",
+      "model": 0.835218,
+      "u_model": 0.0696054,
+      "published": 0.82,
+      "u_published": 0.032,
+      "z": 0.198644
+     },
+     {
+      "what": "end radius",
+      "unit": "nm",
+      "model": 0.9615,
+      "u_model": 0.011,
+      "published": 0.966,
+      "u_published": 0.006,
+      "z": -0.359139
+     },
+     {
+      "what": "wall value",
+      "unit": "m/s",
+      "model": 4.04,
+      "u_model": 0.15,
+      "published": 4.03981,
+      "u_published": 0.04,
+      "z": 0.0012105
+     }
+    ]
+   },
+   {
+    "id": "PR4",
+    "name": "Fig. 7a, Eq. 5 at D, experimental viscosity",
+    "verdict": "PASS",
+    "detail": "D, experimental viscosity: model 0.0232 ± 0.00087 pL/s, published 0.0230 ± 0.00020, z = +0.26 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)",
+    "comparisons": [
+     {
+      "what": "D, experimental viscosity",
+      "unit": "pL/s",
+      "model": 0.0232292,
+      "u_model": 0.000867895,
+      "published": 0.023,
+      "u_published": 0.0002,
+      "z": 0.257365
+     }
+    ]
+   },
+   {
+    "id": "PR5",
+    "name": "Fig. 7c, Eq. 5 at D, Green–Kubo and interfacial viscosity",
+    "verdict": "PASS",
+    "detail": "D, Green–Kubo viscosity: model 0.0235 ± 0.00087 pL/s, published 0.0233 ± 0.00020, z = +0.24; D, interfacial viscosity: model 0.0269 ± 0.00094 pL/s, published 0.0266 ± 0.00020, z = +0.32 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)",
+    "comparisons": [
+     {
+      "what": "D, Green–Kubo viscosity",
+      "unit": "pL/s",
+      "model": 0.0235113,
+      "u_model": 0.000869183,
+      "published": 0.0233,
+      "u_published": 0.0002,
+      "z": 0.236889
+     },
+     {
+      "what": "D, interfacial viscosity",
+      "unit": "pL/s",
+      "model": 0.0269065,
+      "u_model": 0.000942042,
+      "published": 0.0266,
+      "u_published": 0.0002,
+      "z": 0.318241
+     }
+    ]
+   },
+   {
+    "id": "PR6",
+    "name": "Fig. 7a, Eq. 5 at D′, experimental viscosity",
+    "verdict": "PASS",
+    "detail": "D′, experimental viscosity: model 0.0119 ± 0.00052 pL/s, published 0.0114 ± 0.00020, z = +0.95 (limit −2 ≤ z ≤ 2; tube length 6.4 nm)",
+    "comparisons": [
+     {
+      "what": "D′, experimental viscosity",
+      "unit": "pL/s",
+      "model": 0.0119253,
+      "u_model": 0.000516542,
+      "published": 0.0114,
+      "u_published": 0.0002,
+      "z": 0.948308
+     }
+    ]
+   }
+  ],
+  "alternative_length": {
+   "length_nm": 6,
+   "note": "recorded for information, not judged",
+   "comparisons": [
+    {
+     "id": "PR1",
+     "z": [
+      1.02537
+     ]
+    },
+    {
+     "id": "PR2",
+     "z": [
+      -1.00683
+     ]
+    },
+    {
+     "id": "PR3",
+     "z": [
+      0.876941,
+      -0.359139,
+      0.0012105
+     ]
+    },
+    {
+     "id": "PR4",
+     "z": [
+      0.314066
+     ]
+    },
+    {
+     "id": "PR5",
+     "z": [
+      0.314533,
+      0.61905
+     ]
+    },
+    {
+     "id": "PR6",
+     "z": [
+      0.970835
+     ]
+    }
+   ]
+  }
+ },
+ "browser": {
+  "command": "node tools/continuum/flow/browser_flow.js",
+  "date": "2026-11-16",
+  "environment": "Chromium 141.0.7390.37 (headless shell, Playwright) on Intel(R) Xeon(R) Processor @ 2.30GHz (2 cores); local static server; no Safari, Firefox, real phones or screen readers",
+  "counts": {
+   "PASS": 14,
+   "FAIL": 0
+  },
+  "items": [
+   {
+    "id": "PB1",
+    "name": "Load",
+    "verdict": "PASS",
+    "detail": "HTTP 200; page errors 0; 15 requests, outside the site: none, failed: none; footer “Simulation Lab, The Continuum Lab. Website version 2026.12.2.”"
+   },
+   {
+    "id": "PB2",
+    "name": "Default state",
+    "verdict": "PASS",
+    "detail": "case pccp2024-water-cnt2020, slip_velocity at D with interfacial viscosity; largest relative difference from the Node record (flow rate, mean velocity, difference from MD) 0.00e+0 (limit 1e-12); shown “0.0269 pL/s”, “4.66 m/s”, “+16.0 %” (expected “0.0269 pL/s”, “4.66 m/s”, “+16.0 %”); evidence label “Published-case reconstruction”"
+   },
+   {
+    "id": "PB3",
+    "name": "Plot",
+    "verdict": "PASS",
+    "detail": "6 molecular-dynamics points, 1 classical curve, 1 model curve, boundary band absent; model at the six radii against the Node record: largest relative difference 0.00e+0 (limit 1e-12)"
+   },
+   {
+    "id": "PB4",
+    "name": "Model choices",
+    "verdict": "PASS",
+    "detail": "12 combinations selected through the radio buttons; flow rate and mean velocity against the Node record: largest relative difference 0.00e+0 (limit 1e-12)"
+   },
+   {
+    "id": "PB5",
+    "name": "Boundary comparison",
+    "verdict": "PASS",
+    "detail": "off on load: true; on: 1 second curve (its flow rate against the Node record at D′: 0.00e+0), 1 band labelled “Boundary-convention sensitivity”, named in the legend: true; off again: 0 second curve, 0 band"
+   },
+   {
+    "id": "PB6",
+    "name": "Entrance-resistance sensitivity",
+    "verdict": "PASS",
+    "detail": "off on load: true; on: remaining fraction 0.397754 against the Node record 0.00e+0, flow rate against fraction × the value without end resistance 0.00e+0, against the Node record 0.00e+0 (limit 1e-12); label “Entrance-resistance sensitivity (c = 3, an assumed coefficient)”; fraction shown as 39.8 %: true; off again restores the default flow rate"
+   },
+   {
+    "id": "PB7",
+    "name": "Cases not yet enabled",
+    "verdict": "PASS",
+    "detail": "4 cases listed with their reasons; 4 of 5 options disabled; selecting each of them from a script leaves the page on pccp2024-water-cnt2020 with the message “Water in a (9,9) carbon nanotube is not yet enabled: the source curves of Fig. 6b have not been reproduced.”"
+   },
+   {
+    "id": "PB8",
+    "name": "Layout, keyboard and motion",
+    "verdict": "PASS",
+    "detail": "horizontal overflow (px) on load / with every panel open and both sensitivities on: 360 px 0/0, 390 px 0/0, 768 px 0/0, 1440 px 0/0; Tab reached 9 of 9 controls in 20 steps, focused elements without an outline: none; reduced motion: two frames 600 ms apart identical true, clock advance 0 s, button “Play”; default: frames differ true, clock advances by more than 0.3 s"
+   },
+   {
+    "id": "PB9",
+    "name": "Retired addresses",
+    "verdict": "PASS",
+    "detail": "lab/continuum/: HTTP 200, retired notice true, noindex true, link “Open the Continuum Lab” 1, opens the Continuum Lab true; lab/continuum/water.html: HTTP 200, retired notice true, noindex true, link “Open the Continuum Lab” 1, opens the Continuum Lab true; excluded files answer 404, 404, 404, 404, 404, 404 (6 sampled); links to a retired address on 7 pages: none; page errors 0, failed requests 0"
+   },
+   {
+    "id": "PB10",
+    "name": "Both error measures",
+    "verdict": "PASS",
+    "detail": "1440 px: flow-rate difference “+16.0 %” and velocity-profile difference “32.5 %” (Node record +16.0 % and 32.5 %), separate entries true, sentence directly below true, smallest result or label text 12.8 px, smallest plot text 11.7 px, clipped: none; 390 px: flow-rate difference “+16.0 %” and velocity-profile difference “32.5 %” (Node record +16.0 % and 32.5 %), separate entries true, sentence directly below true, smallest result or label text 12.8 px, smallest plot text 11.0 px, clipped: none"
+   },
+   {
+    "id": "PB11",
+    "name": "Controls beside the plot",
+    "verdict": "PASS",
+    "detail": "group “Model” 1, radios “Slip-velocity form” 1 and “Classical, no slip” 1, checkbox “Compare boundary definitions” 1, all inside the plot's figure true; selected through their accessible names: classical → classical, slip → slip_velocity, comparison on → true, off → false; one enabled case with one drive true, case selector shown false, pressure selector shown false; case description names the tube, temperature and pressure drop true (“Case SPC/E water at 300 K in a (20,20) carbon nanotube · D = 2.712 nm · L = 6.4 nm · ΔP = 3.25 ± 0.21 MPa between the re…”)"
+   },
+   {
+    "id": "PB12",
+    "name": "Main links",
+    "verdict": "PASS",
+    "detail": "hero link “Compare molecular and continuum flow” 1, opens the Continuum Lab true; card's primary link “Open the flow comparison” opens it true; card order Live Water Lab 1, inspector 2, Continuum Lab 3; actions in the card 1, “Further experiments” sections 0; page errors 0"
+   },
+   {
+    "id": "PB13",
+    "name": "Three views of one case",
+    "verdict": "PASS",
+    "detail": "tab list 1 with tabs 1/1/1; on load selected tab-profile, shown profile, comparison false; “Boundary sensitivity” (click): shown boundary, comparison true, table D R 1.356 nm, u_s 3.89 ± 0.15 m/s, Q 0.0269 pL/s; Dp R 0.962 nm, u_s 4.04 ± 0.15 m/s, Q 0.0129 pL/s (expected D 1.356 nm, 3.89 ± 0.15 m/s, 0.0269 pL/s; D′ 0.962 nm, 4.04 ± 0.15 m/s, 0.0129 pL/s), same MD flow rate in both rows true; ArrowRight: selected tab-evidence, focus tab-evidence, evidence table Q “0.0269 ± 0.00094 pL/s”, MD “0.0232 ± 0.0002 pL/s”, difference “+16.0 ± 4.2 %” (expected “+16.0 ± 4.2 %”), rms “32.5 %”; checks “11 of 11 pass”, “6 of 6 pass”, “14 of 14 pass”, independent validation “not established”; “Velocity profile”: comparison false; classical kept across views true (shown “0.00444 ± 0.00037 pL/s”); page errors 0"
+   },
+   {
+    "id": "PB14",
+    "name": "Phone hierarchy, compact case",
+    "verdict": "PASS",
+    "detail": "390 × 844 px: model choice ends 651 px and the plot starts 703 px below the top of the page (first screen 844 px); cutaway at 1852 px, after the plot true; 1440 × 1000 px: case lines 1 and 1 line box each, evidence badges 1 (“Published-case reconstruction”); page errors 0"
+   }
+  ]
+ }
+}

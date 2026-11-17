@@ -6,7 +6,7 @@ import json, os, html
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LAB = os.path.join(ROOT, "lab", "cnt")
-WEBSITE_VERSION = "2026.12"
+WEBSITE_VERSION = "2026.12.2"
 
 man = json.load(open(os.path.join(LAB, "data", "manifest.json")))
 tubes = man["tubes"]

@@ -1,0 +1,82 @@
+/* lab.css — base styles of the Continuum Lab page (lab/continuum/flow.html), release 2026.12.2.
+   Extracted from lab/continuum/continuum.css and lab/continuum/ions/ions.css when the ion-transport and membrane experiments
+   left the public site: the rules whose selectors the page and flow/app.js can match, unchanged (selector filter with
+   postcss; every element's computed style checked identical to the old stylesheets at 1440, 820 and 390 px with every
+   panel open). The originals are in the development archive and in the repository history. */
+
+/* ---- from lab/continuum/continuum.css (release 2026.12.1), rules the Continuum Lab page can match ---- */
+.cl-top { padding-top: var(--space-4); }
+.cl-title { margin-bottom: 0.1rem; }
+.cl-subtitle { font-size: var(--step-2); font-weight: 500; color: var(--heading); margin: 0 0 var(--space-1); }
+.cl-lede { max-width: 62ch; font-size: var(--step-1); color: var(--text); margin-bottom: var(--space-2); }
+.cl-app { display: grid; gap: var(--space-2); }
+.cl-app [hidden] { display: none !important; }
+
+.cl-viewport { position: relative; background: var(--viewer-bg); border-radius: var(--radius-m); overflow: hidden; aspect-ratio: 1 / 0.84; }
+.cl-vbadge { position: absolute; top: 0.6rem; right: 0.6rem; margin: 0; max-width: calc(100% - 7.5rem); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em; line-height: 1.25;
+  color: var(--viewer-text); background: rgba(13, 27, 42, 0.78); border: 1px solid rgba(98, 214, 194, 0.55); border-radius: 999px; padding: 0.18rem 0.6rem; pointer-events: none; text-align: right; }
+.cl-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.cl-canvas:focus-visible { outline: 3px solid var(--viewer-accent); outline-offset: -3px; }
+.cl-small { font-size: var(--step--1); color: var(--muted); margin: 0; max-width: none; }
+.cl-tube-readout { display: grid; gap: 0; margin: 0; font-size: var(--step--1); }
+.cl-tube-readout > div { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 0.6rem; padding: 0.3rem 0; border-bottom: 1px solid var(--line-soft); align-items: baseline; }
+.cl-tube-readout dt { color: var(--muted); }
+.cl-tube-readout dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-size: 0.82rem; color: var(--text); overflow-wrap: anywhere; }
+.cl-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
+.cl-tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 0.65rem 0.8rem; box-shadow: var(--shadow); min-width: 0; }
+.cl-tile-k { margin: 0; font-size: var(--step--1); color: var(--muted); }
+.cl-tile-v { margin: 0.15rem 0; font-size: var(--step-1); font-weight: 600; color: var(--heading); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.cl-tile-s { margin: 0; font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.cl-stateline { margin: 0; font-size: var(--step--1); color: var(--muted); max-width: none; }
+.cl-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: var(--space-2); box-shadow: var(--shadow); min-width: 0; }
+.cl-check { display: flex; gap: 0.5rem; align-items: center; font-size: var(--step--1); color: var(--text); min-height: 2.25rem; }
+.cl-check input { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; }
+.cl-field { display: grid; gap: 0.35rem; border: 0; margin: 0; padding: 0; min-width: 0; }
+.cl-field label, .cl-field legend { font-weight: 500; color: var(--heading); font-size: var(--step-0); }
+.cl-field legend { padding: 0; margin-bottom: 0.35rem; }
+.cl-radios { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; }
+.cl-radios label { display: inline-flex; gap: 0.35rem; align-items: center; font-weight: 400; font-size: var(--step--1); color: var(--text); min-height: 2.25rem; }
+.cl-field select { font: inherit; font-size: var(--step--1); padding: 0.4rem 0.5rem; border: 1px solid var(--control); border-radius: var(--radius-s); background: var(--surface); color: var(--text); max-width: 100%; min-height: 2.4rem; }
+.cl-field select:disabled { color: var(--muted); background: var(--bg-2); }
+.btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+.cl-more summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.6rem; min-height: 2.5rem; font-weight: 600; color: var(--heading); font-size: var(--step-0); }
+.cl-more summary::-webkit-details-marker { display: none; }
+.cl-more summary::before { content: ""; flex: none; width: 0.5rem; height: 0.5rem; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform 0.2s; }
+.cl-more[open] summary::before { transform: rotate(45deg); }
+.cl-more summary:hover { color: var(--accent); }
+.cl-more p { max-width: none; font-size: var(--step--1); }
+
+.cl-table-wrap { overflow-x: auto; max-width: 100%; }
+.cl-table { border-collapse: collapse; width: 100%; font-size: var(--step--1); }
+.cl-table th, .cl-table td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.cl-table thead th { color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+.cl-table tbody th { font-weight: 500; color: var(--text); }
+.cl-table td { font-variant-numeric: tabular-nums; }
+.cl-docs { max-width: 72rem; }
+.cl-doc p, .cl-doc li { max-width: 75ch; }
+.cl-doc h3 { font-size: var(--step-1); margin: var(--space-3) 0 var(--space-1); }
+.cl-doc .cl-table { margin: var(--space-1) 0 var(--space-2); }
+.cl-verdict { display: inline-block; font-size: 0.74rem; font-weight: 600; border-radius: 3px; padding: 0 0.4rem; border: 1px solid; white-space: nowrap; }
+.cl-verdict-pass { color: var(--ok); border-color: #A9D3BD; background: #EEF8F2; }
+.cl-verdict-fail { color: var(--stop); border-color: #EDB3AE; background: #FDEEEC; }
+.cl-verdict-notrun { color: var(--muted); border-color: var(--line); background: var(--bg-2); }
+.cl-back { margin-top: var(--space-3); }
+@media (max-width: 899px) {
+  .cl-lede { font-size: var(--step-0); }
+  .cl-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cl-viewport { aspect-ratio: 1 / 1; }
+}
+@media (max-width: 420px) {
+  .cl-tile-v { font-size: var(--step-0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-more summary::before { transition: none; }
+}
+
+/* ---- from lab/continuum/ions/ions.css (release 2026.12.1), rules the Continuum Lab page can match ---- */
+.cl-table tr.is-current th, .cl-table tr.is-current td { background: var(--accent-tint); font-weight: 600; }
+.ion-refs { padding-left: 1.4rem; display: grid; gap: 0.3rem; }
+.ion-refs li { max-width: 90ch; font-size: var(--step--1); }
+.ion-cite { font-size: 0.8em; vertical-align: 0.3em; line-height: 0; }
+.ion-cite a { text-decoration: none; }
+.cl-doc code, .cl-docs h3 code { overflow-wrap: anywhere; }

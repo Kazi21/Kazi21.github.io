@@ -1,0 +1,99 @@
+{
+ "id": "browser_flow",
+ "name": "Continuum Lab browser checks PB1–PB14",
+ "verdict": "PASS",
+ "chromium": "141.0.7390.37",
+ "items": [
+  {
+   "id": "PB1",
+   "name": "Load",
+   "verdict": "PASS",
+   "detail": "HTTP 200; page errors 0; 15 requests, outside the site: none, failed: none; footer “Simulation Lab, The Continuum Lab. Website version 2026.12.2.”"
+  },
+  {
+   "id": "PB2",
+   "name": "Default state",
+   "verdict": "PASS",
+   "detail": "case pccp2024-water-cnt2020, slip_velocity at D with interfacial viscosity; largest relative difference from the Node record (flow rate, mean velocity, difference from MD) 0.00e+0 (limit 1e-12); shown “0.0269 pL/s”, “4.66 m/s”, “+16.0 %” (expected “0.0269 pL/s”, “4.66 m/s”, “+16.0 %”); evidence label “Published-case reconstruction”"
+  },
+  {
+   "id": "PB3",
+   "name": "Plot",
+   "verdict": "PASS",
+   "detail": "6 molecular-dynamics points, 1 classical curve, 1 model curve, boundary band absent; model at the six radii against the Node record: largest relative difference 0.00e+0 (limit 1e-12)"
+  },
+  {
+   "id": "PB4",
+   "name": "Model choices",
+   "verdict": "PASS",
+   "detail": "12 combinations selected through the radio buttons; flow rate and mean velocity against the Node record: largest relative difference 0.00e+0 (limit 1e-12)"
+  },
+  {
+   "id": "PB5",
+   "name": "Boundary comparison",
+   "verdict": "PASS",
+   "detail": "off on load: true; on: 1 second curve (its flow rate against the Node record at D′: 0.00e+0), 1 band labelled “Boundary-convention sensitivity”, named in the legend: true; off again: 0 second curve, 0 band"
+  },
+  {
+   "id": "PB6",
+   "name": "Entrance-resistance sensitivity",
+   "verdict": "PASS",
+   "detail": "off on load: true; on: remaining fraction 0.397754 against the Node record 0.00e+0, flow rate against fraction × the value without end resistance 0.00e+0, against the Node record 0.00e+0 (limit 1e-12); label “Entrance-resistance sensitivity (c = 3, an assumed coefficient)”; fraction shown as 39.8 %: true; off again restores the default flow rate"
+  },
+  {
+   "id": "PB7",
+   "name": "Cases not yet enabled",
+   "verdict": "PASS",
+   "detail": "4 cases listed with their reasons; 4 of 5 options disabled; selecting each of them from a script leaves the page on pccp2024-water-cnt2020 with the message “Water in a (9,9) carbon nanotube is not yet enabled: the source curves of Fig. 6b have not been reproduced.”"
+  },
+  {
+   "id": "PB8",
+   "name": "Layout, keyboard and motion",
+   "verdict": "PASS",
+   "detail": "horizontal overflow (px) on load / with every panel open and both sensitivities on: 360 px 0/0, 390 px 0/0, 768 px 0/0, 1440 px 0/0; Tab reached 9 of 9 controls in 20 steps, focused elements without an outline: none; reduced motion: two frames 600 ms apart identical true, clock advance 0 s, button “Play”; default: frames differ true, clock advances by more than 0.3 s",
+   "data": {
+    "clock_advance_s": 0.617,
+    "tab_steps": 20
+   }
+  },
+  {
+   "id": "PB9",
+   "name": "Retired addresses",
+   "verdict": "PASS",
+   "detail": "lab/continuum/: HTTP 200, retired notice true, noindex true, link “Open the Continuum Lab” 1, opens the Continuum Lab true; lab/continuum/water.html: HTTP 200, retired notice true, noindex true, link “Open the Continuum Lab” 1, opens the Continuum Lab true; excluded files answer 404, 404, 404, 404, 404, 404 (6 sampled); links to a retired address on 7 pages: none; page errors 0, failed requests 0"
+  },
+  {
+   "id": "PB10",
+   "name": "Both error measures",
+   "verdict": "PASS",
+   "detail": "1440 px: flow-rate difference “+16.0 %” and velocity-profile difference “32.5 %” (Node record +16.0 % and 32.5 %), separate entries true, sentence directly below true, smallest result or label text 12.8 px, smallest plot text 11.7 px, clipped: none; 390 px: flow-rate difference “+16.0 %” and velocity-profile difference “32.5 %” (Node record +16.0 % and 32.5 %), separate entries true, sentence directly below true, smallest result or label text 12.8 px, smallest plot text 11.0 px, clipped: none"
+  },
+  {
+   "id": "PB11",
+   "name": "Controls beside the plot",
+   "verdict": "PASS",
+   "detail": "group “Model” 1, radios “Slip-velocity form” 1 and “Classical, no slip” 1, checkbox “Compare boundary definitions” 1, all inside the plot's figure true; selected through their accessible names: classical → classical, slip → slip_velocity, comparison on → true, off → false; one enabled case with one drive true, case selector shown false, pressure selector shown false; case description names the tube, temperature and pressure drop true (“Case SPC/E water at 300 K in a (20,20) carbon nanotube · D = 2.712 nm · L = 6.4 nm · ΔP = 3.25 ± 0.21 MPa between the re…”)"
+  },
+  {
+   "id": "PB12",
+   "name": "Main links",
+   "verdict": "PASS",
+   "detail": "hero link “Compare molecular and continuum flow” 1, opens the Continuum Lab true; card's primary link “Open the flow comparison” opens it true; card order Live Water Lab 1, inspector 2, Continuum Lab 3; actions in the card 1, “Further experiments” sections 0; page errors 0"
+  },
+  {
+   "id": "PB13",
+   "name": "Three views of one case",
+   "verdict": "PASS",
+   "detail": "tab list 1 with tabs 1/1/1; on load selected tab-profile, shown profile, comparison false; “Boundary sensitivity” (click): shown boundary, comparison true, table D R 1.356 nm, u_s 3.89 ± 0.15 m/s, Q 0.0269 pL/s; Dp R 0.962 nm, u_s 4.04 ± 0.15 m/s, Q 0.0129 pL/s (expected D 1.356 nm, 3.89 ± 0.15 m/s, 0.0269 pL/s; D′ 0.962 nm, 4.04 ± 0.15 m/s, 0.0129 pL/s), same MD flow rate in both rows true; ArrowRight: selected tab-evidence, focus tab-evidence, evidence table Q “0.0269 ± 0.00094 pL/s”, MD “0.0232 ± 0.0002 pL/s”, difference “+16.0 ± 4.2 %” (expected “+16.0 ± 4.2 %”), rms “32.5 %”; checks “11 of 11 pass”, “6 of 6 pass”, “14 of 14 pass”, independent validation “not established”; “Velocity profile”: comparison false; classical kept across views true (shown “0.00444 ± 0.00037 pL/s”); page errors 0"
+  },
+  {
+   "id": "PB14",
+   "name": "Phone hierarchy, compact case",
+   "verdict": "PASS",
+   "detail": "390 × 844 px: model choice ends 651 px and the plot starts 703 px below the top of the page (first screen 844 px); cutaway at 1852 px, after the plot true; 1440 × 1000 px: case lines 1 and 1 line box each, evidence badges 1 (“Published-case reconstruction”); page errors 0"
+  }
+ ],
+ "pageErrors": [],
+ "environment": "Chromium 141.0.7390.37 (headless shell, Playwright) on Intel(R) Xeon(R) Processor @ 2.30GHz (2 cores); local static server; no Safari, Firefox, real phones or screen readers",
+ "date": "2026-11-16T12:04:59.485Z"
+}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kazi Ehsanul Karim — From molecular dynamics to physics-informed models of nanoscale transport</title>
-<meta name="description" content="Kazi Ehsanul Karim, Ph.D. candidate in Mechanical Engineering at the University of Ulsan. Molecular dynamics, statistical mechanics and continuum modelling of nanoscale transport; published work on nanoscale boundary conditions and CNT water transport; current development of physics-informed transport closures and error-aware interatomic potentials for confined electrolytes. Open to postdoctoral and research-fellow opportunities from early 2027.">
+<meta name="description" content="Kazi Ehsanul Karim, Ph.D. candidate in Mechanical Engineering at the University of Ulsan. Molecular dynamics, statistical mechanics and continuum modelling of nanoscale transport; published work on nanoscale boundary conditions and CNT water transport; current development of physics-informed transport closures and error-aware interatomic potentials for confined electrolytes. Open to postdoctoral and research-fellow opportunities from March 2027.">
 <meta name="author" content="Kazi Ehsanul Karim">
 <link rel="canonical" href="https://kazi21.github.io/">
 <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
@@ -72,7 +72,7 @@
       <p class="hero-evidence"><strong>Three first-author articles in PRE and PCCP (two published, one accepted).</strong><br><a href="https://doi.org/10.1103/PhysRevE.103.053115">PRE, 2021</a> · <a href="https://doi.org/10.1039/D4CP01068J">PCCP, 2024</a> · <a href="https://doi.org/10.1039/D6CP03099H">PCCP, 2026</a></p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#research">Explore research</a>
-        <a class="btn" href="lab/continuum/">Try the multiscale experiment</a>
+        <a class="btn" href="lab/continuum/flow.html">Compare molecular and continuum flow</a>
       </div>
       <p class="hero-links"><a href="assets/cv/Kazi_Ehsanul_Karim_CV.pdf" download>CV (PDF)</a> · <a href="#contact">Contact</a></p>
     </div>
@@ -86,7 +86,7 @@
         <h2 class="facts-title">At a glance</h2>
         <dl>
           <dt>Position</dt><dd>Ph.D. candidate, University of Ulsan, Republic of Korea (since March 2019); supervisor Prof. BoHung Kim</dd>
-          <dt>Availability</dt><dd>Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from early 2027.</dd>
+          <dt>Availability</dt><dd>Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from March 2027.</dd>
           <dt>Research focus</dt><dd>Water and electrolyte transport in carbon nanotubes and graphene slits: LAMMPS EMD/NEMD, CP2K and DeePMD reference workflows, statistical mechanics of boundary conditions</dd>
         </dl>
       </aside>
@@ -127,13 +127,13 @@
       </li>
       <li class="rmap-step">
         <span class="rmap-n" aria-hidden="true">5</span>
-        <h3>Continuum prediction</h3>
-        <p>Continuum models that take molecular input: a flow model set against published molecular dynamics, ion transport with recorded hydration shells and chamber flow with a pore law, live in the browser now; OpenFOAM with calibrated closures next.</p>
+        <h3>Continuum calculation</h3>
+        <p>A continuum flow model with molecular boundary inputs, compared with published molecular dynamics of water in a carbon nanotube (a published-case reconstruction), live in the browser; coupling to OpenFOAM with calibrated closures is a planned extension.</p>
         <p class="rmap-meta"><span class="status status-live">Live demonstration</span> <a href="lab/continuum/flow.html">Continuum Lab</a></p>
       </li>
     </ol>
-    <p class="rmap-loop"><span class="status status-proposed">Developing direction</span> Error-aware adaptive simulation closes the loop: model errors and uncertainty decide where the next molecular calculation is needed. <a href="#vision">How the decision is made</a></p>
-    <p>I combine molecular simulation, statistical mechanics and continuum modelling, and deliver results in the form a continuum solver uses: a wall law with a test of where it stops being reliable. Currently, molecular simulation supplies the wall physics, continuum theory carries the solution, and machine learning corrects only what the theory misses. Applications include membrane separation, nanofluidic devices and energy conversion, and interfacial thermal management.</p>
+    <p class="rmap-loop"><span class="status status-proposed">Developing direction</span> Error-aware adaptive simulation would close the loop: model errors and uncertainty would decide where the next molecular calculation is needed. <a href="#vision">How the decision is made</a></p>
+    <p>I combine molecular simulation, statistical mechanics and continuum modelling. My published work examines how molecular structure and boundary definitions affect transport. I am extending this foundation through error-aware ML potentials and physics-constrained closures for independent testing. Applications include membrane separation, nanofluidic devices and energy conversion, and interfacial thermal management.</p>
     <details class="disclosure">
       <summary>Scales: where continuum descriptions hold</summary>
       <div class="disclosure-body">
@@ -143,7 +143,7 @@
             <source media="(max-width: 960px)" srcset="assets/figures/across-scales-stacked.png" width="1080" height="2154">
             <img src="assets/figures/across-scales.png" width="2400" height="848" loading="lazy" decoding="async" alt="Diagram from molecular interactions to collective transport. Four illustrative scales: a molecule (about 0.3 nm) whose thermal motion is governed by molecular interactions; nanoconfinement (subnanometre to 10 nm), where packing, correlations and the wall shape transport; microflow, with averaged fields and tested constitutive relations; and macroflow, solved by CFD. Statistical mechanics and physical closures, with physics-constrained learning as one method, link the molecular and continuum descriptions, and a return arrow marks validation against molecular evidence.">
           </picture>
-          <figcaption>Illustrative scales: whether a continuum description holds depends on the system, the observable and the separation of length and time scales, not on a single size. Every closure is checked against molecular evidence.</figcaption>
+          <figcaption>Illustrative scales: whether a continuum description holds depends on the system, the observable and the separation of length and time scales, not on a single size. Molecular evidence is used to assess the assumptions and limits of each transport description.</figcaption>
         </figure>
         <p class="scale-links-title">Where to inspect each part of the diagram</p>
         <ul class="scale-links">
@@ -175,7 +175,7 @@
 <section class="section" id="projects">
   <div class="container">
     <h2>Research Projects</h2>
-    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and the PINN closure that carries wall physics into continuum flow, the basis for adaptive MD–CFD. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
+    <p class="section-intro">Three connected projects: the published transport foundation, the error-aware potentials now being built on it, and a PINN closure in preparation, intended to carry wall physics into continuum flow and to underpin a planned adaptive MD–CFD coupling. Each one states its scientific question, my contribution, the evidence available today and the next development.</p>
 
     <div class="projects">
       <article class="project project-major" id="project-1">
@@ -209,7 +209,7 @@
           <dt>My contribution</dt>
           <dd>I built and ran the full workflow for NaCl–water in four carbon-nanotube diameters, with a check at every stage: CP2K ab initio MD seeds and reference labels (PBE-D3(BJ)), DP-GEN active learning, DeePMD-kit models and LAMMPS production runs.</dd>
           <dt>Available evidence</dt>
-          <dd><a href="#snapshots">Ab initio MD snapshots</a> (below the project cards) · <a href="lab/cnt/">trajectory inspector</a> (interactive, all four tubes) · <a href="evidence/nacl-water-cnt/index.html">methods and software demonstration</a> (synthetic example data, tests executed) · <a href="evidence/nacl-water-cnt/index.html#workflow">workflow schematic</a> · <a href="evidence/models/">guide to choosing and validating ML potentials</a> (model selection and validation; literature-based) · friction results and error analysis are unpublished and shown on request.</dd>
+          <dd><a href="#snapshots">Ab initio MD snapshots</a> (below the project cards) · <a href="lab/cnt/">trajectory inspector</a> (interactive, all four tubes) · <a href="evidence/nacl-water-cnt/index.html">methods and software demonstration</a> (synthetic example data, tests executed) · <a href="evidence/nacl-water-cnt/index.html#workflow">workflow schematic</a> · <a href="evidence/models/">guide to choosing and validating ML potentials</a> (model selection and validation; literature-based) · the force-error analysis is unpublished and shown on request; no friction coefficient is reported while transport-estimator validation is ongoing.</dd>
         </dl>
         <details class="disclosure">
           <summary>Methods, checks and next development</summary>
@@ -219,9 +219,9 @@
       <ol class="lessons">
         <li><strong>Species-resolved validation.</strong> Per-species force checks on fresh DFT frames found one atom type much worse than the acceptable overall error suggested.</li>
         <li><strong>Committee uncertainty assessment.</strong> Committee disagreement did not flag that error, and targeted extra reference data did not reduce it; its cause is being tested.</li>
-        <li><strong>Transport-estimator sensitivity.</strong> Two standard friction estimators gave different values, most strongly in the widest tube, so the friction results remain under analysis.</li>
+        <li><strong>Friction not yet established.</strong> Transport-estimator validation is ongoing; no friction coefficient is reported.</li>
       </ol>
-            <p><strong>Next development.</strong> Test whether the reference data, data coverage or the model type explains the species-specific error, then settle one friction estimator for all four tubes.</p>
+            <p><strong>Next development.</strong> Converge the reference calculations, then retrain under control and test on independent data to locate the species-specific error; report friction only after the transport estimator has been validated, with one estimator for all four tubes.</p>
           </div>
         </details>
       </article>
@@ -274,7 +274,7 @@
 <section class="section section-band" id="lab">
   <div class="container">
     <h2>Simulation Lab</h2>
-    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: live molecular dynamics, recorded ab initio trajectories and the Continuum Lab (a published molecular-flow benchmark, ion transport through one nanotube pore, and water flow through a nanotube membrane). Which interaction model such simulations should use, and how it is validated before use, is set out in <a href="evidence/models/">a practical guide to choosing and validating ML potentials</a>, from confined electrolytes to surface-response models.</p>
+    <p class="section-intro">Each experiment has its own page and loads its solver or data only when you start it: live molecular dynamics, recorded ab initio trajectories and the Continuum Lab, which compares a continuum description of water flow in a carbon nanotube with published molecular dynamics. Which interaction model such simulations should use, and how it is validated before use, is set out in <a href="evidence/models/">a practical guide to choosing and validating ML potentials</a>, from confined electrolytes to surface-response models.</p>
     <div class="lab-cards">
       <article class="lab-card">
         <a class="lab-card-media" href="lab/water/" tabindex="-1" aria-hidden="true"><img src="assets/figures/water-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
@@ -298,24 +298,19 @@
       </article>
     </div>
     <article class="lab-card lab-card-feature">
-      <a class="lab-card-media" href="lab/continuum/" tabindex="-1" aria-hidden="true"><img src="assets/figures/continuum-lab-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
+      <a class="lab-card-media" href="lab/continuum/flow.html" tabindex="-1" aria-hidden="true"><img src="assets/figures/flow-comparison-preview.png" width="1200" height="1200" loading="lazy" decoding="async" alt=""></a>
       <div class="lab-card-body">
-        <p class="project-kicker">Multiscale experiments · browser solvers</p>
+        <p class="project-kicker">Continuum flow · published molecular dynamics</p>
         <h3>The Continuum Lab</h3>
-        <p><span class="status">Published flow benchmark · live solvers · numerical controller · recorded CP2K hydration · illustrative closure</span></p>
-        <p class="lab-lead">How closely does a continuum model with a molecular boundary condition follow molecular dynamics? The flow benchmark sets its velocity profile and flow rate against a published simulation of water in a carbon nanotube and reports the difference. The ion experiment asks why a pore passes one ion and resists another: a live solver compares six physical models, checks grid convergence and can name a suggested molecular calculation, marked not run. A third experiment follows water through a CNT membrane.</p>
-        <ul class="lab-points">
-          <li>Flow benchmark: one published case, labelled a reconstruction; its agreement with molecular dynamics is reported without a verdict, and no case is called a prediction yet.</li>
-          <li>Recorded CP2K hydration structures enter an illustrative solvation closure; the browser solves the resulting continuum transport model.</li>
-          <li>A rule-based controller checks the prediction on finer grids, refines within its budget and records why it stops; the decision record can be downloaded and reproduced.</li>
-          <li>Numerically verified against an independent solver and analytical limits (Hall, Goldman–Hodgkin–Katz, Donnan, Onsager, van ’t Hoff); a 3D cutaway shows the computed fields.</li>
-        </ul>
-        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/flow.html">Open the flow benchmark</a> <a class="btn btn-small" href="lab/continuum/">Ion experiment</a> <a class="btn btn-small" href="lab/continuum/water.html">Water-flow experiment</a> <a class="lab-more" href="lab/continuum/flow.html#checks">Benchmark checks</a> <a class="lab-more" href="lab/continuum/#validation">Ion validation</a></p>
+        <p class="lab-sub">Molecular boundaries and nanoscale flow</p>
+        <p><span class="status">Published-case reconstruction</span></p>
+        <p class="lab-lead">Compare a continuum velocity profile and flow rate with published molecular dynamics. Explore how the definition of the liquid boundary changes the result.</p>
+        <p class="lab-cta"><a class="btn btn-primary btn-small" href="lab/continuum/flow.html">Open the flow comparison</a></p>
       </div>
     </article>
     <h3 class="lab-next-title">Next stages</h3>
     <ol class="lab-steps">
-      <li><b>Calibrated pore law for the Continuum Lab <span class="status status-proposed">Planned</span></b> net water crossings through the (6,6) membrane from molecular dynamics at zero and finite drive, analysed with the published calibration package, replacing the illustrative law with a qualified one and its uncertainty.</li>
+      <li><b>Independent boundary inputs for the Continuum Lab <span class="status status-proposed">Planned</span></b> boundary inputs obtained independently of the driven run, tested against it with an accuracy requirement written down before the comparison.</li>
       <li><b>Molecular interaction in a nanotube <span class="status status-proposed">Planned</span></b> the pulling experiment of the Water Lab, carried into one CNT electrolyte, with an influence view of which neighbours' forces change.</li>
       <li><b>Reference-guided learning <span class="status status-proposed">Planned</span></b> a learned model checked against reference calculations, with errors resolved by species and environment and each next calculation chosen for a stated reason.</li>
     </ol>
@@ -438,7 +433,7 @@
     <h2>What I can contribute to your group</h2>
     <ul class="deliverables">
       <li><h3>Molecular simulation and transport analysis with LAMMPS EMD/NEMD</h3><p>Equilibrium and non-equilibrium studies of confined transport and interfacial friction, with replica-based uncertainty, convergence diagnostics and explicit stopping criteria from the first campaign.</p></li>
-      <li><h3>Connecting molecular mechanisms to boundary conditions and reduced transport descriptions</h3><p>Define the boundary, the accessible region and the quantity a transport model actually needs; test whether a continuum description remains valid before it is used. For CFD and microfluidics groups, this means wall laws derived from molecular simulation, delivered in the form a continuum solver uses, with a test of where they stop being reliable.</p></li>
+      <li><h3>Connecting molecular mechanisms to boundary conditions and reduced transport descriptions</h3><p>Define the boundary, the accessible region and the quantity a transport model actually needs; test whether a continuum description remains valid before it is used. For CFD and microfluidics groups, this means deriving boundary conditions from molecular simulation in the form a continuum solver uses, and testing where they stop being reliable.</p></li>
       <li><h3>Reproducible, physics-informed learning and reference-data workflows</h3><p>Reference calculations, learned potentials and physics-informed closures with species- and environment-resolved error checks, versioned inputs and a traceable route from reference data to prediction.</p></li>
     </ul>
     <p class="section-intro" style="margin-top: var(--space-3)">An initial collaboration would agree on one system and one observable, establish a reproducible baseline, test its predictive limits and identify the next calculation with the greatest scientific value.</p>
@@ -449,7 +444,7 @@
       <div class="disclosure-body">
     <ul class="worklist">
       <li><span class="status">In progress</span><span>Doctoral thesis: two manuscripts completed or in final preparation and two in preparation, completing seven studies (<a href="#thesis">overview</a>).</span></li>
-      <li><span class="status">In progress</span><span>CP2K reference data, DP-GEN active learning and DeePMD-kit models for CNT-confined NaCl–water across four tube diameters are complete; the species-specific error and the choice of friction estimator are under analysis (Project 2); methods tooling published as a software demonstration.</span></li>
+      <li><span class="status">In progress</span><span>CP2K → DP-GEN → DeePMD-kit → LAMMPS workflow for CNT-confined NaCl–water in four tube diameters executed; validation is reported separately: the species-specific force error and the transport-estimator validation remain open (Project 2); methods tooling published as a software demonstration.</span></li>
       <li><span class="status">In progress</span><span>PINN closure for wall friction and flow in nanoconfined water: manuscript in preparation, with models scored on geometries withheld from training (Project 3).</span></li>
       <li><span class="status status-proposed">Planned</span><span>Reproducible reference example: inputs, settings and consistency checks that another group can rerun.</span></li>
       <li><span class="status">In progress</span><span>Held-out model evaluation on fresh reference calculations: species-resolved errors done (unpublished); environment-resolved errors planned.</span></li>
@@ -696,7 +691,7 @@
     <img class="contact-portrait" src="assets/figures/kazi-ehsanul-karim.jpg" width="400" height="400" alt="Kazi Ehsanul Karim" loading="lazy" decoding="async">
     <div class="contact-body">
     <h2>Discuss a postdoctoral or research-fellow opportunity</h2>
-    <p>I am open to positions where molecular simulation, learned potentials and transport questions meet. Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from early 2027. Email is the quickest route; I reply from the address below.</p>
+    <p>I am open to positions where molecular simulation, learned potentials and transport questions meet. Ph.D. defense scheduled for 10 December 2026. Formal degree conferral expected in February 2027; available for postdoctoral or research-fellow opportunities from March 2027. Email is the quickest route; I reply from the address below.</p>
     <div class="contact-row">
       <a class="contact-email" id="email-link" href="mailto:kaziehsanul45@gmail.com" data-email="kaziehsanul45@gmail.com">kaziehsanul45@gmail.com</a>
       <button class="btn btn-small" type="button" id="copy-email" data-email="kaziehsanul45@gmail.com">Copy email</button>
@@ -718,7 +713,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <p class="version">Version 2026.12. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (a published molecular-flow benchmark, ion transport through one nanotube pore, and water flow through a nanotube membrane), the complete methods-and-software package for Project 2, and a practical guide to choosing and validating ML potentials.</p>
+      <p class="version">Version 2026.12.2. Research website with a multiscale research map, the seven-study doctoral thesis, ab initio MD snapshots, an interactive inspector for the four CNT trajectories, a Live Water Lab that runs LAMMPS in the browser, the Continuum Lab (water flow in a carbon nanotube compared with published molecular dynamics), the complete methods-and-software package for Project 2, and a practical guide to choosing and validating ML potentials.</p>
     </div>
     <div>
       <p>Website code is released under the MIT licence. Text, CV and scientific graphics are © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p>

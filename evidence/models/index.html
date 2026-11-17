@@ -156,8 +156,8 @@
           <li><b>LAMMPS</b>: molecular dynamics with the chosen interaction model.</li>
           <li><b>DP-GEN</b>: concurrent learning, which cycles through exploration, labelling and training<sup class="mx-cite"><a href="#ref-zhang2020">[9]</a></sup>.</li>
           <li><b>PINN</b>: physics-constrained learning of solutions or closures<sup class="mx-cite"><a href="#ref-raissi2019">[10]</a></sup>; here intended for the molecular-to-continuum connection (<a href="../../index.html#project-3">Project 3</a>).</li>
-          <li><b>Continuum solver</b>: fields and device-scale response from stated equations and closures (<a href="../../lab/continuum/">Continuum Lab</a>).</li>
-          <li><b>Controller</b>: selects and records computational actions according to stated rules and the available evidence; the <a href="../../lab/continuum/#controller">Continuum Lab controller</a> is rule-based and uses no language model.</li>
+          <li><b>Continuum solver</b>: velocity fields and flow rates from stated equations and boundary inputs (<a href="../../lab/continuum/flow.html">Continuum Lab</a>).</li>
+          <li><b>Controller</b>: selects and records computational actions according to stated rules and the available evidence; the <a href="../nacl-water-cnt/index.html#computational-decisions">decision prototype of the methods package</a> is rule-based and uses no language model.</li>
         </ul>
         <p>The loop that connects these steps is described under <a href="../../index.html#practice">Methods and code</a>.</p>
       </div>
@@ -229,7 +229,7 @@
           <th scope="row" role="rowheader">
             <span class="mx-name">How does confinement change electrolyte transport?</span>
             <span class="badge">Current research</span>
-            <span class="mx-meta"><a href="../../index.html#project-2">Project 2</a> · <a href="../../lab/continuum/">Continuum Lab</a></span>
+            <span class="mx-meta"><a href="../../index.html#project-2">Project 2</a> · <a href="../../lab/cnt/">trajectory inspector</a></span>
           </th>
           <td role="cell" data-label="What the molecular model must establish">Hydration, mobility and driven response within a tested domain</td>
           <td role="cell" data-label="Output for a larger-scale model">Calibrated pore response with uncertainty</td>
@@ -352,7 +352,6 @@
               <p>Selectivity is governed by hydration, coordination and transfer free energies: the model must describe an ion's water shell being replaced by pore-lining atoms as accurately as hydration in bulk water. An isolated binding energy does not determine selectivity, and a pore diameter alone does not establish that a continuum description is valid.</p>
             </div>
           </div>
-          <p class="mx-note">The biological mechanisms and their sources are summarised in the Continuum Lab's <a href="../../lab/continuum/#bio">biological-inspiration notes</a>.</p>
         </div>
       </details>
 
@@ -415,7 +414,7 @@
 </main>
 <footer class="site-footer">
   <div class="container footer-grid">
-    <div><p class="version">Website version 2026.12. A guide to model selection and validation, based on the literature and on the methods of Project 2: it reports no new simulation results.</p></div>
+    <div><p class="version">Website version 2026.12.2. A guide to model selection and validation, based on the literature and on the methods of Project 2: it reports no new simulation results.</p></div>
     <div><p>Website code is released under the MIT licence. Text is © Kazi Ehsanul Karim; see NOTICE.md in the repository.</p></div>
     <div><p>This page makes no third-party requests, sets no cookies and runs no analytics.</p></div>
   </div>

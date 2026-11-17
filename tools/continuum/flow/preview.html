@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flow comparison preview (generator)</title>
+<!-- Draws assets/figures/flow-comparison-preview.png, the home-page card image of the flow benchmark, from the same
+     model code and case sheet as lab/continuum/flow.html. Serve the repository root and run make_preview.js. -->
+<link rel="stylesheet" href="../../../styles/tokens.css">
+<style>html, body { margin: 0; background: #0D1B2A; } canvas { display: block; }</style>
+</head>
+<body>
+<canvas id="c" width="1200" height="1200"></canvas>
+<script src="../../../lab/continuum/flow/core.js"></script>
+<script>
+(async function () {
+  'use strict';
+  var F = window.ContinuumFlow;
+  var data = await (await fetch('../../../lab/continuum/flow/data/cases.json')).json();
+  var cs = data.cases.filter(function (c) { return c.enabled; })[0];
+  await Promise.all(['400 26px "IBM Plex Sans"', '500 26px "IBM Plex Sans"', '600 34px "IBM Plex Sans"', '400 24px "IBM Plex Mono"'].map(function (f) { return document.fonts.load(f); }));
+  var atD = F.evaluate(F.specFromCase(cs, {})), atDp = F.evaluate(F.specFromCase(cs, { boundary: 'Dp' }));
+  var cla = F.evaluate(F.specFromCase(cs, { family: 'classical' }));
+  var cv = document.getElementById('c'), c = cv.getContext('2d');
+  var BG = '#0D1B2A', TXT = '#E9EEF3', MUT = '#A7B6C6', ACC = '#62D6C2', GREY = '#8A99AA', SANS = '"IBM Plex Sans", sans-serif', MONO = '"IBM Plex Mono", monospace';
+  c.fillStyle = BG; c.fillRect(0, 0, 1200, 1200);
+  var X0 = 150, X1 = 1130, Y0 = 1000, Y1 = 230, RMAX = 1.45, UMAX = 6;
+  var px = function (r) { return X0 + (X1 - X0) * r / RMAX; }, py = function (u) { return Y0 - (Y0 - Y1) * u / UMAX; };
+  var RD = 0.5 * cs.geometry.D_nm.value, RP = 0.5 * cs.geometry.Dp_nm.value;
+  // title and status
+  c.textBaseline = 'alphabetic'; c.fillStyle = TXT; c.font = '600 34px ' + SANS; c.fillText('Water in a (20,20) carbon nanotube', 60, 92);
+  c.fillStyle = MUT; c.font = '400 26px ' + SANS; c.fillText('Continuum flow model and published molecular dynamics', 60, 134);
+  var badge = 'Published-case reconstruction'; c.font = '600 24px ' + SANS;
+  var bw = c.measureText(badge).width + 40, bx = 1140 - bw, by = 54;
+  c.strokeStyle = 'rgba(98,214,194,0.75)'; c.lineWidth = 2; c.beginPath(); c.roundRect(bx, by, bw, 48, 24); c.stroke();
+  c.fillStyle = TXT; c.fillText(badge, bx + 20, by + 32);
+  // grid and axes
+  c.strokeStyle = 'rgba(233,238,243,0.08)'; c.lineWidth = 1.5;
+  for (var u = 1; u <= UMAX; u++) { c.beginPath(); c.moveTo(X0, py(u)); c.lineTo(X1, py(u)); c.stroke(); }
+  c.strokeStyle = '#5F7385'; c.lineWidth = 2; c.beginPath(); c.moveTo(X0, Y1 - 10); c.lineTo(X0, Y0); c.lineTo(X1, Y0); c.stroke();
+  c.fillStyle = MUT; c.font = '400 24px ' + MONO; c.textAlign = 'right';
+  for (u = 0; u <= UMAX; u++) c.fillText(String(u), X0 - 16, py(u) + 8);
+  c.textAlign = 'center';
+  for (var i = 0; i <= 7; i++) { var r = 0.2 * i; c.beginPath(); c.moveTo(px(r), Y0); c.lineTo(px(r), Y0 + 10); c.stroke(); c.fillText(i ? r.toFixed(1) : '0', px(r), Y0 + 40); }
+  c.font = '400 26px ' + SANS; c.fillText('distance from the tube axis, r (nm)', (X0 + X1) / 2, Y0 + 86);
+  c.save(); c.translate(64, (Y0 + Y1) / 2); c.rotate(-Math.PI / 2); c.fillText('axial velocity, u (m/s)', 0, 0); c.restore();
+  // the molecular boundary: carbon wall at D/2, first density peak at D'/2
+  c.fillStyle = 'rgba(195,207,218,0.10)'; c.fillRect(px(RD), Y1 - 10, X1 - px(RD), Y0 - Y1 + 10);
+  c.fillStyle = '#C3CFDA';
+  for (var y = Y1 + 6; y < Y0 - 4; y += 26) { c.beginPath(); c.arc(px(RD) + 9, y, 7, 0, 2 * Math.PI); c.fill(); c.beginPath(); c.arc(px(RD) + 24, y + 13, 7, 0, 2 * Math.PI); c.fill(); }
+  c.strokeStyle = MUT; c.lineWidth = 2; c.setLineDash([10, 8]); c.beginPath(); c.moveTo(px(RP), Y1 - 10); c.lineTo(px(RP), Y0); c.stroke(); c.setLineDash([]);
+  c.font = '500 24px ' + SANS; c.textAlign = 'right';                 // labels above the frame, clear of the curves
+  c.fillStyle = TXT; c.fillText('carbon wall, D/2', X1, Y1 - 22);
+  c.fillStyle = MUT; c.fillText('first density peak, D′/2', px(RP) + 8, Y1 - 22);
+  function path(res, n) { var R = res.R_m * 1e9; c.beginPath(); for (var k = 0; k <= n; k++) { var rr = R * k / n; var uu = res.u(Math.min(rr * 1e-9, res.R_m)); if (k) c.lineTo(px(rr), py(uu)); else c.moveTo(px(rr), py(uu)); } }
+  // boundary-choice sensitivity band, then the curves
+  var Rm = Math.min(atD.R_m, atDp.R_m) * 1e9;
+  c.beginPath(); for (i = 0; i <= 80; i++) { r = Rm * i / 80; var ya = py(atD.u(r * 1e-9)); if (i) c.lineTo(px(r), ya); else c.moveTo(px(r), ya); }
+  for (i = 80; i >= 0; i--) { r = Rm * i / 80; c.lineTo(px(r), py(atDp.u(r * 1e-9))); } c.closePath(); c.fillStyle = 'rgba(98,214,194,0.16)'; c.fill();
+  c.lineCap = 'round';
+  c.strokeStyle = GREY; c.lineWidth = 4; c.setLineDash([16, 12]); path(cla, 120); c.stroke(); c.setLineDash([]);
+  c.strokeStyle = ACC; c.lineWidth = 4; c.setLineDash([3, 10]); path(atDp, 120); c.stroke(); c.setLineDash([]);
+  c.strokeStyle = ACC; c.lineWidth = 6; path(atD, 160); c.stroke();
+  // published molecular-dynamics points
+  cs.md.profile.r_nm.forEach(function (rr, k) {
+    c.beginPath(); c.arc(px(rr), py(cs.md.profile.u_m_s[k]), 11, 0, 2 * Math.PI); c.fillStyle = BG; c.fill();
+    c.beginPath(); c.arc(px(rr), py(cs.md.profile.u_m_s[k]), 8, 0, 2 * Math.PI); c.fillStyle = '#F4F7FA'; c.fill();
+  });
+  // direct labels
+  c.textAlign = 'left'; c.font = '500 26px ' + SANS;
+  c.fillStyle = ACC; c.fillText('slip-velocity form, boundary at D', px(0.03), py(atD.u(0)) - 20);
+  c.fillText('same model, boundary at D′', px(0.03), py(atDp.u(0)) + 60);
+  c.fillStyle = TXT; c.fillText('molecular dynamics (published)', px(0.15), py(3.62) + 52);
+  c.fillStyle = GREY; c.fillText('classical, no slip', px(0.03), py(cla.u(0)) - 20);
+  // the two numbers the page leads with
+  c.font = '400 26px ' + SANS; c.fillStyle = MUT;
+  c.fillText('Flow rate: ' + (atD.Q_m3_s * 1e15).toPrecision(3) + ' pL/s at D, ' + (atDp.Q_m3_s * 1e15).toPrecision(3) + ' pL/s at D′; MD ' + cs.md.flow_pL_s.value + ' pL/s', 60, 1150);
+  document.body.setAttribute('data-ready', '1');
+})();
+</script>
+</body>
+</html>
